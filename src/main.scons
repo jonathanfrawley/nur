@@ -1,0 +1,20 @@
+
+env = Environment()
+
+SDL_LIBPREFIX='../../lib/sdl/lib'
+SDL_INCPREFIX='../lib/sdl/include/SDL'
+
+# add additional compiler flags
+cflags = ['-g', '-O2', 
+	'-D_REENTRANT', 
+	'-Wall', 
+	'-DHAVE_OPENGL', 
+	'-L%s' % (SDL_LIBPREFIX), 
+	'-I%s' % (SDL_INCPREFIX)]
+
+# add additional libraries to link against
+libs = ['SDL', 'SDL_mixer', 'SDL_image', 'GL', 'm']
+
+cfiles = Glob('*.c')
+
+env.Program(target='pmuj', source=cfiles, CCFLAGS=cflags, LIBPATH=SDL_LIBPREFIX, LIBS=libs)
