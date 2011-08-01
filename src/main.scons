@@ -8,12 +8,11 @@ SDL_INCPREFIX='../lib/sdl/include/SDL'
 cflags = ['-g', '-O2', 
 	'-D_REENTRANT', 
 	'-Wall', 
-	'-DHAVE_OPENGL', 
 	'-L%s' % (SDL_LIBPREFIX), 
 	'-I%s' % (SDL_INCPREFIX)]
 
 # add additional libraries to link against
-libs = ['SDL', 'SDL_mixer', 'SDL_image', 'GL', 'm']
+libs = ['SDL', 'SDL_mixer', 'SDL_image' ]
 
 cfiles = Glob('*.c')
 
