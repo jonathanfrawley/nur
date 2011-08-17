@@ -1,10 +1,6 @@
 #ifndef SCENENODE_HPP
 #define SCENENODE_HPP
 
-/**
- * Scenenodes are graphical representations of objects in the game.
- */
-
 #include "Point2.hpp"
 
 typedef enum SceneNodeType
@@ -12,6 +8,9 @@ typedef enum SceneNodeType
 	NODE_MAN
 } ScenenodeType;
 
+/**
+ * Scenenodes are graphical representations of objects in the game.
+ */
 class SceneNode 
 {
 	public:
