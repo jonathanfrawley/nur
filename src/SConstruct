@@ -8,5 +8,5 @@ for root, dirnames, filenames in os.walk('.'):
       matches.append(os.path.join(root, filename))
 
 
-env = Environment(CPPPATH = ['.'])
+env = Environment(CPPPATH = ['.'], CFLAGS='-Werror')
 env.Program('pmuj', matches)

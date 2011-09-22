@@ -1,6 +1,6 @@
 #include "nxMM.h"
 
-void *nxMalloc(unsigned size)
+void *nxMalloc(nxUInt size)
 {
     return malloc(size);
 }

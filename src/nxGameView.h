@@ -3,10 +3,9 @@
 
 typedef struct nxGameView
 {
+	void (*init)(struct nxGameView* obj);
+	void (*update)(struct nxGameView* obj);
+	void (*draw)(struct nxGameView* obj);
 } nxGameView;
-
-nxGameView* nxGameView_new();
-void nxGameView_init(nxGameView* obj);
-void nxGameView_draw(nxGameView* obj);
 
 #endif

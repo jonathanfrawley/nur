@@ -1,15 +1,25 @@
 #include <stdio.h>
 
-#include "nxGameView.h"
+#include <nxGameLogic.h>
+#include <nxHumanGameView.h>
 #include <nxCore/nxMM.h>
 
 int main(void)
 {
-    nxGameView* gameView = nxGameView_new();
+    nxGameLogic* gameLogic = nxGameLogic_new();
+    nxGameView* gameView = nxHumanGameView_new();
 
-    nxGameView_init(gameView);
+	nxGameLogic_init(gameLogic);
+    gameView->init(gameView);
 
-    nxGameView_draw(gameView);
+	int finished = 0;
+	while( ! finished) {
+		finished = nxGameLogic_update(gameLogic);
+
+		gameView->update(gameView);
+
+		gameView->draw(gameView);
+	}
 
     nxFree(gameView);
     return 0;
