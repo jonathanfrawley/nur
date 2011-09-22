@@ -17,10 +17,11 @@ int main(void)
 		finished = nxGameLogic_update(gameLogic);
 
 		gameView->update(gameView);
-
 		gameView->draw(gameView);
 	}
 
-    nxFree(gameView);
+	nxGameLogic_shutdown(gameLogic);
+	gameView->shutdown(gameView);
+
     return 0;
 }

@@ -8,9 +8,8 @@ typedef struct nxGameLogic
 } nxGameLogic;
 
 nxGameLogic* nxGameLogic_new();
-
 nxInt nxGameLogic_init(nxGameLogic* obj);
-
 nxInt nxGameLogic_update(nxGameLogic* obj);
+void nxGameLogic_delete(nxGameLogic* obj);
 
 #endif

@@ -16,5 +16,10 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 
 nxInt nxGameLogic_update(nxGameLogic* obj)
 {
-	return 1;
+	return 0;
+}
+
+void nxGameLogic_shutdown(nxGameLogic* obj)
+{
+	nxFree(obj);
 }
