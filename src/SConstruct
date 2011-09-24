@@ -7,7 +7,7 @@ for root, dirnames, filenames in os.walk('.'):
       matches.append(os.path.join(root, filename))
 
 
-env = Environment(CPPPATH = ['.'], CFLAGS='-Werror')
+env = Environment(CPPPATH = ['.'], CFLAGS='-Werror -std=c99')
 
 env.ParseConfig('sdl-config --cflags')
 env.ParseConfig('sdl-config --libs')

@@ -2,6 +2,7 @@
 #define  NXHUMANGAMEVIEW_H
 
 #include <nxGameView.h>
+#include <nxEvent/nxEvent.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_opengl.h"
 
@@ -16,5 +17,7 @@ void nxHumanGameView_draw(nxGameView* obj);
 void nxHumanGameView_shutdown(nxGameView* obj);
 
 nxInt init_GL();
+
+void nxHumanGameView_handleEvent(nxEvent evt);
 
 #endif   // NXHUMANGAMEVIEW_H

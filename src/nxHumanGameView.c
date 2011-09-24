@@ -1,6 +1,11 @@
 #include "nxHumanGameView.h"
 
 #include <nxCore/nxMM.h>
+#include <nxCore/nxLog.h>
+#include <nxEvent/nxEventManager.h>
+#include <nxEvent/nxEventData.h>
+
+static int finished = 0;
 
 nxGameView* nxHumanGameView_new()
 {
@@ -10,6 +15,8 @@ nxGameView* nxHumanGameView_new()
 	res->update = nxHumanGameView_update;
 	res->draw = nxHumanGameView_draw;
 	res->shutdown = nxHumanGameView_shutdown;
+
+	nxEventManager_addHandler(nxHumanGameView_handleEvent);
 
 	return res;
 }
@@ -54,20 +61,23 @@ void nxHumanGameView_draw(nxGameView* obj)
 	glLoadIdentity();
 
 
+	if(finished == 0)
+	{
 //
-	float SQUARE_WIDTH=100.0f;
-	float SQUARE_HEIGHT=50.0f;
-	float x = 10.0f;
-	float y = 10.0f;
-	glTranslatef( x, y, 0 );
-	glBegin( GL_QUADS ); 
-		glColor4f( 1.0, 1.0, 1.0, 1.0 );
-		glVertex3f( 0, 0, 0 ); 
-		glVertex3f( SQUARE_WIDTH, 0, 0 ); 
-		glVertex3f( SQUARE_WIDTH, SQUARE_HEIGHT, 0 ); 
-		glVertex3f( 0, SQUARE_HEIGHT, 0 ); 
-	glEnd();
+		float SQUARE_WIDTH=100.0f;
+		float SQUARE_HEIGHT=50.0f;
+		float x = 10.0f;
+		float y = 10.0f;
+		glTranslatef( x, y, 0 );
+		glBegin( GL_QUADS ); 
+			glColor4f( 1.0, 1.0, 1.0, 1.0 );
+			glVertex3f( 0, 0, 0 ); 
+			glVertex3f( SQUARE_WIDTH, 0, 0 ); 
+			glVertex3f( SQUARE_WIDTH, SQUARE_HEIGHT, 0 ); 
+			glVertex3f( 0, SQUARE_HEIGHT, 0 ); 
+		glEnd();
 //
+	}
 	SDL_GL_SwapBuffers();
 }
 
@@ -92,4 +102,17 @@ nxInt init_GL()
 void nxHumanGameView_shutdown(nxGameView* obj)
 {
 	nxFree(obj);
+}
+
+void nxHumanGameView_handleEvent(nxEvent evt)
+{
+	if(evt.type == NX_EVT_CREATEEVT)
+	{
+		nxCreateEntityEventData* castData = (nxCreateEntityEventData*)evt.data;
+
+		NX_LOG("nxHumanGameView", "handling create event.");
+		//TODO:TEST
+		finished = 1;
+		//Now create a scenenode object
+	}
 }
