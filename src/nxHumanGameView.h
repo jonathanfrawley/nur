@@ -25,4 +25,6 @@ void nxHumanGameView_handleEvent(nxEvent evt);
 
 void nxHumanGameView_toggleFullscreen();
 
+void nxHumanGameView_drawSceneNode(nxSceneNode* node);
+
 #endif   // NXHUMANGAMEVIEW_H

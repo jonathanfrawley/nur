@@ -8,6 +8,7 @@
 static SDL_Surface* screen;
 static nxSceneNode sceneNodes[NX_MAX_SCENENODES];
 static nxUInt currentSceneNodeIdx;
+static nxUInt playerId;
 
 nxGameView* nxHumanGameView_new()
 {
@@ -24,6 +25,8 @@ nxGameView* nxHumanGameView_new()
 		sceneNodes[i].id = -1;
 	}
 	currentSceneNodeIdx = 0;
+
+	playerId = -1;
 
 	nxEventManager_addHandler(nxHumanGameView_handleEvent);
 
@@ -64,9 +67,12 @@ void nxHumanGameView_update(nxGameView* obj)
 		} 
 		else if (event.type == SDL_KEYDOWN)
 		{
+			//HERE, need to use malloc
+			nxMovementEventData evtData = {playerId};
+
 			if (event.key.keysym.sym == SDLK_ESCAPE)
 			{
-				nxEvent endGameEvent = {NX_EVT_ENDGAME, NX_NULL};
+				nxEvent endGameEvent = {NX_EVT_ENDGAME, (void*)evtData};
 				nxEventManager_queueEvent(endGameEvent);
 			}
 			else if (event.key.keysym.sym == SDLK_f)
@@ -78,30 +84,47 @@ void nxHumanGameView_update(nxGameView* obj)
 			}
 			else if(event.key.keysym.sym == SDLK_w)
 			{
+				nxEvent evt = {NX_EVT_STARTMOVEUP, evtData};
+				nxEventManager_queueEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_a)
 			{
+				nxEvent evt = {NX_EVT_STARTMOVELEFT, evtData};
+				nxEventManager_queueEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_s)
 			{
+				nxEvent evt = {NX_EVT_STARTMOVEDOWN, evtData};
+				nxEventManager_queueEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_d)
 			{
+				nxEvent evt = {NX_EVT_STARTMOVERIGHT, evtData};
+				nxEventManager_queueEvent(evt);
 			}
 		}
 		else if (event.type == SDL_KEYUP)
 		{
+			nxMovementEventData evtData = {playerId};
 			if(event.key.keysym.sym == SDLK_w)
 			{
+				nxEvent evt = {NX_EVT_ENDMOVEUP, evtData};
+				nxEventManager_queueEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_a)
 			{
+				nxEvent evt = {NX_EVT_ENDMOVELEFT, evtData};
+				nxEventManager_queueEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_s)
 			{
+				nxEvent evt = {NX_EVT_ENDMOVEDOWN, evtData};
+				nxEventManager_queueEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_d)
 			{
+				nxEvent evt = {NX_EVT_ENDMOVERIGHT, evtData};
+				nxEventManager_queueEvent(evt);
 			}
 		}
 	}
@@ -112,21 +135,18 @@ void nxHumanGameView_draw(nxGameView* obj)
 	glClear( GL_COLOR_BUFFER_BIT ); 
 	glLoadIdentity();
 
+	for(int i = 0 ; i < NX_MAX_SCENENODES ; i++)
+	{
+		if(sceneNodes[i].id == -1)
+		{
+			continue;
+		}
+		else
+		{
+			nxHumanGameView_drawSceneNode(&sceneNodes[i]);
+		}
+	}
 
-//
-	float SQUARE_WIDTH=100.0f;
-	float SQUARE_HEIGHT=50.0f;
-	float x = 10.0f;
-	float y = 10.0f;
-	glTranslatef( x, y, 0 );
-	glBegin( GL_QUADS ); 
-		glColor4f( 1.0, 1.0, 1.0, 1.0 );
-		glVertex3f( 0, 0, 0 ); 
-		glVertex3f( SQUARE_WIDTH, 0, 0 ); 
-		glVertex3f( SQUARE_WIDTH, SQUARE_HEIGHT, 0 ); 
-		glVertex3f( 0, SQUARE_HEIGHT, 0 ); 
-	glEnd();
-//
 	SDL_GL_SwapBuffers();
 }
 
@@ -160,14 +180,37 @@ void nxHumanGameView_handleEvent(nxEvent evt)
 		nxCreateEntityEventData* castData = (nxCreateEntityEventData*)evt.data;
 
 		NX_LOG("nxHumanGameView", "handling create event.");
-		//TODO:Now create a scenenode object from the entity object
+		//Now create a scenenode object from the entity object
 		sceneNodes[currentSceneNodeIdx].id = castData->entity.id;
 		sceneNodes[currentSceneNodeIdx].pos = castData->entity.pos;
 		currentSceneNodeIdx++;
+
+		if(castData->isPlayer)
+		{
+			playerId = castData->entity.id;
+		}
 	}
 }
 
 void nxHumanGameView_toggleFullscreen()
 {
 	SDL_WM_ToggleFullScreen(screen);
+}
+
+void nxHumanGameView_drawSceneNode(nxSceneNode* node)
+{
+	float SQUARE_WIDTH=100.0f;
+	float SQUARE_HEIGHT=50.0f;
+	//float x = 10.0f;
+	//float y = 10.0f;
+	float x = node->pos.x;
+	float y = node->pos.y;
+	glTranslatef( x, y, 0 );
+	glBegin( GL_QUADS ); 
+		glColor4f( 1.0, 1.0, 1.0, 1.0 );
+		glVertex3f( 0, 0, 0 ); 
+		glVertex3f( SQUARE_WIDTH, 0, 0 ); 
+		glVertex3f( SQUARE_WIDTH, SQUARE_HEIGHT, 0 ); 
+		glVertex3f( 0, SQUARE_HEIGHT, 0 ); 
+	glEnd();
 }
