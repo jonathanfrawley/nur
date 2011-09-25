@@ -6,6 +6,8 @@
 #include <nxEvent/nxEventData.h>
 #include <nxEvent/nxEventManager.h>
 
+static int finished = 0;
+
 nxGameLogic* nxGameLogic_new()
 {
 	nxGameLogic* res = (nxGameLogic*)nxMalloc(sizeof(nxGameLogic));
@@ -17,6 +19,8 @@ nxGameLogic* nxGameLogic_new()
 	}
 
 	res->currentEntityId = 0;
+
+	nxEventManager_addHandler(nxGameLogic_handleEvent);
 
 	return res;
 }
@@ -34,6 +38,11 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 
 nxInt nxGameLogic_update(nxGameLogic* obj)
 {
+	if(finished)
+	{
+		return 1;
+	}
+	//
 	return 0;
 }
 
@@ -49,16 +58,21 @@ nxInt nxGameLogic_addEntity(nxGameLogic* obj)
 	obj->entities[id].pos.x = 0.0f;
 	obj->entities[id].pos.y = 0.0f;
 
-	nxEvent createEv;
 	nxCreateEntityEventData* createEvData = (nxCreateEntityEventData*)nxMalloc(sizeof(nxCreateEntityEventData));
-	createEvData->entityId = obj->entities[id].id;
-	createEvData->pos = obj->entities[id].pos;
+	createEvData->entity = obj->entities[id];
 
-	createEv.type = NX_EVT_CREATEEVT;
-	createEv.data = (void*)createEvData;
+	nxEvent createEv = {NX_EVT_CREATEENT, (void*)createEvData};
 
 	//Fire event
 	nxEventManager_queueEvent(createEv);
 
 	return 0;
+}
+
+void nxGameLogic_handleEvent(nxEvent evt)
+{
+	if(evt.type == NX_EVT_ENDGAME)
+	{
+		finished = 1;
+	}
 }

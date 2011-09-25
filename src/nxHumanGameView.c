@@ -5,7 +5,9 @@
 #include <nxEvent/nxEventManager.h>
 #include <nxEvent/nxEventData.h>
 
-static int finished = 0;
+static SDL_Surface* screen;
+static nxSceneNode sceneNodes[NX_MAX_SCENENODES];
+static nxUInt currentSceneNodeIdx;
 
 nxGameView* nxHumanGameView_new()
 {
@@ -16,6 +18,13 @@ nxGameView* nxHumanGameView_new()
 	res->draw = nxHumanGameView_draw;
 	res->shutdown = nxHumanGameView_shutdown;
 
+	screen = NX_NULL;
+	for(int i = 0;i<NX_MAX_SCENENODES;i++)
+	{
+		sceneNodes[i].id = -1;
+	}
+	currentSceneNodeIdx = 0;
+
 	nxEventManager_addHandler(nxHumanGameView_handleEvent);
 
 	return res;
@@ -25,22 +34,22 @@ nxInt nxHumanGameView_init(nxGameView* obj)
 {
 	if( SDL_Init( SDL_INIT_EVERYTHING ) < 0 ) 
 	{ 
-		return 0; 
+		return 1; 
 	} 
 
-	if( SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_OPENGL ) == NULL ) 
+	if( (screen = SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_OPENGL )) == 0 ) 
 	{ 
-		return 0; 
+		return 1; 
 	} 
 
 	if( init_GL() == 0 ) 
 	{ 
-		return 0; 
+		return 1; 
 	} 
 
 	SDL_WM_SetCaption( "OpenGL Test", NULL ); 
 
-	return 1;
+	return 0;
 }
 
 void nxHumanGameView_update(nxGameView* obj)
@@ -50,9 +59,52 @@ void nxHumanGameView_update(nxGameView* obj)
 	{ 
 		if( event.type == SDL_QUIT ) 
 		{ 
-			//Fire a fucking close window event
+			nxEvent endGameEvent = {NX_EVT_ENDGAME, NX_NULL};
+			nxEventManager_queueEvent(endGameEvent);
 		} 
-	} 
+		else if (event.type == SDL_KEYDOWN)
+		{
+			if (event.key.keysym.sym == SDLK_ESCAPE)
+			{
+				nxEvent endGameEvent = {NX_EVT_ENDGAME, NX_NULL};
+				nxEventManager_queueEvent(endGameEvent);
+			}
+			else if (event.key.keysym.sym == SDLK_f)
+			{
+				if (event.key.keysym.mod & KMOD_CTRL)
+				{
+					nxHumanGameView_toggleFullscreen(obj);
+				}
+			}
+			else if(event.key.keysym.sym == SDLK_w)
+			{
+			}
+			else if(event.key.keysym.sym == SDLK_a)
+			{
+			}
+			else if(event.key.keysym.sym == SDLK_s)
+			{
+			}
+			else if(event.key.keysym.sym == SDLK_d)
+			{
+			}
+		}
+		else if (event.type == SDL_KEYUP)
+		{
+			if(event.key.keysym.sym == SDLK_w)
+			{
+			}
+			else if(event.key.keysym.sym == SDLK_a)
+			{
+			}
+			else if(event.key.keysym.sym == SDLK_s)
+			{
+			}
+			else if(event.key.keysym.sym == SDLK_d)
+			{
+			}
+		}
+	}
 }
 
 void nxHumanGameView_draw(nxGameView* obj)
@@ -61,23 +113,20 @@ void nxHumanGameView_draw(nxGameView* obj)
 	glLoadIdentity();
 
 
-	if(finished == 0)
-	{
 //
-		float SQUARE_WIDTH=100.0f;
-		float SQUARE_HEIGHT=50.0f;
-		float x = 10.0f;
-		float y = 10.0f;
-		glTranslatef( x, y, 0 );
-		glBegin( GL_QUADS ); 
-			glColor4f( 1.0, 1.0, 1.0, 1.0 );
-			glVertex3f( 0, 0, 0 ); 
-			glVertex3f( SQUARE_WIDTH, 0, 0 ); 
-			glVertex3f( SQUARE_WIDTH, SQUARE_HEIGHT, 0 ); 
-			glVertex3f( 0, SQUARE_HEIGHT, 0 ); 
-		glEnd();
+	float SQUARE_WIDTH=100.0f;
+	float SQUARE_HEIGHT=50.0f;
+	float x = 10.0f;
+	float y = 10.0f;
+	glTranslatef( x, y, 0 );
+	glBegin( GL_QUADS ); 
+		glColor4f( 1.0, 1.0, 1.0, 1.0 );
+		glVertex3f( 0, 0, 0 ); 
+		glVertex3f( SQUARE_WIDTH, 0, 0 ); 
+		glVertex3f( SQUARE_WIDTH, SQUARE_HEIGHT, 0 ); 
+		glVertex3f( 0, SQUARE_HEIGHT, 0 ); 
+	glEnd();
 //
-	}
 	SDL_GL_SwapBuffers();
 }
 
@@ -106,13 +155,19 @@ void nxHumanGameView_shutdown(nxGameView* obj)
 
 void nxHumanGameView_handleEvent(nxEvent evt)
 {
-	if(evt.type == NX_EVT_CREATEEVT)
+	if(evt.type == NX_EVT_CREATEENT)
 	{
 		nxCreateEntityEventData* castData = (nxCreateEntityEventData*)evt.data;
 
 		NX_LOG("nxHumanGameView", "handling create event.");
-		//TODO:TEST
-		finished = 1;
-		//Now create a scenenode object
+		//TODO:Now create a scenenode object from the entity object
+		sceneNodes[currentSceneNodeIdx].id = castData->entity.id;
+		sceneNodes[currentSceneNodeIdx].pos = castData->entity.pos;
+		currentSceneNodeIdx++;
 	}
+}
+
+void nxHumanGameView_toggleFullscreen()
+{
+	SDL_WM_ToggleFullScreen(screen);
 }

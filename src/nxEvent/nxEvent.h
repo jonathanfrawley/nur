@@ -3,11 +3,13 @@
 
 #include <nxCore/nxTypes.h>
 
-#define NX_EVT_CREATEEVT 0
+#define NX_EVT_CREATEENT 0
+#define NX_EVT_ENDGAME 1
 
-typedef struct nxEvent {
+typedef struct nxEvent 
+{
 	nxUInt type;
 	void* data;
-} nxEvent;				
+} nxEvent;
 
 #endif   // NXEVENT_H

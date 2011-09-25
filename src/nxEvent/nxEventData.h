@@ -1,13 +1,11 @@
 #ifndef  NXEVENTDATA_H
 #define  NXEVENTDATA_H
 
-#include <nxCore/nxTypes.h>
-#include <nxAlgebra/nxVector2.h>
+#include <nxEntity.h>
 
 typedef struct nxCreateEntityEventData
 {
-	nxUInt entityId;
-	nxVector2 pos;
+	nxEntity entity;
 } nxCreateEntityEventData;
 
 #endif   // NXEVENTDATA_H

@@ -2,9 +2,12 @@
 #define  NXHUMANGAMEVIEW_H
 
 #include <nxGameView.h>
+#include <nxSceneNode.h>
 #include <nxEvent/nxEvent.h>
 #include "SDL/SDL.h"
 #include "SDL/SDL_opengl.h"
+
+#define NX_MAX_SCENENODES 1024
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -19,5 +22,7 @@ void nxHumanGameView_shutdown(nxGameView* obj);
 nxInt init_GL();
 
 void nxHumanGameView_handleEvent(nxEvent evt);
+
+void nxHumanGameView_toggleFullscreen();
 
 #endif   // NXHUMANGAMEVIEW_H
