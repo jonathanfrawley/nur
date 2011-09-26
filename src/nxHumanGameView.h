@@ -21,7 +21,7 @@ void nxHumanGameView_shutdown(nxGameView* obj);
 
 nxInt init_GL();
 
-void nxHumanGameView_handleEvent(nxEvent evt);
+void nxHumanGameView_handleEvent(nxEvent evt, void* vobj);
 
 void nxHumanGameView_toggleFullscreen();
 

@@ -9,19 +9,20 @@
 
 //typedef void (*handlers)(nxEvent ev) = nxEventHandlerFunc;
 //typedef nxEventHandlerFunc = void (*handlers)(nxEvent ev);
-typedef void (*nxEventHandlerFunc)(nxEvent ev);
+typedef void (*nxEventHandlerFunc)(nxEvent ev, void* vobj);
 
 typedef struct nxEventManager
 {
 	nxEventHandlerFunc handlers[NX_MAX_HANDLERS];
+	void* handlerObjs[NX_MAX_HANDLERS];
 	nxEvent events[NX_MAX_EVENTS];
 	nxUInt currentEvtIdx;
 	nxUInt currentHandlerIdx;
 } nxEventManager;
 
-void nxEventManager_queueEvent(nxEvent event);
+void nxEventManager_triggerEvent(nxEvent event);
 
-void nxEventManager_addHandler(nxEventHandlerFunc);
+void nxEventManager_addHandler(nxEventHandlerFunc handler, void* vobj);
 
 void nxEventManager_handleEvents();
 

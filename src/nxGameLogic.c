@@ -20,7 +20,7 @@ nxGameLogic* nxGameLogic_new()
 
 	res->currentEntityId = 0;
 
-	nxEventManager_addHandler(nxGameLogic_handleEvent);
+	nxEventManager_addHandler(nxGameLogic_handleEvent, (void*)res);
 
 	return res;
 }
@@ -32,7 +32,6 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 		return 1;
 	}
 
-	NX_LOG("nxGameLogic", "added entity correctly");
 	return 0;
 }
 
@@ -44,20 +43,19 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 	}
 	for(int i = 0 ; i < NX_MAX_ENTITIES ; i++)
 	{
-		if(obj->entities[i].id = -1)
+		if(obj->entities[i].id == -1)
 		{
 			continue;
 		}
 		else
 		{
 			//TODO:Only update info if something has changed.
-			nxUpdateEntityEventData* evtData = (nxUpdateEntityEventData*)nxMalloc(sizeof(nxUpdateEntityEventData));
-			evtData->entity = obj->entities[i];
+			nxUpdateEntityEventData evtData = { obj->entities[i] };
 
-			nxEvent evt = {NX_EVT_UPDATEENT, (void*)evtData};
+			nxEvent evt = {NX_EVT_UPDATEENT, (void*)&evtData};
 
 			//Fire event
-			nxEventManager_queueEvent(evt);
+			nxEventManager_triggerEvent(evt);
 		}
 	}
 
@@ -83,7 +81,7 @@ nxInt nxGameLogic_addNonPlayerEntity(nxGameLogic* obj)
 	nxEvent createEv = {NX_EVT_CREATEENT, (void*)createEvData};
 
 	//Fire event
-	nxEventManager_queueEvent(createEv);
+	nxEventManager_triggerEvent(createEv);
 
 	return 0;
 }
@@ -91,39 +89,47 @@ nxInt nxGameLogic_addNonPlayerEntity(nxGameLogic* obj)
 nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj)
 {
 	nxUInt id = obj->currentEntityId++;
+	obj->playerId = id;
 	obj->entities[id].id = id;
 	obj->entities[id].pos.x = 10.0f;
 	obj->entities[id].pos.y = 0.0f;
 
-	nxCreateEntityEventData* createEvData = (nxCreateEntityEventData*)nxMalloc(sizeof(nxCreateEntityEventData));
-	createEvData->entity = obj->entities[id];
-	createEvData->isPlayer = 1;
+	nxCreateEntityEventData createEvData = { obj->entities[id], 1 };
 
-	nxEvent createEv = {NX_EVT_CREATEENT, (void*)createEvData};
+	nxEvent createEv = {NX_EVT_CREATEENT, &createEvData};
 
 	//Fire event
-	nxEventManager_queueEvent(createEv);
+	nxEventManager_triggerEvent(createEv);
 
 	return 0;
 }
 
-void nxGameLogic_handleEvent(nxEvent evt)
+void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 {
+	nxGameLogic* obj = (nxGameLogic*)vobj;
+
+	nxFloat ySpeed = 3.0f;
+	nxFloat xSpeed = 3.0f;
+
 	if(evt.type == NX_EVT_ENDGAME)
 	{
 		finished = 1;
 	}
 	else if(evt.type == NX_EVT_STARTMOVEUP)
 	{
+		obj->entities[obj->playerId].pos.y -= ySpeed;
 	}
 	else if(evt.type == NX_EVT_STARTMOVEDOWN)
 	{
+		obj->entities[obj->playerId].pos.y += ySpeed;
 	}
 	else if(evt.type == NX_EVT_STARTMOVELEFT)
 	{
+		obj->entities[obj->playerId].pos.x -= xSpeed;
 	}
 	else if(evt.type == NX_EVT_STARTMOVERIGHT)
 	{
+		obj->entities[obj->playerId].pos.x += xSpeed;
 	}
 	else if(evt.type == NX_EVT_ENDMOVEUP)
 	{

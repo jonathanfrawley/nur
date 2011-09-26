@@ -17,20 +17,24 @@ void nxEventManager_init()
 	for(int i=0;i<NX_MAX_HANDLERS;i++)
 	{
 		instance.handlers[i] = NX_NULL;
+		instance.handlerObjs[i] = NX_NULL;
 	}
 
 	instance.currentEvtIdx = 0;
 	instance.currentHandlerIdx = 0;
 }
 
-void nxEventManager_queueEvent(nxEvent event)
+void nxEventManager_triggerEvent(nxEvent event)
 {
-	instance.events[instance.currentEvtIdx++] = event;
+//	instance.events[instance.currentEvtIdx++] = event;
+//	nxEventManager_handleEvents();
+	nxEventManager_handleEvent(event);
 }
 
-void nxEventManager_addHandler(nxEventHandlerFunc handler)
+void nxEventManager_addHandler(nxEventHandlerFunc handler, void* vobj)
 {
-	instance.handlers[instance.currentHandlerIdx++] = handler;
+	instance.handlers[instance.currentHandlerIdx] = handler;
+	instance.handlerObjs[instance.currentHandlerIdx++] = vobj;
 }
 
 void nxEventManager_handleEvents()
@@ -59,6 +63,6 @@ void nxEventManager_handleEvent(nxEvent event)
 			continue;
 		}
 
-		instance.handlers[i](event);
+		instance.handlers[i](event, instance.handlerObjs[i]);
 	}
 }

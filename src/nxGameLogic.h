@@ -11,6 +11,7 @@ typedef struct nxGameLogic
 {
 	nxEntity entities[NX_MAX_ENTITIES];
 	nxInt currentEntityId;
+	nxInt playerId;
 } nxGameLogic;
 
 nxGameLogic* nxGameLogic_new();
@@ -21,6 +22,6 @@ void nxGameLogic_shutdown(nxGameLogic* obj);
 nxInt nxGameLogic_addNonPlayerEntity(nxGameLogic* obj);
 nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj);
 
-void nxGameLogic_handleEvent(nxEvent event);
+void nxGameLogic_handleEvent(nxEvent evt, void* vobj);
 
 #endif

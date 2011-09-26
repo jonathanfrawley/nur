@@ -28,7 +28,7 @@ nxGameView* nxHumanGameView_new()
 
 	playerId = -1;
 
-	nxEventManager_addHandler(nxHumanGameView_handleEvent);
+	nxEventManager_addHandler(nxHumanGameView_handleEvent, (void*)res);
 
 	return res;
 }
@@ -63,7 +63,7 @@ void nxHumanGameView_update(nxGameView* obj)
 		if( event.type == SDL_QUIT ) 
 		{ 
 			nxEvent endGameEvent = {NX_EVT_ENDGAME, NX_NULL};
-			nxEventManager_queueEvent(endGameEvent);
+			nxEventManager_triggerEvent(endGameEvent);
 		} 
 		else if (event.type == SDL_KEYDOWN)
 		{
@@ -72,8 +72,8 @@ void nxHumanGameView_update(nxGameView* obj)
 
 			if (event.key.keysym.sym == SDLK_ESCAPE)
 			{
-				nxEvent endGameEvent = {NX_EVT_ENDGAME, (void*)evtData};
-				nxEventManager_queueEvent(endGameEvent);
+				nxEvent endGameEvent = {NX_EVT_ENDGAME, (void*)NX_NULL};
+				nxEventManager_triggerEvent(endGameEvent);
 			}
 			else if (event.key.keysym.sym == SDLK_f)
 			{
@@ -84,23 +84,23 @@ void nxHumanGameView_update(nxGameView* obj)
 			}
 			else if(event.key.keysym.sym == SDLK_w)
 			{
-				nxEvent evt = {NX_EVT_STARTMOVEUP, evtData};
-				nxEventManager_queueEvent(evt);
+				nxEvent evt = {NX_EVT_STARTMOVEUP, &evtData};
+				nxEventManager_triggerEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_a)
 			{
-				nxEvent evt = {NX_EVT_STARTMOVELEFT, evtData};
-				nxEventManager_queueEvent(evt);
+				nxEvent evt = {NX_EVT_STARTMOVELEFT, &evtData};
+				nxEventManager_triggerEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_s)
 			{
-				nxEvent evt = {NX_EVT_STARTMOVEDOWN, evtData};
-				nxEventManager_queueEvent(evt);
+				nxEvent evt = {NX_EVT_STARTMOVEDOWN, &evtData};
+				nxEventManager_triggerEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_d)
 			{
-				nxEvent evt = {NX_EVT_STARTMOVERIGHT, evtData};
-				nxEventManager_queueEvent(evt);
+				nxEvent evt = {NX_EVT_STARTMOVERIGHT, &evtData};
+				nxEventManager_triggerEvent(evt);
 			}
 		}
 		else if (event.type == SDL_KEYUP)
@@ -108,23 +108,23 @@ void nxHumanGameView_update(nxGameView* obj)
 			nxMovementEventData evtData = {playerId};
 			if(event.key.keysym.sym == SDLK_w)
 			{
-				nxEvent evt = {NX_EVT_ENDMOVEUP, evtData};
-				nxEventManager_queueEvent(evt);
+				nxEvent evt = {NX_EVT_ENDMOVEUP, &evtData};
+				nxEventManager_triggerEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_a)
 			{
-				nxEvent evt = {NX_EVT_ENDMOVELEFT, evtData};
-				nxEventManager_queueEvent(evt);
+				nxEvent evt = {NX_EVT_ENDMOVELEFT, &evtData};
+				nxEventManager_triggerEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_s)
 			{
-				nxEvent evt = {NX_EVT_ENDMOVEDOWN, evtData};
-				nxEventManager_queueEvent(evt);
+				nxEvent evt = {NX_EVT_ENDMOVEDOWN, &evtData};
+				nxEventManager_triggerEvent(evt);
 			}
 			else if(event.key.keysym.sym == SDLK_d)
 			{
-				nxEvent evt = {NX_EVT_ENDMOVERIGHT, evtData};
-				nxEventManager_queueEvent(evt);
+				nxEvent evt = {NX_EVT_ENDMOVERIGHT, &evtData};
+				nxEventManager_triggerEvent(evt);
 			}
 		}
 	}
@@ -173,13 +173,14 @@ void nxHumanGameView_shutdown(nxGameView* obj)
 	nxFree(obj);
 }
 
-void nxHumanGameView_handleEvent(nxEvent evt)
+void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 {
+	nxGameView* obj = (nxGameView*) vobj;
+
 	if(evt.type == NX_EVT_CREATEENT)
 	{
 		nxCreateEntityEventData* castData = (nxCreateEntityEventData*)evt.data;
 
-		NX_LOG("nxHumanGameView", "handling create event.");
 		//Now create a scenenode object from the entity object
 		sceneNodes[currentSceneNodeIdx].id = castData->entity.id;
 		sceneNodes[currentSceneNodeIdx].pos = castData->entity.pos;
@@ -189,6 +190,12 @@ void nxHumanGameView_handleEvent(nxEvent evt)
 		{
 			playerId = castData->entity.id;
 		}
+	}
+	else if(evt.type == NX_EVT_UPDATEENT)
+	{
+		nxUpdateEntityEventData* castData = (nxUpdateEntityEventData*)evt.data;
+
+		sceneNodes[castData->entity.id].pos = castData->entity.pos;
 	}
 }
 
