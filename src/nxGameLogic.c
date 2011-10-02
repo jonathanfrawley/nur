@@ -1,11 +1,5 @@
 #include "nxGameLogic.h"
 
-#include <nxCore/nxMM.h>
-#include <nxCore/nxLog.h>
-#include <nxEvent/nxEvent.h>
-#include <nxEvent/nxEventData.h>
-#include <nxEvent/nxEventManager.h>
-
 static int finished = 0;
 
 nxGameLogic* nxGameLogic_new()
@@ -32,6 +26,11 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 		return 1;
 	}
 
+	if(nxGameLogic_addBallEntity(obj))
+	{
+		return 1;
+	}
+
 	return 0;
 }
 
@@ -51,7 +50,6 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 		}
 		else
 		{
-
 			//Do physics
 			obj->entities[i].pos.x += (obj->entities[i].accel.x * timestep);
 			obj->entities[i].pos.y += (obj->entities[i].accel.y * timestep);
@@ -75,18 +73,20 @@ void nxGameLogic_shutdown(nxGameLogic* obj)
 	nxFree(obj);
 }
 
-nxInt nxGameLogic_addNonPlayerEntity(nxGameLogic* obj)
+nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj)
 {
 	nxUInt id = obj->currentEntityId++;
+	obj->playerId = id;
+	obj->entities[id].type = NX_ENT_PLAYER;
 	obj->entities[id].id = id;
-	obj->entities[id].pos.x = 10.0f;
-	obj->entities[id].pos.y = 0.0f;
+	obj->entities[id].pos.x = NX_PADDLE_HALFWIDTH;
+	obj->entities[id].pos.y = NX_PADDLE_HALFHEIGHT;
+	obj->entities[id].accel.x = 0.0f;
+	obj->entities[id].accel.y = 0.0f;
 
-	nxCreateEntityEventData* createEvData = (nxCreateEntityEventData*)nxMalloc(sizeof(nxCreateEntityEventData));
-	createEvData->entity = obj->entities[id];
-	createEvData->isPlayer = 0;
+	nxCreateEntityEventData createEvData = { obj->entities[id], 1 };
 
-	nxEvent createEv = {NX_EVT_CREATEENT, (void*)createEvData};
+	nxEvent createEv = {NX_EVT_CREATEENT, &createEvData};
 
 	//Fire event
 	nxEventManager_triggerEvent(createEv);
@@ -94,15 +94,17 @@ nxInt nxGameLogic_addNonPlayerEntity(nxGameLogic* obj)
 	return 0;
 }
 
-nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj)
+nxInt nxGameLogic_addBallEntity(nxGameLogic* obj)
 {
 	nxUInt id = obj->currentEntityId++;
-	obj->playerId = id;
+	obj->entities[id].type = NX_ENT_BALL;
 	obj->entities[id].id = id;
-	obj->entities[id].pos.x = 10.0f;
-	obj->entities[id].pos.y = 0.0f;
+	obj->entities[id].pos.x = (NX_SCREEN_WIDTH / 2);
+	obj->entities[id].pos.y = (NX_SCREEN_HEIGHT / 2);
+	obj->entities[id].accel.x = 0.0f;
+	obj->entities[id].accel.y = -1.0f;
 
-	nxCreateEntityEventData createEvData = { obj->entities[id], 1 };
+	nxCreateEntityEventData createEvData = { obj->entities[id], 0 };
 
 	nxEvent createEv = {NX_EVT_CREATEENT, &createEvData};
 

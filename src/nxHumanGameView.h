@@ -4,14 +4,12 @@
 #include <nxGameView.h>
 #include <nxSceneNode.h>
 #include <nxEvent/nxEvent.h>
+#include <nxCore/nxConstants.h>
+
 #include "SDL/SDL.h"
 #include "SDL/SDL_opengl.h"
 
 #define NX_MAX_SCENENODES 1024
-
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-#define SCREEN_BPP 32
 
 nxGameView* nxHumanGameView_new();
 nxInt nxHumanGameView_init(nxGameView* obj);

@@ -40,7 +40,7 @@ nxInt nxHumanGameView_init(nxGameView* obj)
 		return 1; 
 	} 
 
-	if( (screen = SDL_SetVideoMode( SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_BPP, SDL_OPENGL )) == 0 ) 
+	if( (screen = SDL_SetVideoMode( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, NX_SCREEN_BPP, SDL_OPENGL )) == 0 ) 
 	{ 
 		return 1; 
 	} 
@@ -143,9 +143,21 @@ void nxHumanGameView_draw(nxGameView* obj)
 		}
 		else
 		{
+			glPushMatrix();
 			nxHumanGameView_drawSceneNode(&sceneNodes[i]);
+			glPopMatrix();
 		}
 	}
+
+	//do test
+	glBegin( GL_LINES ); 
+		glColor4f( 1.0, 0.0, 0.0, 1.0 );
+		glVertex3f( 0, 0, 0 ); 
+		glVertex3f( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, 0 ); 
+		glVertex3f( 0, NX_SCREEN_HEIGHT, 0 ); 
+		glVertex3f( NX_SCREEN_WIDTH, 0, 0 ); 
+	glEnd();
+	//end test
 
 	SDL_GL_SwapBuffers();
 }
@@ -155,7 +167,7 @@ nxInt init_GL()
 	glClearColor( 0, 0, 0, 0 );
 	glMatrixMode( GL_PROJECTION ); 
 	glLoadIdentity(); 
-	glOrtho( 0, SCREEN_WIDTH, SCREEN_HEIGHT, 0, -1, 1 );
+	glOrtho( 0, NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, 0, -1, 1 );
 
 	glMatrixMode( GL_MODELVIEW ); 
 	glLoadIdentity();
@@ -184,12 +196,21 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 		//Now create a scenenode object from the entity object
 		sceneNodes[currentSceneNodeIdx].id = castData->entity.id;
 		sceneNodes[currentSceneNodeIdx].pos = castData->entity.pos;
-		currentSceneNodeIdx++;
 
-		if(castData->isPlayer)
+		switch(castData->entity.type)
 		{
-			playerId = castData->entity.id;
+			case NX_ENT_PLAYER:
+				playerId = castData->entity.id;
+				sceneNodes[currentSceneNodeIdx].type = NX_SN_PADDLE;
+				break;
+			case NX_ENT_BALL:
+				sceneNodes[currentSceneNodeIdx].type = NX_SN_BALL;
+				break;
+			default:
+				break;
 		}
+
+		currentSceneNodeIdx++;
 	}
 	else if(evt.type == NX_EVT_UPDATEENT)
 	{
@@ -206,18 +227,37 @@ void nxHumanGameView_toggleFullscreen()
 
 void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 {
-	float SQUARE_WIDTH=100.0f;
-	float SQUARE_HEIGHT=50.0f;
 	//float x = 10.0f;
 	//float y = 10.0f;
 	float x = node->pos.x;
 	float y = node->pos.y;
-	glTranslatef( x, y, 0 );
-	glBegin( GL_QUADS ); 
-		glColor4f( 1.0, 1.0, 1.0, 1.0 );
-		glVertex3f( 0, 0, 0 ); 
-		glVertex3f( SQUARE_WIDTH, 0, 0 ); 
-		glVertex3f( SQUARE_WIDTH, SQUARE_HEIGHT, 0 ); 
-		glVertex3f( 0, SQUARE_HEIGHT, 0 ); 
-	glEnd();
+	switch(node->type)
+	{
+		case(NX_SN_PADDLE):
+			glTranslatef( x, y, 0 );
+			glBegin( GL_QUADS ); 
+				glColor4f( 1.0, 1.0, 1.0, 1.0 );
+				glVertex3f( -NX_PADDLE_HALFWIDTH, -NX_PADDLE_HALFHEIGHT, 0 ); 
+				glVertex3f( -NX_PADDLE_HALFWIDTH, NX_PADDLE_HALFHEIGHT, 0 ); 
+				glVertex3f( NX_PADDLE_HALFWIDTH, NX_PADDLE_HALFHEIGHT, 0 ); 
+				glVertex3f( NX_PADDLE_HALFWIDTH, -NX_PADDLE_HALFHEIGHT, 0 ); 
+				/*
+				glVertex3f( 0, 0, 0 ); 
+				glVertex3f( NX_PADDLE_HALFWIDTH*2, 0, 0 ); 
+				glVertex3f( NX_PADDLE_HALFWIDTH*2, NX_PADDLE_HALFHEIGHT*2, 0 ); 
+				glVertex3f( 0, NX_PADDLE_HALFHEIGHT*2, 0 ); 
+				*/
+			glEnd();
+			break;
+		case(NX_SN_BALL):
+			glTranslatef( x, y, 0 );
+			glBegin( GL_QUADS ); 
+				glColor4f( 1.0, 1.0, 1.0, 1.0 );
+				glVertex3f( -NX_BALL_HALFWIDTH, -NX_BALL_HALFHEIGHT, 0 ); 
+				glVertex3f( -NX_BALL_HALFWIDTH, NX_BALL_HALFHEIGHT, 0 ); 
+				glVertex3f( NX_BALL_HALFWIDTH, NX_BALL_HALFHEIGHT, 0 ); 
+				glVertex3f( NX_BALL_HALFWIDTH, -NX_BALL_HALFHEIGHT, 0 ); 
+			glEnd();
+			break;
+	}
 }

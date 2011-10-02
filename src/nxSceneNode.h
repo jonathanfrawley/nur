@@ -4,9 +4,13 @@
 #include <nxCore/nxTypes.h>
 #include <nxAlgebra/nxVector2.h>
 
+#define NX_SN_PADDLE 0
+#define NX_SN_BALL 1
+
 typedef struct nxSceneNode
 {
 	nxUInt id;
+	nxUInt type;
 	nxVector2 pos;
 } nxSceneNode;
 
