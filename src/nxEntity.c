@@ -6,6 +6,12 @@ nxEntity* nxEntity_new()
 {
 	nxEntity* res = (nxEntity*)nxMalloc(sizeof(nxEntity));
 
+	res->pos.x = 0.0f;
+	res->pos.y = 0.0f;
+
+	res->accel.x = 0.0f;
+	res->accel.y = 0.0f;
+
 	return res;
 }
 

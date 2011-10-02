@@ -37,6 +37,8 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 
 nxInt nxGameLogic_update(nxGameLogic* obj)
 {
+	float timestep = 0.02f;
+
 	if(finished)
 	{
 		return 1;
@@ -49,6 +51,12 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 		}
 		else
 		{
+
+			//Do physics
+			obj->entities[i].pos.x += (obj->entities[i].accel.x * timestep);
+			obj->entities[i].pos.y += (obj->entities[i].accel.y * timestep);
+			//End physics
+
 			//TODO:Only update info if something has changed.
 			nxUpdateEntityEventData evtData = { obj->entities[i] };
 
@@ -108,8 +116,9 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 {
 	nxGameLogic* obj = (nxGameLogic*)vobj;
 
-	nxFloat ySpeed = 3.0f;
-	nxFloat xSpeed = 3.0f;
+	//TODO : #define these somewhere
+	nxFloat ySpeed = 12.0f;
+	nxFloat xSpeed = 12.0f;
 
 	if(evt.type == NX_EVT_ENDGAME)
 	{
@@ -117,30 +126,34 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	}
 	else if(evt.type == NX_EVT_STARTMOVEUP)
 	{
-		obj->entities[obj->playerId].pos.y -= ySpeed;
+		obj->entities[obj->playerId].accel.y = - ySpeed;
 	}
 	else if(evt.type == NX_EVT_STARTMOVEDOWN)
 	{
-		obj->entities[obj->playerId].pos.y += ySpeed;
+		obj->entities[obj->playerId].accel.y = ySpeed;
 	}
 	else if(evt.type == NX_EVT_STARTMOVELEFT)
 	{
-		obj->entities[obj->playerId].pos.x -= xSpeed;
+		obj->entities[obj->playerId].accel.x = - xSpeed;
 	}
 	else if(evt.type == NX_EVT_STARTMOVERIGHT)
 	{
-		obj->entities[obj->playerId].pos.x += xSpeed;
+		obj->entities[obj->playerId].accel.x = xSpeed;
 	}
 	else if(evt.type == NX_EVT_ENDMOVEUP)
 	{
+		obj->entities[obj->playerId].accel.y = 0.0f;
 	}
 	else if(evt.type == NX_EVT_ENDMOVEDOWN)
 	{
+		obj->entities[obj->playerId].accel.y = 0.0f;
 	}
 	else if(evt.type == NX_EVT_ENDMOVELEFT)
 	{
+		obj->entities[obj->playerId].accel.x = 0.0f;
 	}
 	else if(evt.type == NX_EVT_ENDMOVERIGHT)
 	{
+		obj->entities[obj->playerId].accel.x = 0.0f;
 	}
 }

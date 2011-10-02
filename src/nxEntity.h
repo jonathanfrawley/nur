@@ -8,6 +8,7 @@ typedef struct nxEntity
 {
 	nxUInt id;
 	nxVector2 pos;
+	nxVector2 accel;
 } nxEntity;
 
 nxEntity* nxEntity_new();
