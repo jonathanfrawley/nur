@@ -1,5 +1,8 @@
 #include "nxGameLogic.h"
 
+#include <chipmunk.h> //XXX:prob shouldn't be here
+#include <nxCore/nxConstants.h> //XXX:prob shouldn't be here
+
 static int finished = 0;
 
 nxGameLogic* nxGameLogic_new()
@@ -14,10 +17,19 @@ nxGameLogic* nxGameLogic_new()
 
 	res->currentEntityId = 0;
 
+	res->physics = nxPhysics_new();
+
 	nxEventManager_addHandler(nxGameLogic_handleEvent, (void*)res);
 
 	return res;
 }
+
+void nxGameLogic_shutdown(nxGameLogic* obj)
+{
+	nxPhysics_shutdown(obj->physics);
+	nxFree(obj);
+}
+
 
 nxInt nxGameLogic_init(nxGameLogic* obj)
 {
@@ -31,12 +43,22 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 		return 1;
 	}
 
+	nxPhysics_init(obj->physics);
+
 	return 0;
 }
 
 nxInt nxGameLogic_update(nxGameLogic* obj)
 {
 	float timestep = 0.02f;
+
+	nxPhysics_update(obj->physics, timestep);
+
+	//XXX:Do Test physics
+    cpVect pos = cpBodyGetPos(obj->physics->ballBody);
+	obj->entities[1].pos.x = pos.x;
+	obj->entities[1].pos.y = NX_SCREEN_HEIGHT - pos.y; //TODO:Put into translation func
+	//XXX:End Test physics
 
 	if(finished)
 	{
@@ -51,8 +73,8 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 		else
 		{
 			//Do physics
-			obj->entities[i].pos.x += (obj->entities[i].accel.x * timestep);
-			obj->entities[i].pos.y += (obj->entities[i].accel.y * timestep);
+	//		obj->entities[i].pos.x += (obj->entities[i].accel.x * timestep);
+	//		obj->entities[i].pos.y += (obj->entities[i].accel.y * timestep);
 			//End physics
 
 			//TODO:Only update info if something has changed.
@@ -66,11 +88,6 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 	}
 
 	return 0;
-}
-
-void nxGameLogic_shutdown(nxGameLogic* obj)
-{
-	nxFree(obj);
 }
 
 nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj)

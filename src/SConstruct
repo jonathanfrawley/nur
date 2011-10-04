@@ -7,10 +7,10 @@ for root, dirnames, filenames in os.walk('.'):
       matches.append(os.path.join(root, filename))
 
 
-env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS='-Werror -std=c99 -L ../lib/external/arch64/lib')
+env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS='-g -Werror -std=c99 -L ../lib/external/arch64/lib')
 
 env.ParseConfig('sdl-config --cflags')
 env.ParseConfig('sdl-config --libs')
-env.Append(LIBS = ['GL', 'm', 'chipmunk'])
+env.Append(LIBS = ['GL', 'm', File('../lib/external/arch64/lib/libchipmunk.a')])
 
 env.Program('pmuj', matches)
