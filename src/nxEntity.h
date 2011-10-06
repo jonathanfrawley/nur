@@ -13,6 +13,7 @@ typedef struct nxEntity
 	nxUInt type;
 	nxVector2 pos;
 	nxVector2 accel;
+	nxFloat rot;
 } nxEntity;
 
 nxEntity* nxEntity_new();

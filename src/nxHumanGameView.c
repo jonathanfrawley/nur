@@ -2,6 +2,7 @@
 
 #include <nxCore/nxMM.h>
 #include <nxCore/nxLog.h>
+#include <nxCore/nxMath.h>
 #include <nxEvent/nxEventManager.h>
 #include <nxEvent/nxEventData.h>
 
@@ -196,6 +197,7 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 		//Now create a scenenode object from the entity object
 		sceneNodes[currentSceneNodeIdx].id = castData->entity.id;
 		sceneNodes[currentSceneNodeIdx].pos = castData->entity.pos;
+		sceneNodes[currentSceneNodeIdx].rot = castData->entity.rot;
 
 		switch(castData->entity.type)
 		{
@@ -217,6 +219,7 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 		nxUpdateEntityEventData* castData = (nxUpdateEntityEventData*)evt.data;
 
 		sceneNodes[castData->entity.id].pos = castData->entity.pos;
+		sceneNodes[castData->entity.id].rot = castData->entity.rot;
 	}
 }
 
@@ -229,12 +232,14 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 {
 	//float x = 10.0f;
 	//float y = 10.0f;
-	float x = node->pos.x;
-	float y = node->pos.y;
+	nxFloat x = node->pos.x;
+	nxFloat y = node->pos.y;
+	nxFloat rot = node->rot;
 	switch(node->type)
 	{
 		case(NX_SN_PADDLE):
 			glTranslatef( x, y, 0 );
+			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
 			glBegin( GL_QUADS ); 
 				glColor4f( 1.0, 1.0, 1.0, 1.0 );
 				glVertex3f( -NX_PADDLE_HALFWIDTH, -NX_PADDLE_HALFHEIGHT, 0 ); 
@@ -251,6 +256,7 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 			break;
 		case(NX_SN_BALL):
 			glTranslatef( x, y, 0 );
+			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
 			glBegin( GL_QUADS ); 
 				glColor4f( 1.0, 1.0, 1.0, 1.0 );
 				glVertex3f( -NX_BALL_HALFWIDTH, -NX_BALL_HALFHEIGHT, 0 ); 

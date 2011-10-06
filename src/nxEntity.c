@@ -12,6 +12,8 @@ nxEntity* nxEntity_new()
 	res->accel.x = 0.0f;
 	res->accel.y = 0.0f;
 
+	res->rot = 0.0f;
+
 	return res;
 }
 

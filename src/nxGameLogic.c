@@ -56,8 +56,11 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 
 	//XXX:Do Test physics
     cpVect pos = cpBodyGetPos(obj->physics->ballBody);
+    nxFloat rot = cpBodyGetAngle(obj->physics->ballBody);
 	obj->entities[1].pos.x = pos.x;
 	obj->entities[1].pos.y = NX_SCREEN_HEIGHT - pos.y; //TODO:Put into translation func
+	obj->entities[1].rot = rot; //TODO:Put into translation func
+	printf("rot is : %f", rot); 
 	//XXX:End Test physics
 
 	if(finished)
@@ -120,6 +123,7 @@ nxInt nxGameLogic_addBallEntity(nxGameLogic* obj)
 	obj->entities[id].pos.y = (NX_SCREEN_HEIGHT / 2);
 	obj->entities[id].accel.x = 0.0f;
 	obj->entities[id].accel.y = -1.0f;
+	obj->entities[id].rot = 0.0f;
 
 	nxCreateEntityEventData createEvData = { obj->entities[id], 0 };
 
