@@ -203,7 +203,7 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 		{
 			case NX_ENT_PLAYER:
 				playerId = castData->entity.id;
-				sceneNodes[currentSceneNodeIdx].type = NX_SN_PADDLE;
+				sceneNodes[currentSceneNodeIdx].type = NX_SN_PLAYER;
 				break;
 			case NX_ENT_BALL:
 				sceneNodes[currentSceneNodeIdx].type = NX_SN_BALL;
@@ -237,20 +237,20 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 	nxFloat rot = node->rot;
 	switch(node->type)
 	{
-		case(NX_SN_PADDLE):
+		case(NX_SN_PLAYER):
 			glTranslatef( x, y, 0 );
 			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
 			glBegin( GL_QUADS ); 
 				glColor4f( 1.0, 1.0, 1.0, 1.0 );
-				glVertex3f( -NX_PADDLE_HALFWIDTH, -NX_PADDLE_HALFHEIGHT, 0 ); 
-				glVertex3f( -NX_PADDLE_HALFWIDTH, NX_PADDLE_HALFHEIGHT, 0 ); 
-				glVertex3f( NX_PADDLE_HALFWIDTH, NX_PADDLE_HALFHEIGHT, 0 ); 
-				glVertex3f( NX_PADDLE_HALFWIDTH, -NX_PADDLE_HALFHEIGHT, 0 ); 
+				glVertex3f( -NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 ); 
+				glVertex3f( -NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 
+				glVertex3f( NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 
+				glVertex3f( NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 ); 
 				/*
 				glVertex3f( 0, 0, 0 ); 
-				glVertex3f( NX_PADDLE_HALFWIDTH*2, 0, 0 ); 
-				glVertex3f( NX_PADDLE_HALFWIDTH*2, NX_PADDLE_HALFHEIGHT*2, 0 ); 
-				glVertex3f( 0, NX_PADDLE_HALFHEIGHT*2, 0 ); 
+				glVertex3f( NX_PLAYER_HALFWIDTH*2, 0, 0 ); 
+				glVertex3f( NX_PLAYER_HALFWIDTH*2, NX_PLAYER_HALFHEIGHT*2, 0 ); 
+				glVertex3f( 0, NX_PLAYER_HALFHEIGHT*2, 0 ); 
 				*/
 			glEnd();
 			break;

@@ -5,7 +5,9 @@
 #include <nxEvent/nxEventManager.h>
 #include <nxCore/nxMM.h>
 
-#define FRAMES_PER_SECOND 40
+#define FRAMES_PER_SECOND 60
+
+static int FRAME_TIME = 1000 / FRAMES_PER_SECOND;
 
 int main(void)
 {
@@ -17,7 +19,6 @@ int main(void)
 	nxGameLogic_init(gameLogic);
     gameView->init(gameView);
 
-
 	nxInt finished = 0;
 	nxUInt startTime = SDL_GetTicks();
 	while( ! finished) {
@@ -27,10 +28,13 @@ int main(void)
 		gameView->update(gameView);
 		gameView->draw(gameView);
 
+        nxUInt now = SDL_GetTicks();
+        nxUInt timeDelta = now - startTime;
 		//limit frame rate
-		if( (SDL_GetTicks() - startTime) < 1000 / FRAMES_PER_SECOND )
+		if( timeDelta < FRAME_TIME )
 		{ 
-			SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - (SDL_GetTicks() - startTime) ); 
+			SDL_Delay( FRAME_TIME - timeDelta ); 
+            startTime = SDL_GetTicks();
 		}
 	}
 

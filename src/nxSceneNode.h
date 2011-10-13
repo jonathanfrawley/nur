@@ -6,6 +6,7 @@
 
 #define NX_SN_PADDLE 0
 #define NX_SN_BALL 1
+#define NX_SN_PLAYER 2
 
 typedef struct nxSceneNode
 {

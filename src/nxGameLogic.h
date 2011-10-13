@@ -11,8 +11,6 @@
 #include <nxEvent/nxEventManager.h>
 #include <nxPhysics.h>
 
-#define NX_MAX_ENTITIES 1024
-
 typedef struct nxGameLogic
 {
 	nxEntity entities[NX_MAX_ENTITIES];
@@ -30,5 +28,7 @@ nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj);
 nxInt nxGameLogic_addBallEntity(nxGameLogic* obj);
 
 void nxGameLogic_handleEvent(nxEvent evt, void* vobj);
+
+void nxGameLogic_updateEntityState(nxGameLogic* obj, nxUInt entityId, nxVector2 pos, nxFloat rot);
 
 #endif
