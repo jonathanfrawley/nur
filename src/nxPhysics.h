@@ -8,7 +8,22 @@
 #include <nxCore/nxConstants.h>
 #include <nxCore/nxMM.h>
 
+#define NX_INFINITY __builtin_inf()
+
 #define NX_PLAYER_MASS 1.0f
+//#define NX_PLAYER_MASS NX_INFINITY
+#define NX_JUMP_HEIGHT 50.0
+#define NX_JUMP_BOOST_HEIGHT 55.0
+#define NX_FALL_VELOCITY 900.0
+
+#define NX_PLAYER_VELOCITY 500.0
+
+#define NX_PLAYER_GROUND_ACCEL_TIME 0.1
+#define NX_PLAYER_GROUND_ACCEL (PLAYER_VELOCITY/PLAYER_GROUND_ACCEL_TIME)
+
+#define NX_PLAYER_AIR_ACCEL_TIME 0.25
+#define NX_PLAYER_AIR_ACCEL (PLAYER_VELOCITY/PLAYER_AIR_ACCEL_TIME)
+
 
 typedef struct nxGameLogic nxGameLogic;
 typedef struct nxEntity nxEntity;
@@ -36,6 +51,8 @@ typedef struct nxPhysics
     nxGameLogic* _gameLogic;
 	cpSpace* _space;
 	cpShape* _ground;
+	cpShape* _leftWall;
+	cpShape* _rightWall;
     nxPhysicsEntity _physicsEntities[NX_MAX_ENTITIES];
     nxUInt _nextEntityIdx;
 } nxPhysics;
@@ -46,5 +63,9 @@ nxInt nxPhysics_init(nxPhysics* obj);
 void nxPhysics_update(nxPhysics* obj, nxFloat timestep);
 void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity);
 void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel);
+void nxPhysics_addLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel);
+void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res);
+
+void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt);
 
 #endif   // NXPHYSICS_H

@@ -150,6 +150,7 @@ void nxHumanGameView_draw(nxGameView* obj)
 		}
 	}
 
+    /*
 	//do test
 	glBegin( GL_LINES ); 
 		glColor4f( 1.0, 0.0, 0.0, 1.0 );
@@ -159,6 +160,7 @@ void nxHumanGameView_draw(nxGameView* obj)
 		glVertex3f( NX_SCREEN_WIDTH, 0, 0 ); 
 	glEnd();
 	//end test
+    */
 
 	SDL_GL_SwapBuffers();
 }

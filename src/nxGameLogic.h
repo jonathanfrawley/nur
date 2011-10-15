@@ -17,6 +17,7 @@ typedef struct nxGameLogic
 	nxInt currentEntityId;
 	nxInt playerId;
 	nxPhysics* physics;
+    nxVector2 currentPlayerVel;
 } nxGameLogic;
 
 nxGameLogic* nxGameLogic_new();

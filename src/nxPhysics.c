@@ -31,14 +31,31 @@ void nxPhysics_shutdown(nxPhysics* obj)
 nxInt nxPhysics_init(nxPhysics* obj)
 {
 	//Space init
-	cpVect gravity = cpv(0, -0.2);
+	cpVect gravity = cpv(0, -2000.0f);
 	obj->_space = cpSpaceNew();
+    cpSpaceSetIterations(obj->_space, 10);
 	cpSpaceSetGravity(obj->_space, gravity);
+    obj->_space->enableContactGraph = cpTrue;
+
+    cpShape* shape;
 
 	//Ground init
-	obj->_ground = cpSegmentShapeNew(obj->_space->staticBody, cpv(0, 0), cpv(NX_SCREEN_WIDTH, 0), 0);
-	cpShapeSetFriction(obj->_ground, 0.1);
-	cpSpaceAddShape(obj->_space, obj->_ground);
+	shape = cpSegmentShapeNew(obj->_space->staticBody, cpv(0, 0), cpv(NX_SCREEN_WIDTH, 0), 0);
+	cpSpaceAddShape(obj->_space, shape);
+    shape->e = 1.0f; shape->u = 1.0f;
+    obj->_ground = shape;
+
+	//Left wall init
+	shape = cpSegmentShapeNew(obj->_space->staticBody, cpv(0, 0), cpv(0, NX_SCREEN_HEIGHT), 0);
+	cpSpaceAddShape(obj->_space, shape);
+    shape->e = 1.0f; shape->u = 1.0f;
+    obj->_leftWall = shape;
+
+	//Right wall init
+	shape = cpSegmentShapeNew(obj->_space->staticBody, cpv(NX_SCREEN_WIDTH, 0), cpv(NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT), 0);
+	cpSpaceAddShape(obj->_space, shape);
+    shape->e = 1.0f; shape->u = 1.0f;
+    obj->_rightWall = shape;
 
     /*
 	//Create ball
@@ -116,6 +133,7 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             cpBodySetPos(body, cpv(NX_SCREEN_WIDTH/2, NX_SCREEN_HEIGHT/2));
             cpBodySetAngle(body, 0.0f);
             cpBodySetTorque(body, 0.0f);
+//            body->velocity_func = playerUpdateVelocity;
 
             // Now we create the collision shape for the ball.
             // You can create multiple collision shapes that point to the same body.
@@ -134,8 +152,64 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
 
 void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel)
 {
-    cpVect cpvel;
-    cpvel.x = vel.x;
-    cpvel.y = vel.y;
-    cpBodySetVel(obj->_physicsEntities[entityId].body, cpvel);
+    cpVect velDelta;
+    velDelta.x = vel.x;
+    velDelta.y = vel.y;
+    cpBodySetVel(obj->_physicsEntities[entityId].body, velDelta);
 }
+
+void nxPhysics_addLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel)
+{
+    cpVect velDelta;
+    velDelta.x = vel.x;
+    velDelta.y = vel.y;
+    cpVect velBefore = cpBodyGetVel(obj->_physicsEntities[entityId].body);
+    cpVect newVel = cpvadd(velDelta,velBefore);
+    cpBodySetVel(obj->_physicsEntities[entityId].body, newVel);
+}
+
+void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res)
+{
+    cpVect vel = cpBodyGetVel(obj->_physicsEntities[entityId].body);
+    nxVector2_fromCpVect(&vel, res);
+}
+
+//--------------------------------------------------------------------------------------------
+//Non ADT functions below
+//--------------------------------------------------------------------------------------------
+/*
+//HERE
+void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
+{
+	int jumpState = (ChipmunkDemoKeyboard.y > 0.0f);
+	
+	// Grab the grounding normal from last frame
+	cpVect groundNormal = cpvzero;
+	cpBodyEachArbiter(playerBody, (cpBodyArbiterIteratorFunc)SelectPlayerGroundNormal, &groundNormal);
+	
+	grounded = (groundNormal.y > 0.0);
+	if(groundNormal.y < 0.0f) remainingBoost = 0.0f;
+	
+	// Do a normal-ish update
+	cpBool boost = (jumpState && remainingBoost > 0.0f);
+	cpVect g = (boost ? cpvzero : gravity);
+	cpBodyUpdateVelocity(body, g, damping, dt);
+	
+	// Target horizontal speed for air/ground control
+	cpFloat target_vx = PLAYER_VELOCITY*ChipmunkDemoKeyboard.x;
+	
+	// Update the surface velocity and friction
+	cpVect surface_v = cpv(target_vx, 0.0);
+	playerShape->surface_v = surface_v;
+	playerShape->u = (grounded ? PLAYER_GROUND_ACCEL/GRAVITY : 0.0);
+	
+	// Apply air control if not grounded
+	if(!grounded){
+		// Smoothly accelerate the velocity
+		playerBody->v.x = cpflerpconst(playerBody->v.x, target_vx, PLAYER_AIR_ACCEL*dt);
+	}
+	
+	body->v.y = cpfclamp(body->v.y, -FALL_VELOCITY, INFINITY);
+}
+
+*/

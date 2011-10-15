@@ -51,7 +51,13 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 
 nxInt nxGameLogic_update(nxGameLogic* obj)
 {
-	float timestep = 0.02f;
+	float timestep = 1.0f/60.0f;
+    /*
+    if(obj->playerHadMoved)
+    {
+        nxPhysics_setLinearVel(obj->physics, obj->playerId, obj->currentPlayerVel); //
+    }
+    */
 
 	nxPhysics_update(obj->physics, timestep);
 
@@ -127,7 +133,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	nxGameLogic* obj = (nxGameLogic*)vobj;
 
 	//TODO : #define these somewhere
-	nxFloat ySpeed = 150.0f;
+	nxFloat ySpeed = 300.0f;
 	nxFloat xSpeed = 150.0f;
 
 	if(evt.type == NX_EVT_ENDGAME)
@@ -136,35 +142,64 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	}
 	else if(evt.type == NX_EVT_STARTMOVEUP)
 	{
-        nxVector2 vel = { 0.0f, ySpeed };
+        nxVector2 currentVel;
+        nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
+        nxVector2 vel = { currentVel.x, ySpeed };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+        //obj->currentPlayerVel = vel;
 	}
 	else if(evt.type == NX_EVT_STARTMOVEDOWN)
 	{
+        /*
         nxVector2 vel = { 0.0f, -ySpeed };
-        nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+        nxPhysics_addLinearVel(obj->physics, obj->playerId, vel);
+        */
 	}
 	else if(evt.type == NX_EVT_STARTMOVELEFT)
 	{
-        nxVector2 vel = { -xSpeed, 0 };
+        nxVector2 currentVel;
+        nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
+        nxVector2 vel = { -xSpeed, currentVel.y };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+//        obj->currentPlayerVel = vel;
 	}
 	else if(evt.type == NX_EVT_STARTMOVERIGHT)
 	{
-        nxVector2 vel = { xSpeed, 0 };
+        nxVector2 currentVel;
+        nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
+        nxVector2 vel = { xSpeed, currentVel.y };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+//        obj->currentPlayerVel = vel;
 	}
 	else if(evt.type == NX_EVT_ENDMOVEUP)
 	{
+        //nxVector2 currentVel;
+        //nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
+        //currentVel.y = 0;
+        //nxPhysics_setLinearVel(obj->physics, obj->playerId, currentVel);
 	}
 	else if(evt.type == NX_EVT_ENDMOVEDOWN)
 	{
 	}
 	else if(evt.type == NX_EVT_ENDMOVELEFT)
 	{
+        nxVector2 currentVel;
+        nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
+        if(currentVel.x < 0)
+        {
+            currentVel.x = 0;
+            nxPhysics_setLinearVel(obj->physics, obj->playerId, currentVel);
+        }
 	}
 	else if(evt.type == NX_EVT_ENDMOVERIGHT)
 	{
+        nxVector2 currentVel;
+        nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
+        if(currentVel.x > 0)
+        {
+            currentVel.x = 0;
+            nxPhysics_setLinearVel(obj->physics, obj->playerId, currentVel);
+        }
 	}
 }
 
