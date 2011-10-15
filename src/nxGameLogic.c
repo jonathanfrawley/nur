@@ -55,17 +55,6 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 
 	nxPhysics_update(obj->physics, timestep);
 
-    /*
-	//XXX:Do Test physics
-    cpVect pos = cpBodyGetPos(obj->physics->ballBody);
-    nxFloat rot = cpBodyGetAngle(obj->physics->ballBody);
-	obj->entities[1].pos.x = pos.x;
-	obj->entities[1].pos.y = NX_SCREEN_HEIGHT - pos.y; //TODO:Put into translation func
-	obj->entities[1].rot = rot; //TODO:Put into translation func
-	printf("rot is : %f", rot); 
-	//XXX:End Test physics
-    */
-
 	if(finished)
 	{
 		return 1;
@@ -78,11 +67,6 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 		}
 		else
 		{
-			//Do physics
-	//		obj->entities[i].pos.x += (obj->entities[i].accel.x * timestep);
-	//		obj->entities[i].pos.y += (obj->entities[i].accel.y * timestep);
-			//End physics
-
 			//TODO:Only update info if something has changed.
 			nxUpdateEntityEventData evtData = { obj->entities[i] };
 
@@ -105,12 +89,8 @@ nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj)
 	obj->entities[id].valid = 1;
 	obj->entities[id].pos.x = (NX_SCREEN_WIDTH / 2);
 	obj->entities[id].pos.y = (NX_SCREEN_HEIGHT / 2);
-//	obj->entities[id].accel.x = 0.0f;
-//	obj->entities[id].accel.y = -1.0f;
 	obj->entities[id].rot = 0.0f;
     nxPhysics_addEntity(obj->physics, &(obj->entities[id]));
-//	obj->entities[id].accel.x = 0.0f;
-//	obj->entities[id].accel.y = 0.0f;
 
 	nxCreateEntityEventData createEvData = { obj->entities[id], 1 };
 
@@ -130,8 +110,6 @@ nxInt nxGameLogic_addBallEntity(nxGameLogic* obj)
 	obj->entities[id].valid = 1;
 	obj->entities[id].pos.x = (NX_SCREEN_WIDTH / 2);
 	obj->entities[id].pos.y = (NX_SCREEN_HEIGHT / 2);
-//	obj->entities[id].accel.x = 0.0f;
-//	obj->entities[id].accel.y = -1.0f;
 	obj->entities[id].rot = 0.0f;
 
 	nxCreateEntityEventData createEvData = { obj->entities[id], 0 };
@@ -158,44 +136,35 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	}
 	else if(evt.type == NX_EVT_STARTMOVEUP)
 	{
-        nxVector2 vel = { 0.0f, -ySpeed };
+        nxVector2 vel = { 0.0f, ySpeed };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
-//		obj->entities[obj->playerId].accel.y = - ySpeed;
-//		obj->entities[obj->playerId].accel.y = - ySpeed;
 	}
 	else if(evt.type == NX_EVT_STARTMOVEDOWN)
 	{
-        nxVector2 vel = { 0.0f, ySpeed };
+        nxVector2 vel = { 0.0f, -ySpeed };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
-//		obj->entities[obj->playerId].accel.y = ySpeed;
 	}
 	else if(evt.type == NX_EVT_STARTMOVELEFT)
 	{
         nxVector2 vel = { -xSpeed, 0 };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
-//		obj->entities[obj->playerId].accel.x = - xSpeed;
 	}
 	else if(evt.type == NX_EVT_STARTMOVERIGHT)
 	{
         nxVector2 vel = { xSpeed, 0 };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
-//		obj->entities[obj->playerId].accel.x = xSpeed;
 	}
 	else if(evt.type == NX_EVT_ENDMOVEUP)
 	{
-//		obj->entities[obj->playerId].accel.y = 0.0f;
 	}
 	else if(evt.type == NX_EVT_ENDMOVEDOWN)
 	{
-//		obj->entities[obj->playerId].accel.y = 0.0f;
 	}
 	else if(evt.type == NX_EVT_ENDMOVELEFT)
 	{
-//		obj->entities[obj->playerId].accel.x = 0.0f;
 	}
 	else if(evt.type == NX_EVT_ENDMOVERIGHT)
 	{
-//		obj->entities[obj->playerId].accel.x = 0.0f;
 	}
 }
 

@@ -233,7 +233,7 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 	//float x = 10.0f;
 	//float y = 10.0f;
 	nxFloat x = node->pos.x;
-	nxFloat y = node->pos.y;
+	nxFloat y = NX_SCREEN_HEIGHT - node->pos.y;
 	nxFloat rot = node->rot;
 	switch(node->type)
 	{

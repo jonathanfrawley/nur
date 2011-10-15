@@ -13,7 +13,6 @@ typedef struct nxEntity
 	nxUInt type;
 	nxUInt valid;
 	nxVector2 pos;
-	nxVector2 accel;
 	nxFloat rot;
 } nxEntity;
 

@@ -9,9 +9,6 @@ nxEntity* nxEntity_new()
 	res->pos.x = 0.0f;
 	res->pos.y = 0.0f;
 
-	res->accel.x = 0.0f;
-	res->accel.y = 0.0f;
-
 	res->rot = 0.0f;
 
 	return res;

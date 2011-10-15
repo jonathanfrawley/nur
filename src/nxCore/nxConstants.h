@@ -16,5 +16,4 @@
 #define NX_PLAYER_HALFWIDTH 25.0f
 #define NX_PLAYER_HALFHEIGHT 25.0f
 
-
 #endif   // NXCONSTANTS_H
