@@ -31,7 +31,7 @@ void nxPhysics_shutdown(nxPhysics* obj)
 nxInt nxPhysics_init(nxPhysics* obj)
 {
 	//Space init
-	cpVect gravity = cpv(0, -2000.0f);
+	cpVect gravity = cpv(0, -200.0f);
 	obj->_space = cpSpaceNew();
     cpSpaceSetIterations(obj->_space, 10);
 	cpSpaceSetGravity(obj->_space, gravity);
@@ -56,6 +56,19 @@ nxInt nxPhysics_init(nxPhysics* obj)
 	cpSpaceAddShape(obj->_space, shape);
     shape->e = 1.0f; shape->u = 1.0f;
     obj->_rightWall = shape;
+
+	// Add our one way segment
+	shape = cpSpaceAddShape(obj->_space, cpSegmentShapeNew(obj->_space->staticBody, cpv(300,100), cpv(NX_SCREEN_WIDTH-300,100), 10.0f));
+	cpShapeSetElasticity(shape, 1.0f);
+	cpShapeSetFriction(shape, 1.0f);
+	cpShapeSetCollisionType(shape, NX_PLATFORM_COLLISION_TYPE);
+	
+	obj->_oneWayPlatforms[0].valid = 1;
+	obj->_oneWayPlatforms[0].n = cpv(0, 1); // let objects pass upwards
+	cpShapeSetUserData(shape, &obj->_oneWayPlatforms[0]);
+
+    cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_PLAYER_COLLISION_TYPE, 
+            NULL, platformPreSolve, NULL, NULL, NULL);
 
     /*
 	//Create ball
@@ -139,6 +152,7 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             // You can create multiple collision shapes that point to the same body.
             // They will all be attached to the body and move around to follow it.
             cpShape* shape = cpSpaceAddShape(obj->_space, cpBoxShapeNew(body, NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT));
+            cpShapeSetCollisionType(shape, NX_PLAYER_COLLISION_TYPE);
             cpShapeSetFriction(shape, 0.7f);
             obj->_physicsEntities[idx].shape = shape;
             obj->_physicsEntities[idx].body = body;
@@ -174,14 +188,16 @@ void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res)
     nxVector2_fromCpVect(&vel, res);
 }
 
+/*
 //--------------------------------------------------------------------------------------------
 //Non ADT functions below
 //--------------------------------------------------------------------------------------------
-/*
 //HERE
 void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
 {
-	int jumpState = (ChipmunkDemoKeyboard.y > 0.0f);
+    nxEntity *entity = (nxEntity *)cpBodyGetUserData(body);
+//	int jumpState = (ChipmunkDemoKeyboard.y > 0.0f);
+	int jumpState = entity->jumping;
 	
 	// Grab the grounding normal from last frame
 	cpVect groundNormal = cpvzero;
@@ -211,5 +227,16 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
 	
 	body->v.y = cpfclamp(body->v.y, -FALL_VELOCITY, INFINITY);
 }
-
 */
+cpBool platformPreSolve(cpArbiter *arb, cpSpace *space, void *ignore)
+{
+    CP_ARBITER_GET_SHAPES(arb, a, b); 
+    nxOneWayPlatform *platform = (nxOneWayPlatform *)cpShapeGetUserData(a);
+     
+    if(cpvdot(cpArbiterGetNormal(arb, 0), platform->n) < 0){ 
+        cpArbiterIgnore(arb);
+        return cpFalse;
+    }   
+    
+    return cpTrue;
+}

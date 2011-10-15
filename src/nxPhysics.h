@@ -11,6 +11,10 @@
 #define NX_INFINITY __builtin_inf()
 
 #define NX_PLAYER_MASS 1.0f
+
+#define NX_PLATFORM_COLLISION_TYPE 1
+#define NX_PLAYER_COLLISION_TYPE 2
+
 //#define NX_PLAYER_MASS NX_INFINITY
 #define NX_JUMP_HEIGHT 50.0
 #define NX_JUMP_BOOST_HEIGHT 55.0
@@ -23,6 +27,7 @@
 
 #define NX_PLAYER_AIR_ACCEL_TIME 0.25
 #define NX_PLAYER_AIR_ACCEL (PLAYER_VELOCITY/PLAYER_AIR_ACCEL_TIME)
+
 
 
 typedef struct nxGameLogic nxGameLogic;
@@ -39,6 +44,12 @@ typedef struct nxPhysicsEntity
 	cpBody* body;
 } nxPhysicsEntity;
 
+typedef struct nxOneWayPlatform 
+{
+    cpVect n; // direction objects may pass through
+    nxUInt valid;
+} nxOneWayPlatform;
+
 /**
  * Encapsulates the physics for the game.
  **/
@@ -54,6 +65,7 @@ typedef struct nxPhysics
 	cpShape* _leftWall;
 	cpShape* _rightWall;
     nxPhysicsEntity _physicsEntities[NX_MAX_ENTITIES];
+    nxOneWayPlatform _oneWayPlatforms[NX_MAX_ONEWAYPLATFORMS];
     nxUInt _nextEntityIdx;
 } nxPhysics;
 
@@ -66,6 +78,7 @@ void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel);
 void nxPhysics_addLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel);
 void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res);
 
-void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt);
+//void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt);
+cpBool platformPreSolve(cpArbiter *arb, cpSpace *space, void *ignore);
 
 #endif   // NXPHYSICS_H
