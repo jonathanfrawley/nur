@@ -6,6 +6,8 @@
 #include <nxEvent/nxEvent.h>
 #include <nxCore/nxConstants.h>
 
+#include <nxTextureLoader.h>
+
 #include "SDL/SDL.h"
 #include "SDL/SDL_opengl.h"
 

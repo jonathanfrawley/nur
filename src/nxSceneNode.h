@@ -14,6 +14,7 @@ typedef struct nxSceneNode
 	nxUInt type;
 	nxVector2 pos;
 	nxFloat rot;
+	nxUInt texIdx;
 } nxSceneNode;
 
 #endif   // NXSCENENODE_H

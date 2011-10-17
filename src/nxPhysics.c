@@ -42,7 +42,7 @@ nxInt nxPhysics_init(nxPhysics* obj)
 	//Ground init
 	shape = cpSegmentShapeNew(obj->_space->staticBody, cpv(0, 0), cpv(NX_SCREEN_WIDTH, 0), 0);
 	cpSpaceAddShape(obj->_space, shape);
-    shape->e = 1.0f; shape->u = 1.0f;
+    shape->e = 1.0f; shape->u = 0.0f;
     obj->_ground = shape;
 
 	//Left wall init
@@ -60,7 +60,7 @@ nxInt nxPhysics_init(nxPhysics* obj)
 	// Add our one way segment
 	shape = cpSpaceAddShape(obj->_space, cpSegmentShapeNew(obj->_space->staticBody, cpv(300,100), cpv(NX_SCREEN_WIDTH-300,100), 10.0f));
 	cpShapeSetElasticity(shape, 1.0f);
-	cpShapeSetFriction(shape, 1.0f);
+	cpShapeSetFriction(shape, 0.0f);
 	cpShapeSetCollisionType(shape, NX_PLATFORM_COLLISION_TYPE);
 	
 	obj->_oneWayPlatforms[0].valid = 1;
@@ -142,7 +142,8 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             cpFloat moment = cpMomentForBox(NX_PLAYER_MASS, NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT);
             // The cpSpaceAdd*() functions return the thing that you are adding.
             // It's convenient to create and add an object in one line.
-            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_PLAYER_MASS, moment));
+    //        cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_PLAYER_MASS, moment));
+            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_PLAYER_MASS, NX_INFINITY));
             cpBodySetPos(body, cpv(NX_SCREEN_WIDTH/2, NX_SCREEN_HEIGHT/2));
             cpBodySetAngle(body, 0.0f);
             cpBodySetTorque(body, 0.0f);
@@ -170,6 +171,7 @@ void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel)
     velDelta.x = vel.x;
     velDelta.y = vel.y;
     cpBodySetVel(obj->_physicsEntities[entityId].body, velDelta);
+//    cpBodySetForce(obj->_physicsEntities[entityId].body, velDelta); //XXX
 }
 
 void nxPhysics_addLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel)

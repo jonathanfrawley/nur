@@ -28,8 +28,6 @@
 #define NX_PLAYER_AIR_ACCEL_TIME 0.25
 #define NX_PLAYER_AIR_ACCEL (PLAYER_VELOCITY/PLAYER_AIR_ACCEL_TIME)
 
-
-
 typedef struct nxGameLogic nxGameLogic;
 typedef struct nxEntity nxEntity;
 

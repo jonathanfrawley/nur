@@ -20,6 +20,8 @@ nxGameView* nxHumanGameView_new()
 	res->draw = nxHumanGameView_draw;
 	res->shutdown = nxHumanGameView_shutdown;
 
+
+
 	screen = NX_NULL;
 	for(int i = 0;i<NX_MAX_SCENENODES;i++)
 	{
@@ -167,7 +169,14 @@ void nxHumanGameView_draw(nxGameView* obj)
 
 nxInt init_GL()
 {
-	glClearColor( 0, 0, 0, 0 );
+    glEnable( GL_TEXTURE_2D );
+
+    glEnable (GL_BLEND); 
+//    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glBlendFunc(GL_DST_COLOR,GL_ZERO);
+
+	//glClearColor( 0, 0, 0, 0 );
+	glClearColor( 1, 1, 1, 0 );
 	glMatrixMode( GL_PROJECTION ); 
 	glLoadIdentity(); 
 	glOrtho( 0, NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, 0, -1, 1 );
@@ -186,6 +195,7 @@ nxInt init_GL()
 void nxHumanGameView_shutdown(nxGameView* obj)
 {
 	nxFree(obj);
+    nxTextureLoader_shutdown();
 }
 
 void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
@@ -200,6 +210,7 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 		sceneNodes[currentSceneNodeIdx].id = castData->entity.id;
 		sceneNodes[currentSceneNodeIdx].pos = castData->entity.pos;
 		sceneNodes[currentSceneNodeIdx].rot = castData->entity.rot;
+        sceneNodes[currentSceneNodeIdx].texIdx = nxTextureLoader_loadImageFromFilename("../media/man_still.png");
 
 		switch(castData->entity.type)
 		{
@@ -237,6 +248,10 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 	nxFloat x = node->pos.x;
 	nxFloat y = NX_SCREEN_HEIGHT - node->pos.y;
 	nxFloat rot = node->rot;
+
+    // load the texture
+	glBindTexture(GL_TEXTURE_2D, node->texIdx);
+
 	switch(node->type)
 	{
 		case(NX_SN_PLAYER):
@@ -244,9 +259,13 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
 			glBegin( GL_QUADS ); 
 				glColor4f( 1.0, 1.0, 1.0, 1.0 );
-				glVertex3f( -NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 ); 
-				glVertex3f( -NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 
-				glVertex3f( NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 
+                glTexCoord2f( 0.0f, 0.0f ); 
+				glVertex3f( -NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 );
+                glTexCoord2f( 0.0f, 1.0f ); 
+				glVertex3f( -NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 				
+                glTexCoord2f( 1.0f, 1.0f ); 
+                glVertex3f( NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 
+                glTexCoord2f( 1.0f, 0.0f );  
 				glVertex3f( NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 ); 
 				/*
 				glVertex3f( 0, 0, 0 ); 

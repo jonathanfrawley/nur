@@ -13,11 +13,11 @@ int main(void)
 {
 	nxEventManager_init();
 
-    nxGameLogic* gameLogic = nxGameLogic_new();
     nxGameView* gameView = nxHumanGameView_new();
-
-	nxGameLogic_init(gameLogic);
     gameView->init(gameView);
+
+    nxGameLogic* gameLogic = nxGameLogic_new();
+	nxGameLogic_init(gameLogic);
 
 	nxInt finished = 0;
 	nxUInt startTime = SDL_GetTicks();

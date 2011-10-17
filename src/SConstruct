@@ -11,6 +11,6 @@ env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CF
 
 env.ParseConfig('sdl-config --cflags')
 env.ParseConfig('sdl-config --libs')
-env.Append(LIBS = ['GL', 'm', File('../lib/external/arch64/lib/libchipmunk.a')])
+env.Append(LIBS = ['GL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a')])
 
 env.Program('pmuj', matches)
