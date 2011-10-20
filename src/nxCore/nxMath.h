@@ -3,6 +3,9 @@
 
 #include <math.h>
 #include <nxCore/nxTypes.h>
+#include <float.h>
+
+#define NX_MAX_FLOAT FLT_MAX
 
 const nxFloat NX_PI = 3.14159265f;
 const nxFloat NX_PI_OVER_180 = 0.0174532925f;

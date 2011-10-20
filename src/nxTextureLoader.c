@@ -29,7 +29,8 @@ static GLuint uploadTextureFromSurface(
         SDL_Surface* sourceSurface, 
         Uint8 colorKeyRed, 
         Uint8 colorKeyGreen, 
-        Uint8 colorKeyBlue )
+        Uint8 colorKeyBlue,
+        Uint8 colorKeyAlpha)
 {
 
     /*
@@ -76,16 +77,17 @@ static GLuint uploadTextureFromSurface(
     }
 
     // Set up so that colorkey pixels become transparent :
-    Uint32 colorkey = SDL_MapRGBA( alphaImage->format, colorKeyRed, colorKeyGreen, colorKeyBlue, 0 );
+    //Uint32 colorkey = SDL_MapRGBA( alphaImage->format, colorKeyRed, colorKeyGreen, colorKeyBlue, colorKeyAlpha );
+    Uint32 colorkey = SDL_MapRGBA( alphaImage->format, colorKeyRed, colorKeyGreen, colorKeyBlue, colorKeyAlpha );
     SDL_FillRect( alphaImage, 0, colorkey );
 
-    colorkey = SDL_MapRGBA( sourceSurface->format, colorKeyRed, colorKeyGreen, colorKeyBlue, 0 );
+    colorkey = SDL_MapRGBA( sourceSurface->format, colorKeyRed, colorKeyGreen, colorKeyBlue, colorKeyAlpha);
     SDL_SetColorKey( sourceSurface, SDL_SRCCOLORKEY, colorkey );
 
     SDL_Rect area;
 
 //    SDL_SetAlpha(sourceSurface, 0, 0); //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
-//    SDL_SetAlpha(sourceSurface, 0, 0x000000FF); //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
+    SDL_SetAlpha(sourceSurface, 0, colorKeyAlpha); //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
             
 //    SDL_SetAlpha(sourceSurface, SDL_ALPHA_TRANSPARENT, 255); //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
 
@@ -166,7 +168,8 @@ GLuint nxTextureLoader_loadImageFromFilename(const char* filename)
         image, 
         rmask, 
         gmask, 
-        amask );
+        bmask, 
+        amask);
 
     textureIndices[currentTextureIdx++] = texture; //Keep track of textures for deletion
 

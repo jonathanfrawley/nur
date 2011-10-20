@@ -43,6 +43,22 @@ nxInt nxHumanGameView_init(nxGameView* obj)
 		return 1; 
 	} 
 
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,        8);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,      8);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,       8);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,      8);
+     
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,      16);
+    SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,        32);
+     
+    SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE,    8);
+    SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE,    8);
+    SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,    8);
+    SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,    8);
+     
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,  1);
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,  2);
+
 	if( (screen = SDL_SetVideoMode( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, NX_SCREEN_BPP, SDL_OPENGL )) == 0 ) 
 	{ 
 		return 1; 
@@ -172,11 +188,11 @@ nxInt init_GL()
     glEnable( GL_TEXTURE_2D );
 
     glEnable (GL_BLEND); 
-//    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBlendFunc(GL_DST_COLOR,GL_ZERO);
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//    glBlendFunc(GL_DST_COLOR,GL_ZERO);
 
 	//glClearColor( 0, 0, 0, 0 );
-	glClearColor( 1, 1, 1, 0 );
+	glClearColor( 1, 1, 1, 1 );
 	glMatrixMode( GL_PROJECTION ); 
 	glLoadIdentity(); 
 	glOrtho( 0, NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, 0, -1, 1 );

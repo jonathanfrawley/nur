@@ -14,6 +14,9 @@ typedef struct nxEntity
 	nxUInt valid;
 	nxVector2 pos;
 	nxFloat rot;
+
+    nxInt xVel;
+    nxInt yVel;
 } nxEntity;
 
 nxEntity* nxEntity_new();

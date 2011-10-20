@@ -30,6 +30,8 @@ nxInt nxGameLogic_addBallEntity(nxGameLogic* obj);
 
 void nxGameLogic_handleEvent(nxEvent evt, void* vobj);
 
+//Utils
 void nxGameLogic_updateEntityState(nxGameLogic* obj, nxUInt entityId, nxVector2 pos, nxFloat rot);
+nxEntity* nxGameLogic_getEntity(nxGameLogic* obj, nxUInt entityId);
 
 #endif
