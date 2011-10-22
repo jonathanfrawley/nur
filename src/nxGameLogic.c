@@ -39,6 +39,15 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 		return 1;
 	}
 
+	if(nxGameLogic_addPlatformEntity(obj,
+               300.0f,
+               100.0f,
+               NX_SCREEN_WIDTH-600.0f,
+               0.0f ))
+	{
+		return 1;
+	}
+
     /*
 	if(nxGameLogic_addBallEntity(obj))
 	{
@@ -90,39 +99,45 @@ nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj)
 {
 	nxUInt id = obj->currentEntityId++;
 	obj->playerId = id;
-	obj->entities[id].type = NX_ENT_PLAYER;
-	obj->entities[id].id = id;
-	obj->entities[id].valid = 1;
-	obj->entities[id].pos.x = (NX_SCREEN_WIDTH / 2);
-	obj->entities[id].pos.y = (NX_SCREEN_HEIGHT / 2);
-	obj->entities[id].rot = 0.0f;
-    nxPhysics_addEntity(obj->physics, &(obj->entities[id]));
+    nxEntity* entity = &(obj->entities[id]);
+	entity->type = NX_ENT_PLAYER;
+	entity->id = id;
+	entity->valid = 1;
+	entity->reversed = 0;
+	entity->pos.x = (NX_SCREEN_WIDTH / 2);
+	entity->pos.y = (NX_SCREEN_HEIGHT / 2);
+	entity->rot = 0.0f;
+	nxPhysics_addEntity(obj->physics, &(obj->entities[id]));
 
 	nxCreateEntityEventData createEvData = { obj->entities[id], 1 };
-
 	nxEvent createEv = {NX_EVT_CREATEENT, &createEvData};
-
 	//Fire event
 	nxEventManager_triggerEvent(createEv);
 
 	return 0;
 }
 
-nxInt nxGameLogic_addBallEntity(nxGameLogic* obj)
+nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj, 
+        nxFloat x, 
+        nxFloat y, 
+        nxFloat w,
+        nxFloat h)
 {
 	nxUInt id = obj->currentEntityId++;
-	obj->entities[id].type = NX_ENT_BALL;
-	obj->entities[id].id = id;
-	obj->entities[id].valid = 1;
-	obj->entities[id].pos.x = (NX_SCREEN_WIDTH / 2);
-	obj->entities[id].pos.y = (NX_SCREEN_HEIGHT / 2);
-	obj->entities[id].rot = 0.0f;
+    nxEntity* entity = &(obj->entities[id]);
+	entity->type = NX_ENT_PLATFORM;
+	entity->id = id;
+	entity->valid = 1;
+	entity->pos.x = x;
+	entity->pos.y = y;
+	entity->width = w;
+	entity->height = h;
+	entity->rot = 0.0f;
 
-	nxCreateEntityEventData createEvData = { obj->entities[id], 0 };
+	nxPhysics_addEntity(obj->physics, entity);
 
+	nxCreateEntityEventData createEvData = { obj->entities[id], 1 };
 	nxEvent createEv = {NX_EVT_CREATEENT, &createEvData};
-
-	//Fire event
 	nxEventManager_triggerEvent(createEv);
 
 	return 0;
@@ -133,8 +148,8 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	nxGameLogic* obj = (nxGameLogic*)vobj;
 
 	//TODO : #define these somewhere
-	nxFloat ySpeed = 300.0f;
 	nxFloat xSpeed = 150.0f;
+	nxFloat ySpeed = 300.0f;
 
 	if(evt.type == NX_EVT_ENDGAME)
 	{
@@ -161,6 +176,11 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
         nxVector2 vel = { -xSpeed, currentVel.y };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+
+        if(currentVel.x >= 0.0f)
+        {
+            obj->entities[obj->playerId].reversed = 0;
+        }
 //        obj->currentPlayerVel = vel;
 	}
 	else if(evt.type == NX_EVT_STARTMOVERIGHT)
@@ -169,6 +189,11 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
         nxVector2 vel = { xSpeed, currentVel.y };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+
+        if(currentVel.x <= 0.0f)
+        {
+            obj->entities[obj->playerId].reversed = 1;
+        }
 //        obj->currentPlayerVel = vel;
 	}
 	else if(evt.type == NX_EVT_ENDMOVEUP)

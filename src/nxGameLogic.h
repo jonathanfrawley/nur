@@ -17,7 +17,6 @@ typedef struct nxGameLogic
 	nxInt currentEntityId;
 	nxInt playerId;
 	nxPhysics* physics;
-    nxVector2 currentPlayerVel;
 } nxGameLogic;
 
 nxGameLogic* nxGameLogic_new();
@@ -26,7 +25,11 @@ nxInt nxGameLogic_init(nxGameLogic* obj);
 nxInt nxGameLogic_update(nxGameLogic* obj);
 
 nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj);
-nxInt nxGameLogic_addBallEntity(nxGameLogic* obj);
+nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj, 
+        nxFloat x, 
+        nxFloat y, 
+        nxFloat w,
+        nxFloat h);
 
 void nxGameLogic_handleEvent(nxEvent evt, void* vobj);
 

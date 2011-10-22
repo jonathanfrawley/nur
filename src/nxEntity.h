@@ -5,7 +5,7 @@
 #include <nxCore/nxTypes.h>
 
 #define NX_ENT_PLAYER 0
-#define NX_ENT_BALL 1
+#define NX_ENT_PLATFORM 1
 
 typedef struct nxEntity
 {
@@ -14,9 +14,13 @@ typedef struct nxEntity
 	nxUInt valid;
 	nxVector2 pos;
 	nxFloat rot;
+    nxUInt reversed;
 
     nxInt xVel;
     nxInt yVel;
+
+    nxFloat width;
+    nxFloat height;
 } nxEntity;
 
 nxEntity* nxEntity_new();

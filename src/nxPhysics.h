@@ -64,7 +64,8 @@ typedef struct nxPhysics
 	cpShape* _rightWall;
     nxPhysicsEntity _physicsEntities[NX_MAX_ENTITIES];
     nxOneWayPlatform _oneWayPlatforms[NX_MAX_ONEWAYPLATFORMS];
-    nxUInt _nextEntityIdx;
+    nxUInt _nextEntityId;
+    nxUInt _currentPlatformId;
 } nxPhysics;
 
 nxPhysics* nxPhysics_new(nxGameLogic* gameLogic);

@@ -8,7 +8,7 @@
 
 static SDL_Surface* screen;
 static nxSceneNode sceneNodes[NX_MAX_SCENENODES];
-static nxUInt currentSceneNodeIdx;
+static nxUInt currentSceneNodeId;
 static nxUInt playerId;
 
 nxGameView* nxHumanGameView_new()
@@ -25,9 +25,9 @@ nxGameView* nxHumanGameView_new()
 	screen = NX_NULL;
 	for(int i = 0;i<NX_MAX_SCENENODES;i++)
 	{
-		sceneNodes[i].id = -1;
+		sceneNodes[i].valid = 0;
 	}
-	currentSceneNodeIdx = 0;
+	currentSceneNodeId = 0;
 
 	playerId = -1;
 
@@ -156,12 +156,8 @@ void nxHumanGameView_draw(nxGameView* obj)
 
 	for(int i = 0 ; i < NX_MAX_SCENENODES ; i++)
 	{
-		if(sceneNodes[i].id == -1)
-		{
-			continue;
-		}
-		else
-		{
+		if(sceneNodes[i].valid)
+        {
 			glPushMatrix();
 			nxHumanGameView_drawSceneNode(&sceneNodes[i]);
 			glPopMatrix();
@@ -220,28 +216,35 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 
 	if(evt.type == NX_EVT_CREATEENT)
 	{
+        int id = currentSceneNodeId++;
 		nxCreateEntityEventData* castData = (nxCreateEntityEventData*)evt.data;
 
 		//Now create a scenenode object from the entity object
-		sceneNodes[currentSceneNodeIdx].id = castData->entity.id;
-		sceneNodes[currentSceneNodeIdx].pos = castData->entity.pos;
-		sceneNodes[currentSceneNodeIdx].rot = castData->entity.rot;
-        sceneNodes[currentSceneNodeIdx].texIdx = nxTextureLoader_loadImageFromFilename("../media/man_still.png");
+		sceneNodes[id].id = castData->entity.id;
+		sceneNodes[id].valid = 1;
+		sceneNodes[id].pos = castData->entity.pos;
+		sceneNodes[id].rot = castData->entity.rot;
+        sceneNodes[id].width = castData->entity.width;
+        sceneNodes[id].height = castData->entity.height;
+        sceneNodes[id].hasTex = 0; //Default to having no tex
 
 		switch(castData->entity.type)
 		{
 			case NX_ENT_PLAYER:
 				playerId = castData->entity.id;
-				sceneNodes[currentSceneNodeIdx].type = NX_SN_PLAYER;
+				sceneNodes[id].type = NX_SN_PLAYER;
+                sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/man_still.png");
+                sceneNodes[id].hasTex = 1;
 				break;
-			case NX_ENT_BALL:
-				sceneNodes[currentSceneNodeIdx].type = NX_SN_BALL;
+			case NX_ENT_PLATFORM:
+				sceneNodes[id].type = NX_SN_PLATFORM;
+                sceneNodes[id].height = castData->entity.height+1;
 				break;
 			default:
 				break;
 		}
 
-		currentSceneNodeIdx++;
+		currentSceneNodeId++;
 	}
 	else if(evt.type == NX_EVT_UPDATEENT)
 	{
@@ -249,6 +252,7 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 
 		sceneNodes[castData->entity.id].pos = castData->entity.pos;
 		sceneNodes[castData->entity.id].rot = castData->entity.rot;
+		sceneNodes[castData->entity.id].reversed = castData->entity.reversed;
 	}
 }
 
@@ -265,42 +269,68 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 	nxFloat y = NX_SCREEN_HEIGHT - node->pos.y;
 	nxFloat rot = node->rot;
 
-    // load the texture
-	glBindTexture(GL_TEXTURE_2D, node->texIdx);
+    if(node->hasTex)
+    {
+        glEnable( GL_TEXTURE_2D );
+        // load the texture
+        glBindTexture(GL_TEXTURE_2D, node->texId);
+    }
+    else
+    {
+        glDisable( GL_TEXTURE_2D );
+    }
 
 	switch(node->type)
 	{
 		case(NX_SN_PLAYER):
 			glTranslatef( x, y, 0 );
 			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
-			glBegin( GL_QUADS ); 
-				glColor4f( 1.0, 1.0, 1.0, 1.0 );
-                glTexCoord2f( 0.0f, 0.0f ); 
-				glVertex3f( -NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 );
-                glTexCoord2f( 0.0f, 1.0f ); 
-				glVertex3f( -NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 				
-                glTexCoord2f( 1.0f, 1.0f ); 
-                glVertex3f( NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 
-                glTexCoord2f( 1.0f, 0.0f );  
-				glVertex3f( NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 ); 
-				/*
-				glVertex3f( 0, 0, 0 ); 
-				glVertex3f( NX_PLAYER_HALFWIDTH*2, 0, 0 ); 
-				glVertex3f( NX_PLAYER_HALFWIDTH*2, NX_PLAYER_HALFHEIGHT*2, 0 ); 
-				glVertex3f( 0, NX_PLAYER_HALFHEIGHT*2, 0 ); 
-				*/
-			glEnd();
+            glColor4f( 1.0, 1.0, 1.0, 1.0 );
+            if(! node->reversed)
+            {
+                glBegin( GL_QUADS ); 
+                    glTexCoord2f( 0.0f, 0.0f ); 
+                    glVertex3f( -NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 );
+                    glTexCoord2f( 0.0f, 1.0f ); 
+                    glVertex3f( -NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 				
+                    glTexCoord2f( 1.0f, 1.0f ); 
+                    glVertex3f( NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 
+                    glTexCoord2f( 1.0f, 0.0f );  
+                    glVertex3f( NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 ); 
+                glEnd();
+            }
+            else
+            {
+                glBegin( GL_QUADS ); 
+                    glTexCoord2f( 1.0f, 0.0f );  
+                    glVertex3f( -NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 );
+                    glTexCoord2f( 1.0f, 1.0f ); 
+                    glVertex3f( -NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 				
+                    glTexCoord2f( 0.0f, 1.0f ); 
+                    glVertex3f( NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 
+                    glTexCoord2f( 0.0f, 0.0f ); 
+                    glVertex3f( NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 ); 
+                glEnd();
+            }
 			break;
-		case(NX_SN_BALL):
-			glTranslatef( x, y, 0 );
+		case(NX_SN_PLATFORM):
+            {
+            nxFloat halfWidth = node->width * 0.5f;
+            nxFloat halfHeight = node->height * 0.5f;
+			glTranslatef( x+halfWidth, y+halfHeight, 0 );
 			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
-			glBegin( GL_QUADS ); 
-				glColor4f( 1.0, 1.0, 1.0, 1.0 );
-				glVertex3f( -NX_BALL_HALFWIDTH, -NX_BALL_HALFHEIGHT, 0 ); 
-				glVertex3f( -NX_BALL_HALFWIDTH, NX_BALL_HALFHEIGHT, 0 ); 
-				glVertex3f( NX_BALL_HALFWIDTH, NX_BALL_HALFHEIGHT, 0 ); 
-				glVertex3f( NX_BALL_HALFWIDTH, -NX_BALL_HALFHEIGHT, 0 ); 
-			glEnd();
+            glColor4f( 1.0f, 0.41, 0.7, 1.0 );
+            glBegin( GL_QUADS ); 
+                glTexCoord2f( 0.0f, 0.0f ); 
+                glVertex3f( -halfWidth, -halfHeight, 0 );
+                glTexCoord2f( 0.0f, 1.0f ); 
+                glVertex3f( -halfWidth, halfHeight, 0 ); 				
+                glTexCoord2f( 1.0f, 1.0f ); 
+                glVertex3f( halfWidth, halfHeight, 0 ); 
+                glTexCoord2f( 1.0f, 0.0f );  
+                glVertex3f( halfWidth, -halfHeight, 0 ); 
+            glEnd();
 			break;
+            }
 	}
 }

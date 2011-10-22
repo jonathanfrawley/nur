@@ -8,8 +8,8 @@ nxPhysics* nxPhysics_new(nxGameLogic* gameLogic)
 	nxPhysics* res = (nxPhysics*) nxMalloc(sizeof(nxPhysics));
 
     res->_gameLogic = gameLogic;
-    res->_nextEntityIdx = 0;
-
+    res->_nextEntityId = 0;
+    res->_currentPlatformId = 0;
 	return res;
 }
 
@@ -57,6 +57,7 @@ nxInt nxPhysics_init(nxPhysics* obj)
     shape->e = 1.0f; shape->u = 1.0f;
     obj->_rightWall = shape;
 
+    /*
 	// Add our one way segment
 	shape = cpSpaceAddShape(obj->_space, cpSegmentShapeNew(obj->_space->staticBody, cpv(300,100), cpv(NX_SCREEN_WIDTH-300,100), 10.0f));
 	cpShapeSetElasticity(shape, 1.0f);
@@ -69,6 +70,7 @@ nxInt nxPhysics_init(nxPhysics* obj)
 
     cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_PLAYER_COLLISION_TYPE, 
             NULL, platformPreSolve, NULL, NULL, NULL);
+            */
 
     /*
 	//Create ball
@@ -133,12 +135,14 @@ void nxPhysics_update(nxPhysics* obj, nxFloat timestep)
 
 void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
 {
-    int idx = obj->_nextEntityIdx;
-    obj->_physicsEntities[idx].entityId = idx;
     switch(entity->type)
     {
         case NX_ENT_PLAYER: 
             {
+            int id = obj->_nextEntityId++;
+            obj->_physicsEntities[id].entityId = id;
+            obj->_physicsEntities[id].valid = 1;
+
             cpFloat moment = cpMomentForBox(NX_PLAYER_MASS, NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT);
             // The cpSpaceAdd*() functions return the thing that you are adding.
             // It's convenient to create and add an object in one line.
@@ -155,14 +159,30 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             cpShape* shape = cpSpaceAddShape(obj->_space, cpBoxShapeNew(body, NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT));
             cpShapeSetCollisionType(shape, NX_PLAYER_COLLISION_TYPE);
             cpShapeSetFriction(shape, 0.7f);
-            obj->_physicsEntities[idx].shape = shape;
-            obj->_physicsEntities[idx].body = body;
+            obj->_physicsEntities[id].shape = shape;
+            obj->_physicsEntities[id].body = body;
+            break;
+            }
+        case NX_ENT_PLATFORM:
+            {
+            nxUInt platformId = obj->_currentPlatformId++;
+            printf("%f, %f, %f, %f \n", entity->pos.x,entity->pos.y, NX_SCREEN_HEIGHT-entity->height, entity->width);
+            // Add our one way segment
+            cpShape* shape = cpSpaceAddShape(obj->_space, 
+                    cpSegmentShapeNew(obj->_space->staticBody, cpv(entity->pos.x,entity->pos.y), cpv(entity->pos.x+entity->width, entity->pos.y+entity->height), 10.0f));
+            cpShapeSetElasticity(shape, 1.0f);
+            cpShapeSetFriction(shape, 0.0f);
+            cpShapeSetCollisionType(shape, NX_PLATFORM_COLLISION_TYPE);
+
+            obj->_oneWayPlatforms[platformId].valid = 1;
+            obj->_oneWayPlatforms[platformId].n = cpv(0, 1); // let objects pass upwards
+            cpShapeSetUserData(shape, &obj->_oneWayPlatforms[platformId]);
+
+            cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_PLAYER_COLLISION_TYPE, 
+                    NULL, platformPreSolve, NULL, NULL, NULL);
             break;
             }
     }
-
-    obj->_physicsEntities[idx].valid = 1;
-    obj->_nextEntityIdx++;
 }
 
 void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel)
