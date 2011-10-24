@@ -43,6 +43,7 @@ nxInt nxHumanGameView_init(nxGameView* obj)
 		return 1; 
 	} 
 
+
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE,        8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,      8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,       8);
@@ -59,6 +60,7 @@ nxInt nxHumanGameView_init(nxGameView* obj)
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,  1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,  2);
 
+
 	if( (screen = SDL_SetVideoMode( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, NX_SCREEN_BPP, SDL_OPENGL )) == 0 ) 
 	{ 
 		return 1; 
@@ -69,7 +71,12 @@ nxInt nxHumanGameView_init(nxGameView* obj)
 		return 1; 
 	} 
 
-	SDL_WM_SetCaption( "OpenGL Test", NULL ); 
+    if( nxHumanGameView_initAudio(obj) )
+    {
+        return 1;
+    }
+
+	SDL_WM_SetCaption( "pmuj", NULL ); 
 
 	return 0;
 }
@@ -204,10 +211,25 @@ nxInt init_GL()
 	return 1;
 }
 
+nxInt nxHumanGameView_initAudio(nxGameView* obj)
+{
+    ALuint soundBuffer;
+
+    alutInit (0, NX_NULL);
+
+    //soundBuffer = alutCreateBufferHelloWorld (); 
+    soundBuffer = alutCreateBufferFromFile ("../media/audio/jump.wav");
+    alGenSources (1, &obj->soundSources[0]);
+    alSourcei (obj->soundSources[0], AL_BUFFER, soundBuffer);
+
+	return 0;
+}
+
 void nxHumanGameView_shutdown(nxGameView* obj)
 {
 	nxFree(obj);
     nxTextureLoader_shutdown();
+    alutExit (); 
 }
 
 void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
@@ -233,7 +255,7 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 			case NX_ENT_PLAYER:
 				playerId = castData->entity.id;
 				sceneNodes[id].type = NX_SN_PLAYER;
-                sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/man_still.png");
+                sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/man_still.png");
                 sceneNodes[id].hasTex = 1;
 				break;
 			case NX_ENT_PLATFORM:
@@ -254,6 +276,11 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 		sceneNodes[castData->entity.id].rot = castData->entity.rot;
 		sceneNodes[castData->entity.id].reversed = castData->entity.reversed;
 	}
+    else if(evt.type == NX_EVT_STARTMOVEUP) 
+    {
+        //Play sound now.
+        alSourcePlay (obj->soundSources[0]);
+    }
 }
 
 void nxHumanGameView_toggleFullscreen()
@@ -266,7 +293,7 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 	//float x = 10.0f;
 	//float y = 10.0f;
 	nxFloat x = node->pos.x;
-	nxFloat y = NX_SCREEN_HEIGHT - node->pos.y;
+	nxFloat y = NX_SCREEN_HEIGHT - node->pos.y; //Conversion between physics and graphics coords
 	nxFloat rot = node->rot;
 
     if(node->hasTex)

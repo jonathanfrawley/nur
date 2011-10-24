@@ -31,9 +31,9 @@ void nxPhysics_shutdown(nxPhysics* obj)
 nxInt nxPhysics_init(nxPhysics* obj)
 {
 	//Space init
-	cpVect gravity = cpv(0, -200.0f);
+	cpVect gravity = cpv(0, -400.0f);
 	obj->_space = cpSpaceNew();
-    cpSpaceSetIterations(obj->_space, 10);
+    cpSpaceSetIterations(obj->_space, 20);
 	cpSpaceSetGravity(obj->_space, gravity);
     obj->_space->enableContactGraph = cpTrue;
 
@@ -139,7 +139,7 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
     {
         case NX_ENT_PLAYER: 
             {
-            int id = obj->_nextEntityId++;
+            nxUInt id = obj->_nextEntityId++;
             obj->_physicsEntities[id].entityId = id;
             obj->_physicsEntities[id].valid = 1;
 
@@ -166,7 +166,6 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
         case NX_ENT_PLATFORM:
             {
             nxUInt platformId = obj->_currentPlatformId++;
-            printf("%f, %f, %f, %f \n", entity->pos.x,entity->pos.y, NX_SCREEN_HEIGHT-entity->height, entity->width);
             // Add our one way segment
             cpShape* shape = cpSpaceAddShape(obj->_space, 
                     cpSegmentShapeNew(obj->_space->staticBody, cpv(entity->pos.x,entity->pos.y), cpv(entity->pos.x+entity->width, entity->pos.y+entity->height), 10.0f));

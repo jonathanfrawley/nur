@@ -11,6 +11,9 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_opengl.h"
 
+#include <stdlib.h>
+#include <AL/alut.h>
+
 #define NX_MAX_SCENENODES 1024
 
 nxGameView* nxHumanGameView_new();
@@ -20,6 +23,8 @@ void nxHumanGameView_draw(nxGameView* obj);
 void nxHumanGameView_shutdown(nxGameView* obj);
 
 nxInt init_GL();
+
+nxInt nxHumanGameView_initAudio(nxGameView* obj);
 
 void nxHumanGameView_handleEvent(nxEvent evt, void* vobj);
 
