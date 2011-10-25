@@ -12,6 +12,8 @@
 
 #define NX_PLAYER_MASS 1.0f
 
+#define NX_GRAVITY 2000.0f
+
 #define NX_PLATFORM_COLLISION_TYPE 1
 #define NX_PLAYER_COLLISION_TYPE 2
 
@@ -23,10 +25,10 @@
 #define NX_PLAYER_VELOCITY 500.0
 
 #define NX_PLAYER_GROUND_ACCEL_TIME 0.1
-#define NX_PLAYER_GROUND_ACCEL (PLAYER_VELOCITY/PLAYER_GROUND_ACCEL_TIME)
+#define NX_PLAYER_GROUND_ACCEL (NX_PLAYER_VELOCITY/NX_PLAYER_GROUND_ACCEL_TIME)
 
 #define NX_PLAYER_AIR_ACCEL_TIME 0.25
-#define NX_PLAYER_AIR_ACCEL (PLAYER_VELOCITY/PLAYER_AIR_ACCEL_TIME)
+#define NX_PLAYER_AIR_ACCEL (NX_PLAYER_VELOCITY/NX_PLAYER_AIR_ACCEL_TIME)
 
 typedef struct nxGameLogic nxGameLogic;
 typedef struct nxEntity nxEntity;
@@ -40,6 +42,7 @@ typedef struct nxPhysicsEntity
     nxUInt valid;
 	cpShape* shape;
 	cpBody* body;
+    nxEntity* entity;
 } nxPhysicsEntity;
 
 typedef struct nxOneWayPlatform 
@@ -79,7 +82,7 @@ void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel);
 void nxPhysics_addLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel);
 void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res);
 
-//void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt);
+void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt);
 cpBool platformPreSolve(cpArbiter *arb, cpSpace *space, void *ignore);
 
 #endif   // NXPHYSICS_H

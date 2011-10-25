@@ -31,7 +31,8 @@ void nxPhysics_shutdown(nxPhysics* obj)
 nxInt nxPhysics_init(nxPhysics* obj)
 {
 	//Space init
-	cpVect gravity = cpv(0, -400.0f);
+	//cpVect gravity = cpv(0, -400.0f);
+	cpVect gravity = cpv(0, -NX_GRAVITY);
 	obj->_space = cpSpaceNew();
     cpSpaceSetIterations(obj->_space, 20);
 	cpSpaceSetGravity(obj->_space, gravity);
@@ -149,9 +150,9 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
     //        cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_PLAYER_MASS, moment));
             cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_PLAYER_MASS, NX_INFINITY));
             cpBodySetPos(body, cpv(NX_SCREEN_WIDTH/2, NX_SCREEN_HEIGHT/2));
-            cpBodySetAngle(body, 0.0f);
-            cpBodySetTorque(body, 0.0f);
-//            body->velocity_func = playerUpdateVelocity;
+            //cpBodySetAngle(body, 0.0f);
+            //cpBodySetTorque(body, 0.0f);
+            body->velocity_func = playerUpdateVelocity;
 
             // Now we create the collision shape for the ball.
             // You can create multiple collision shapes that point to the same body.
@@ -161,6 +162,10 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             cpShapeSetFriction(shape, 0.7f);
             obj->_physicsEntities[id].shape = shape;
             obj->_physicsEntities[id].body = body;
+
+            //Back pointer to nxPhysicsEntity struct, to be used in vel func
+            cpBodySetUserData(body, (const cpDataPointer)&(obj->_physicsEntities[id]));
+
             break;
             }
         case NX_ENT_PLATFORM:
@@ -209,23 +214,38 @@ void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res)
     nxVector2_fromCpVect(&vel, res);
 }
 
-/*
 //--------------------------------------------------------------------------------------------
 //Non ADT functions below
 //--------------------------------------------------------------------------------------------
+
+static void SelectPlayerGroundNormal(cpBody *body, cpArbiter *arb, cpVect *groundNormal)
+{
+    cpVect n = cpvneg(cpArbiterGetNormal(arb, 0));
+        
+    if(n.y > groundNormal->y)
+    {
+        (*groundNormal) = n;
+    }   
+}
+
 //HERE
 void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
 {
-    nxEntity *entity = (nxEntity *)cpBodyGetUserData(body);
-//	int jumpState = (ChipmunkDemoKeyboard.y > 0.0f);
-	int jumpState = entity->jumping;
+    nxPhysicsEntity *physicsEntity = (nxPhysicsEntity *)cpBodyGetUserData(body);
+    nxEntity *entity = physicsEntity->entity;
+    //	int jumpState = (ChipmunkDemoKeyboard.y > 0.0f);
+	int jumpState = (entity->yKeys > 0.0f);
 	
 	// Grab the grounding normal from last frame
 	cpVect groundNormal = cpvzero;
-	cpBodyEachArbiter(playerBody, (cpBodyArbiterIteratorFunc)SelectPlayerGroundNormal, &groundNormal);
-	
-	grounded = (groundNormal.y > 0.0);
-	if(groundNormal.y < 0.0f) remainingBoost = 0.0f;
+	cpBodyEachArbiter(body, (cpBodyArbiterIteratorFunc)SelectPlayerGroundNormal, &groundNormal);
+
+	nxFloat remainingBoost = 0.0f;
+	nxUInt grounded = (groundNormal.y > 0.0);
+	if(groundNormal.y < 0.0f) 
+    {
+        remainingBoost = 0.0f;
+    }
 	
 	// Do a normal-ish update
 	cpBool boost = (jumpState && remainingBoost > 0.0f);
@@ -233,22 +253,23 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
 	cpBodyUpdateVelocity(body, g, damping, dt);
 	
 	// Target horizontal speed for air/ground control
-	cpFloat target_vx = PLAYER_VELOCITY*ChipmunkDemoKeyboard.x;
+	cpFloat target_vx = NX_PLAYER_VELOCITY*entity->xKeys;
 	
 	// Update the surface velocity and friction
 	cpVect surface_v = cpv(target_vx, 0.0);
-	playerShape->surface_v = surface_v;
-	playerShape->u = (grounded ? PLAYER_GROUND_ACCEL/GRAVITY : 0.0);
+	physicsEntity->shape->surface_v = surface_v;
+	physicsEntity->shape->u = (grounded ? NX_PLAYER_GROUND_ACCEL/NX_GRAVITY : 0.0);
 	
 	// Apply air control if not grounded
-	if(!grounded){
+	if(!grounded)
+    {
 		// Smoothly accelerate the velocity
-		playerBody->v.x = cpflerpconst(playerBody->v.x, target_vx, PLAYER_AIR_ACCEL*dt);
+		body->v.x = cpflerpconst(body->v.x, target_vx, NX_PLAYER_AIR_ACCEL*dt);
 	}
 	
-	body->v.y = cpfclamp(body->v.y, -FALL_VELOCITY, INFINITY);
+	body->v.y = cpfclamp(body->v.y, -NX_FALL_VELOCITY, NX_INFINITY);
 }
-*/
+
 cpBool platformPreSolve(cpArbiter *arb, cpSpace *space, void *ignore)
 {
     CP_ARBITER_GET_SHAPES(arb, a, b); 
