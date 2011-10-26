@@ -141,7 +141,7 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
         case NX_ENT_PLAYER: 
             {
             nxUInt id = obj->_nextEntityId++;
-            obj->_physicsEntities[id].entityId = id;
+            obj->_physicsEntities[id].entityId = entity->id;
             obj->_physicsEntities[id].valid = 1;
 
             cpFloat moment = cpMomentForBox(NX_PLAYER_MASS, NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT);
@@ -160,8 +160,10 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             cpShape* shape = cpSpaceAddShape(obj->_space, cpBoxShapeNew(body, NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT));
             cpShapeSetCollisionType(shape, NX_PLAYER_COLLISION_TYPE);
             cpShapeSetFriction(shape, 0.7f);
+
             obj->_physicsEntities[id].shape = shape;
             obj->_physicsEntities[id].body = body;
+            obj->_physicsEntities[id].entity = entity;
 
             //Back pointer to nxPhysicsEntity struct, to be used in vel func
             cpBodySetUserData(body, (const cpDataPointer)&(obj->_physicsEntities[id]));

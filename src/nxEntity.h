@@ -23,8 +23,8 @@ typedef struct nxEntity
     nxFloat height;
 
     //Show keyboard movement on x and y axes.
-    nxInt xKeys;
-    nxInt yKeys;
+    nxFloat xKeys;
+    nxFloat yKeys;
 } nxEntity;
 
 nxEntity* nxEntity_new();

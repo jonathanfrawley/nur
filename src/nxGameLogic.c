@@ -148,8 +148,8 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	nxGameLogic* obj = (nxGameLogic*)vobj;
 
 	//TODO : #define these somewhere
-	nxFloat xSpeed = 150.0f;
-	nxFloat ySpeed = 300.0f;
+	nxFloat xSpeed = 250.0f;
+	nxFloat ySpeed = 600.0f;
 
 	if(evt.type == NX_EVT_ENDGAME)
 	{
@@ -162,6 +162,8 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxVector2 vel = { currentVel.x, ySpeed };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
         //obj->currentPlayerVel = vel;
+        
+        obj->entities[obj->playerId].yKeys = 1.0f;
 	}
 	else if(evt.type == NX_EVT_STARTMOVEDOWN)
 	{
@@ -177,10 +179,14 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxVector2 vel = { -xSpeed, currentVel.y };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
 
+        obj->entities[obj->playerId].xKeys = -1.0f;
+
+        //Reverse if we were still or moving right
         if(currentVel.x >= 0.0f)
         {
             obj->entities[obj->playerId].reversed = 0;
         }
+
 //        obj->currentPlayerVel = vel;
 	}
 	else if(evt.type == NX_EVT_STARTMOVERIGHT)
@@ -189,6 +195,8 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
         nxVector2 vel = { xSpeed, currentVel.y };
         nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+
+        obj->entities[obj->playerId].xKeys = 1.0f;
 
         if(currentVel.x <= 0.0f)
         {
@@ -205,25 +213,32 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	}
 	else if(evt.type == NX_EVT_ENDMOVEDOWN)
 	{
+        obj->entities[obj->playerId].yKeys = 0.0f;
 	}
 	else if(evt.type == NX_EVT_ENDMOVELEFT)
 	{
         nxVector2 currentVel;
         nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
-        if(currentVel.x < 0)
+    //    if(currentVel.x < 0)
+        if(obj->entities[obj->playerId].xKeys < 0)
         {
             currentVel.x = 0;
             nxPhysics_setLinearVel(obj->physics, obj->playerId, currentVel);
+
+            obj->entities[obj->playerId].xKeys = 0.0f;
         }
 	}
 	else if(evt.type == NX_EVT_ENDMOVERIGHT)
 	{
         nxVector2 currentVel;
         nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
-        if(currentVel.x > 0)
+//        if(currentVel.x > 0)
+        if(obj->entities[obj->playerId].xKeys > 0)
         {
             currentVel.x = 0;
             nxPhysics_setLinearVel(obj->physics, obj->playerId, currentVel);
+
+            obj->entities[obj->playerId].xKeys = 0.0f;
         }
 	}
 }
