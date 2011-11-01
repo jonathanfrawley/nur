@@ -282,8 +282,8 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
                 sceneNodes[id].animTexIds[0] = nxTextureLoader_loadImageFromFilename("../media/tex/man_walking_0.png");
                 sceneNodes[id].animTexIds[1] = nxTextureLoader_loadImageFromFilename("../media/tex/man_walking_1.png");
                 sceneNodes[id].hasTex = 1;
-                sceneNodes[id].maxAnimTime = 400;
                 sceneNodes[id].animFrameTime = 200;
+                sceneNodes[id].maxAnimTime = 400;
 				break;
 			case NX_ENT_PLATFORM:
 				sceneNodes[id].type = NX_SN_PLATFORM;
