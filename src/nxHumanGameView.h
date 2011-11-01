@@ -18,7 +18,7 @@
 
 nxGameView* nxHumanGameView_new();
 nxInt nxHumanGameView_init(nxGameView* obj);
-void nxHumanGameView_update(nxGameView* obj);
+void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds);
 void nxHumanGameView_draw(nxGameView* obj);
 void nxHumanGameView_shutdown(nxGameView* obj);
 

@@ -2,6 +2,7 @@
 #define  NXSCENENODE_H
 
 #include <nxCore/nxTypes.h>
+#include <nxCore/nxConstants.h>
 #include <nxAlgebra/nxVector2.h>
 
 #define NX_SN_PLAYER 0
@@ -15,7 +16,15 @@ typedef struct nxSceneNode
 	nxUInt type;
 	nxVector2 pos;
 	nxFloat rot;
+
+	nxUInt moving;
+	nxUInt animTime;
+	nxUInt animFrameTime;
+	nxUInt maxAnimTime;
+
 	nxUInt texId;
+	nxUInt animTexIds[NX_MAX_ANIMTEXS];
+
 	nxUInt reversed;
 	nxFloat width;
 	nxFloat height;

@@ -10,7 +10,7 @@
 typedef struct nxGameView
 {
 	nxInt (*init)(struct nxGameView* obj);
-	void (*update)(struct nxGameView* obj);
+	void (*update)(struct nxGameView* obj, nxUInt deltaMilliseconds);
 	void (*draw)(struct nxGameView* obj);
 	void (*shutdown)(struct nxGameView* obj);
 

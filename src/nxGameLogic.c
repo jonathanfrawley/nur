@@ -1,7 +1,6 @@
 #include "nxGameLogic.h"
 
 #include <chipmunk.h> //XXX:prob shouldn't be here
-#include <nxCore/nxConstants.h> //XXX:prob shouldn't be here
 
 static int finished = 0;
 
@@ -148,8 +147,9 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	nxGameLogic* obj = (nxGameLogic*)vobj;
 
 	//TODO : #define these somewhere
-	nxFloat xSpeed = 250.0f;
-	nxFloat ySpeed = 600.0f;
+	nxFloat xSpeed = 150.0f;
+	nxFloat ySpeed = 500.0f;
+	nxFloat yDoubleJumpDelta = 100.0f;
 
 	if(evt.type == NX_EVT_ENDGAME)
 	{
@@ -160,7 +160,17 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxVector2 currentVel;
         nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
         nxVector2 vel = { currentVel.x, ySpeed };
-        nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+        if(currentVel.y > (0.0f + NX_FLOAT_DELTA) || 
+            currentVel.y < (0.0f - NX_FLOAT_DELTA) )
+        {
+            vel.y += yDoubleJumpDelta;
+            //Doing a double jump
+            nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+        }
+        else
+        {
+            nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+        }
         //obj->currentPlayerVel = vel;
         
         obj->entities[obj->playerId].yKeys = 1.0f;
@@ -187,6 +197,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
             obj->entities[obj->playerId].reversed = 0;
         }
 
+        obj->entities[obj->playerId].moving = 1;
 //        obj->currentPlayerVel = vel;
 	}
 	else if(evt.type == NX_EVT_STARTMOVERIGHT)
@@ -203,6 +214,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
             obj->entities[obj->playerId].reversed = 1;
         }
 //        obj->currentPlayerVel = vel;
+        obj->entities[obj->playerId].moving = 1;
 	}
 	else if(evt.type == NX_EVT_ENDMOVEUP)
 	{
@@ -227,6 +239,8 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 
             obj->entities[obj->playerId].xKeys = 0.0f;
         }
+
+        obj->entities[obj->playerId].moving = 0;
 	}
 	else if(evt.type == NX_EVT_ENDMOVERIGHT)
 	{
@@ -240,6 +254,8 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 
             obj->entities[obj->playerId].xKeys = 0.0f;
         }
+
+        obj->entities[obj->playerId].moving = 0;
 	}
 }
 

@@ -81,7 +81,7 @@ nxInt nxHumanGameView_init(nxGameView* obj)
 	return 0;
 }
 
-void nxHumanGameView_update(nxGameView* obj)
+void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds)
 {
 	SDL_Event event;
 	while( SDL_PollEvent( &event ) ) 
@@ -154,6 +154,28 @@ void nxHumanGameView_update(nxGameView* obj)
 			}
 		}
 	}
+
+    //Now update the times of nodes
+	for(int i = 0 ; i < NX_MAX_SCENENODES ; i++)
+	{
+		if(sceneNodes[i].valid)
+        {
+            if(sceneNodes[i].moving)
+            {
+                sceneNodes[i].animTime += deltaMilliseconds;
+                printf("ime is : %d \n", sceneNodes[i].animTime);
+
+                if(sceneNodes[i].animTime > sceneNodes[i].maxAnimTime)
+                {
+                    sceneNodes[i].animTime = 0;
+                }
+            }
+            else
+            {
+                sceneNodes[i].animTime = 0;
+            }
+        }
+    }
 }
 
 void nxHumanGameView_draw(nxGameView* obj)
@@ -249,6 +271,7 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
         sceneNodes[id].width = castData->entity.width;
         sceneNodes[id].height = castData->entity.height;
         sceneNodes[id].hasTex = 0; //Default to having no tex
+        sceneNodes[id].animTime = 0;
 
 		switch(castData->entity.type)
 		{
@@ -256,7 +279,11 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 				playerId = castData->entity.id;
 				sceneNodes[id].type = NX_SN_PLAYER;
                 sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/man_still.png");
+                sceneNodes[id].animTexIds[0] = nxTextureLoader_loadImageFromFilename("../media/tex/man_walking_0.png");
+                sceneNodes[id].animTexIds[1] = nxTextureLoader_loadImageFromFilename("../media/tex/man_walking_1.png");
                 sceneNodes[id].hasTex = 1;
+                sceneNodes[id].maxAnimTime = 400;
+                sceneNodes[id].animFrameTime = 200;
 				break;
 			case NX_ENT_PLATFORM:
 				sceneNodes[id].type = NX_SN_PLATFORM;
@@ -275,11 +302,12 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 		sceneNodes[castData->entity.id].pos = castData->entity.pos;
 		sceneNodes[castData->entity.id].rot = castData->entity.rot;
 		sceneNodes[castData->entity.id].reversed = castData->entity.reversed;
+		sceneNodes[castData->entity.id].moving = castData->entity.moving;
 	}
     else if(evt.type == NX_EVT_STARTMOVEUP) 
     {
         //Play sound now.
-        alSourcePlay (obj->soundSources[0]);
+    //    alSourcePlay (obj->soundSources[0]);
     }
 }
 
@@ -299,8 +327,23 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
     if(node->hasTex)
     {
         glEnable( GL_TEXTURE_2D );
-        // load the texture
-        glBindTexture(GL_TEXTURE_2D, node->texId);
+        if(node->moving)
+        {
+            nxUInt frame = node->animTime / node->animFrameTime;
+
+            /*
+            printf("node->animTime is : %d", node->animTime);
+            printf("node->animFrameTime is : %d", node->animFrameTime);
+            printf("frame is : %d", frame);
+            */
+            //TODO:Move between tex ids based on time.
+            glBindTexture(GL_TEXTURE_2D, node->animTexIds[frame]);
+        }
+        else
+        {
+            // load the texture
+            glBindTexture(GL_TEXTURE_2D, node->texId);
+        }
     }
     else
     {

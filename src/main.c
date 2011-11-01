@@ -21,19 +21,23 @@ int main(void)
 
 	nxInt finished = 0;
 	nxUInt startTime = SDL_GetTicks();
+	nxUInt lastFrameTime = 0;
 	while( ! finished) {
 		nxEventManager_handleEvents();
 		finished = nxGameLogic_update(gameLogic);
 
-		gameView->update(gameView);
+		gameView->update(gameView, lastFrameTime);
 		gameView->draw(gameView);
 
         nxUInt now = SDL_GetTicks();
         nxUInt timeDelta = now - startTime;
+
 		//limit frame rate
 		if( timeDelta < FRAME_TIME )
 		{ 
 			SDL_Delay( FRAME_TIME - timeDelta ); 
+
+            lastFrameTime = SDL_GetTicks() - startTime;
             startTime = SDL_GetTicks();
 		}
 	}

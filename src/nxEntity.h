@@ -15,12 +15,15 @@ typedef struct nxEntity
 	nxVector2 pos;
 	nxFloat rot;
     nxUInt reversed;
+    nxUInt moving;
 
     nxInt xVel;
     nxInt yVel;
 
     nxFloat width;
     nxFloat height;
+
+    nxUInt nJumps;
 
     //Show keyboard movement on x and y axes.
     nxFloat xKeys;
