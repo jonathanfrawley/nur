@@ -135,9 +135,34 @@ nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj,
 
 	nxPhysics_addEntity(obj->physics, entity);
 
-	nxCreateEntityEventData createEvData = { obj->entities[id], 1 };
+	nxCreateEntityEventData createEvData = { obj->entities[id], 0 };
 	nxEvent createEv = {NX_EVT_CREATEENT, &createEvData};
 	nxEventManager_triggerEvent(createEv);
+
+	return 0;
+}
+
+nxInt nxGameLogic_addBulletEntity(nxGameLogic* obj, 
+        nxVector2 pos, 
+        nxVector2 vel)
+{
+	nxUInt id = obj->currentEntityId++;
+    nxEntity* entity = &(obj->entities[id]);
+	entity->type = NX_ENT_BULLET;
+	entity->id = id;
+	entity->valid = 1;
+	entity->pos.x = pos.x;
+	entity->pos.y = pos.y;
+	entity->width = NX_BULLET_HALFWIDTH * 2;
+	entity->height = NX_BULLET_HALFHEIGHT * 2;
+	entity->rot = 0.0f;
+
+	nxPhysics_addEntity(obj->physics, entity);
+	nxPhysics_applyImpulseToEntity(obj->physics, entity->id, &vel);
+
+	nxCreateEntityEventData createEvData = { obj->entities[id], 0 };
+	nxEvent createEv = { NX_EVT_CREATEENT, &createEvData };
+	nxEventManager_triggerEvent( createEv );
 
 	return 0;
 }
@@ -150,11 +175,27 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	nxFloat xSpeed = 150.0f;
 	nxFloat ySpeed = 500.0f;
 	nxFloat yDoubleJumpDelta = 100.0f;
+	nxFloat bulletSpeed = 1.0f;
 
 	if(evt.type == NX_EVT_ENDGAME)
 	{
 		finished = 1;
 	}
+    else if(evt.type == NX_EVT_FIRE)
+    {
+//        nxUInt entityId = *((nxUInt*)evt.data);
+        nxFireEventData* evtData = (nxFireEventData*)evt.data;
+        nxUInt entityId = evtData->entityId;
+        nxVector2 vel = { 1.0f, 0.0f };
+        if(obj->entities[entityId].reversed)
+        {
+            vel.x = -1.0f;
+        }
+        nxInt res = nxGameLogic_addBulletEntity(obj,
+                obj->entities[entityId].pos, 
+                vel);
+        NX_ASSERT((res==0) && "Can't add bullet entity.");
+    }
 	else if(evt.type == NX_EVT_STARTMOVEUP)
 	{
         nxVector2 currentVel;

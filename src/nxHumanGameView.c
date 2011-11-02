@@ -101,6 +101,12 @@ void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds)
 				nxEvent endGameEvent = {NX_EVT_ENDGAME, (void*)NX_NULL};
 				nxEventManager_triggerEvent(endGameEvent);
 			}
+            else if (event.key.keysym.sym == SDLK_SPACE)
+			{
+                nxFireEventData evtData = {playerId};
+				nxEvent ev = {NX_EVT_FIRE, (void*)&evtData};
+				nxEventManager_triggerEvent(ev);
+			}
 			else if (event.key.keysym.sym == SDLK_f)
 			{
 				if (event.key.keysym.mod & KMOD_CTRL)
@@ -289,6 +295,11 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 				sceneNodes[id].type = NX_SN_PLATFORM;
                 sceneNodes[id].height = castData->entity.height+1;
 				break;
+			case NX_ENT_BULLET:
+				sceneNodes[id].type = NX_SN_BULLET;
+                sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/bullet_0.png");
+                sceneNodes[id].hasTex = 1;
+				break;
 			default:
 				break;
 		}
@@ -390,6 +401,25 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 			glTranslatef( x+halfWidth, y+halfHeight, 0 );
 			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
             glColor4f( 1.0f, 0.41, 0.7, 1.0 );
+            glBegin( GL_QUADS ); 
+                glTexCoord2f( 0.0f, 0.0f ); 
+                glVertex3f( -halfWidth, -halfHeight, 0 );
+                glTexCoord2f( 0.0f, 1.0f ); 
+                glVertex3f( -halfWidth, halfHeight, 0 ); 				
+                glTexCoord2f( 1.0f, 1.0f ); 
+                glVertex3f( halfWidth, halfHeight, 0 ); 
+                glTexCoord2f( 1.0f, 0.0f );  
+                glVertex3f( halfWidth, -halfHeight, 0 ); 
+            glEnd();
+			break;
+            }
+		case(NX_SN_BULLET):
+            {
+            nxFloat halfWidth = node->width * 0.5f;
+            nxFloat halfHeight = node->height * 0.5f;
+			glTranslatef( x+halfWidth, y+halfHeight, 0 );
+			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
+            glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
             glBegin( GL_QUADS ); 
                 glTexCoord2f( 0.0f, 0.0f ); 
                 glVertex3f( -halfWidth, -halfHeight, 0 );

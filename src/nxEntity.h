@@ -6,6 +6,7 @@
 
 #define NX_ENT_PLAYER 0
 #define NX_ENT_PLATFORM 1
+#define NX_ENT_BULLET 2
 
 typedef struct nxEntity
 {

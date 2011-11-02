@@ -11,6 +11,7 @@
 #define NX_INFINITY __builtin_inf()
 
 #define NX_PLAYER_MASS 1.0f
+#define NX_BULLET_MASS 0.0f
 
 #define NX_GRAVITY 2000.0f
 
@@ -81,6 +82,7 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity);
 void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel);
 void nxPhysics_addLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel);
 void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res);
+void nxPhysics_applyImpulseToEntity(nxPhysics* obj, nxUInt entityId, const nxVector2* vel);
 
 void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt);
 cpBool platformPreSolve(cpArbiter *arb, cpSpace *space, void *ignore);

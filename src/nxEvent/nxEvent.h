@@ -18,6 +18,8 @@
 
 #define NX_EVT_UPDATEENT 10
 
+#define NX_EVT_FIRE 11
+
 typedef struct nxEvent 
 {
 	nxUInt type;

@@ -186,7 +186,44 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
 
             cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_PLAYER_COLLISION_TYPE, 
                     NULL, platformPreSolve, NULL, NULL, NULL);
+
+            obj->_nextEntityId++; //Add it as an entity even though it isn't used, this is so there is a 1-1 mapping between physicsEntities and entities.
             break;
+            }
+        case NX_ENT_BULLET:
+            {
+            nxUInt id = obj->_nextEntityId++;
+            obj->_physicsEntities[id].entityId = entity->id;
+            obj->_physicsEntities[id].valid = 1;
+
+            cpFloat moment = cpMomentForBox(NX_BULLET_MASS, entity->width * 0.5f, entity->height*0.5f);
+            // The cpSpaceAdd*() functions return the thing that you are adding.
+            // It's convenient to create and add an object in one line.
+    //        cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_PLAYER_MASS, moment));
+            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_PLAYER_MASS, NX_BULLET_MASS));
+            cpBodySetPos(body, cpv(NX_SCREEN_WIDTH/2, NX_SCREEN_HEIGHT/2));
+
+            // Now we create the collision shape for the ball.
+            // You can create multiple collision shapes that point to the same body.
+            // They will all be attached to the body and move around to follow it.
+            cpShape* shape = cpSpaceAddShape(obj->_space, cpBoxShapeNew(body, entity->width * 0.5f, entity->width * 0.5f));
+//            cpShapeSetCollisionType(shape, NX_BULLET_COLLISION_TYPE);
+            cpShapeSetFriction(shape, 0.7f);
+
+            obj->_physicsEntities[id].shape = shape;
+            obj->_physicsEntities[id].body = body;
+            obj->_physicsEntities[id].entity = entity;
+
+            //Back pointer to nxPhysicsEntity struct, to be used in vel func
+            cpBodySetUserData(body, (const cpDataPointer)&(obj->_physicsEntities[id]));
+
+
+
+            break;
+            }
+        default:
+            {
+                NX_ASSERT("Entity type not handled in physics.");
             }
     }
 }
@@ -214,6 +251,16 @@ void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res)
 {
     cpVect vel = cpBodyGetVel(obj->_physicsEntities[entityId].body);
     nxVector2_fromCpVect(&vel, res);
+}
+
+
+void nxPhysics_applyImpulseToEntity(nxPhysics* obj, nxUInt entityId, const nxVector2* vel)
+{
+    //Fire the bullet
+    cpVect j;
+    cpVect r;
+    nxVector2_toCpVect(vel, &r);
+    cpBodyApplyImpulse(obj->_physicsEntities[entityId].body, j, r);
 }
 
 //--------------------------------------------------------------------------------------------

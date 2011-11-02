@@ -19,4 +19,9 @@ typedef struct nxUpdateEntityEventData
 	nxEntity entity;
 } nxUpdateEntityEventData;
 
+typedef struct nxFireEventData
+{
+	nxUInt entityId;
+} nxFireEventData;
+
 #endif   // NXEVENTDATA_H
