@@ -10,6 +10,12 @@ nxPhysics* nxPhysics_new(nxGameLogic* gameLogic)
     res->_gameLogic = gameLogic;
     res->_nextEntityId = 0;
     res->_currentPlatformId = 0;
+
+    for(int i=0;i<NX_MAX_ENTITIES;i++)
+    {
+        res->_physicsEntities[i].valid = 0;
+    }
+
 	return res;
 }
 
@@ -200,24 +206,32 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             // The cpSpaceAdd*() functions return the thing that you are adding.
             // It's convenient to create and add an object in one line.
     //        cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_PLAYER_MASS, moment));
-            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_PLAYER_MASS, NX_BULLET_MASS));
-            cpBodySetPos(body, cpv(NX_SCREEN_WIDTH/2, NX_SCREEN_HEIGHT/2));
+//            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_BULLET_MASS, moment));
+            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_BULLET_MASS, NX_GRAVITY));
+            cpBodySetPos(body, cpv(entity->pos.x, entity->pos.y));
 
             // Now we create the collision shape for the ball.
             // You can create multiple collision shapes that point to the same body.
             // They will all be attached to the body and move around to follow it.
             cpShape* shape = cpSpaceAddShape(obj->_space, cpBoxShapeNew(body, entity->width * 0.5f, entity->width * 0.5f));
-//            cpShapeSetCollisionType(shape, NX_BULLET_COLLISION_TYPE);
-            cpShapeSetFriction(shape, 0.7f);
+            cpShapeSetCollisionType(shape, NX_BULLET_COLLISION_TYPE);
+            //cpShapeSetFriction(shape, 0.1f);
 
             obj->_physicsEntities[id].shape = shape;
             obj->_physicsEntities[id].body = body;
             obj->_physicsEntities[id].entity = entity;
 
+            cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_BULLET_COLLISION_TYPE, 
+                    NULL, bulletPreSolve, NULL, NULL, NULL);
+
+            cpSpaceAddCollisionHandler(obj->_space, NX_PLAYER_COLLISION_TYPE, NX_BULLET_COLLISION_TYPE, 
+                    NULL, bulletPreSolve, NULL, NULL, NULL);
+
+            cpSpaceAddCollisionHandler(obj->_space, NX_BULLET_COLLISION_TYPE, NX_BULLET_COLLISION_TYPE, 
+                    NULL, bulletPreSolve, NULL, NULL, NULL);
+
             //Back pointer to nxPhysicsEntity struct, to be used in vel func
             cpBodySetUserData(body, (const cpDataPointer)&(obj->_physicsEntities[id]));
-
-
 
             break;
             }
@@ -257,9 +271,10 @@ void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res)
 void nxPhysics_applyImpulseToEntity(nxPhysics* obj, nxUInt entityId, const nxVector2* vel)
 {
     //Fire the bullet
-    cpVect j;
+    cpVect j; //wtf is this!?!?
     cpVect r;
-    nxVector2_toCpVect(vel, &r);
+    //nxVector2_toCpVect(vel, &r);
+    nxVector2_toCpVect(vel, &j);
     cpBodyApplyImpulse(obj->_physicsEntities[entityId].body, j, r);
 }
 
@@ -267,7 +282,7 @@ void nxPhysics_applyImpulseToEntity(nxPhysics* obj, nxUInt entityId, const nxVec
 //Non ADT functions below
 //--------------------------------------------------------------------------------------------
 
-static void SelectPlayerGroundNormal(cpBody *body, cpArbiter *arb, cpVect *groundNormal)
+static void selectPlayerGroundNormal(cpBody *body, cpArbiter *arb, cpVect *groundNormal)
 {
     cpVect n = cpvneg(cpArbiterGetNormal(arb, 0));
         
@@ -287,7 +302,7 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
 	
 	// Grab the grounding normal from last frame
 	cpVect groundNormal = cpvzero;
-	cpBodyEachArbiter(body, (cpBodyArbiterIteratorFunc)SelectPlayerGroundNormal, &groundNormal);
+	cpBodyEachArbiter(body, (cpBodyArbiterIteratorFunc)selectPlayerGroundNormal, &groundNormal);
 
 	nxFloat remainingBoost = 0.0f;
 	nxUInt grounded = (groundNormal.y > 0.0);
@@ -330,4 +345,12 @@ cpBool platformPreSolve(cpArbiter *arb, cpSpace *space, void *ignore)
     }   
     
     return cpTrue;
+}
+
+cpBool bulletPreSolve(cpArbiter *arb, cpSpace *space, void *ignore)
+{
+    CP_ARBITER_GET_SHAPES(arb, a, b); 
+     
+    cpArbiterIgnore(arb);
+    return cpFalse;
 }

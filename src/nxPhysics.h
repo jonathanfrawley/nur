@@ -11,12 +11,13 @@
 #define NX_INFINITY __builtin_inf()
 
 #define NX_PLAYER_MASS 1.0f
-#define NX_BULLET_MASS 0.0f
+#define NX_BULLET_MASS 1.0f
 
 #define NX_GRAVITY 2000.0f
 
 #define NX_PLATFORM_COLLISION_TYPE 1
 #define NX_PLAYER_COLLISION_TYPE 2
+#define NX_BULLET_COLLISION_TYPE 3
 
 //#define NX_PLAYER_MASS NX_INFINITY
 #define NX_JUMP_HEIGHT 2050.0
@@ -86,5 +87,6 @@ void nxPhysics_applyImpulseToEntity(nxPhysics* obj, nxUInt entityId, const nxVec
 
 void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt);
 cpBool platformPreSolve(cpArbiter *arb, cpSpace *space, void *ignore);
+cpBool bulletPreSolve(cpArbiter *arb, cpSpace *space, void *ignore);
 
 #endif   // NXPHYSICS_H

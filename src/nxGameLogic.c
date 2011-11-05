@@ -86,6 +86,9 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 
 			nxEvent evt = {NX_EVT_UPDATEENT, (void*)&evtData};
 
+            printf("obj->entities[%d].pos with id %d is <%f, %f> \n", i, obj->entities[i].id, obj->entities[i].pos.x, obj->entities[i].pos.y );
+//            NX_LOG(NX_LOG_DEBUG, "");
+
 			//Fire event
 			nxEventManager_triggerEvent(evt);
 		}
@@ -160,6 +163,7 @@ nxInt nxGameLogic_addBulletEntity(nxGameLogic* obj,
 
 	nxPhysics_addEntity(obj->physics, entity);
 	nxPhysics_applyImpulseToEntity(obj->physics, entity->id, &vel);
+    //nxPhysics_setLinearVel(obj->physics, entity->id, vel);
 
 	nxCreateEntityEventData createEvData = { obj->entities[id], 0 };
 	nxEvent createEv = { NX_EVT_CREATEENT, &createEvData };
@@ -176,7 +180,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	nxFloat xSpeed = 150.0f;
 	nxFloat ySpeed = 500.0f;
 	nxFloat yDoubleJumpDelta = 100.0f;
-	nxFloat bulletSpeed = 1.0f;
+	nxFloat bulletSpeed = 1000.0f;
 
 	if(evt.type == NX_EVT_ENDGAME)
 	{
@@ -187,10 +191,10 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 //        nxUInt entityId = *((nxUInt*)evt.data);
         nxFireEventData* evtData = (nxFireEventData*)evt.data;
         nxUInt entityId = evtData->entityId;
-        nxVector2 vel = { 1.0f, 0.0f };
+        nxVector2 vel = { bulletSpeed, 0.0f };
         if(obj->entities[entityId].reversed)
         {
-            vel.x = -1.0f;
+            vel.x = -bulletSpeed;
         }
         nxInt res = nxGameLogic_addBulletEntity(obj,
                 obj->entities[entityId].pos, 

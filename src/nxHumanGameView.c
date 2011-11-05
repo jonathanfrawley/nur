@@ -20,8 +20,6 @@ nxGameView* nxHumanGameView_new()
 	res->draw = nxHumanGameView_draw;
 	res->shutdown = nxHumanGameView_shutdown;
 
-
-
 	screen = NX_NULL;
 	for(int i = 0;i<NX_MAX_SCENENODES;i++)
 	{
@@ -269,6 +267,8 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
         int id = currentSceneNodeId++;
 		nxCreateEntityEventData* castData = (nxCreateEntityEventData*)evt.data;
 
+        printf("id is : %d, type is %d \n", id, castData->entity.type);
+
 		//Now create a scenenode object from the entity object
 		sceneNodes[id].id = castData->entity.id;
 		sceneNodes[id].valid = 1;
@@ -303,12 +303,12 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 			default:
 				break;
 		}
-
-		currentSceneNodeId++;
 	}
 	else if(evt.type == NX_EVT_UPDATEENT)
 	{
 		nxUpdateEntityEventData* castData = (nxUpdateEntityEventData*)evt.data;
+
+		printf("castData->entity.pos with id %d : <%f,%f>\n", castData->entity.id, castData->entity.pos.x, castData->entity.pos.y);
 
 		sceneNodes[castData->entity.id].pos = castData->entity.pos;
 		sceneNodes[castData->entity.id].rot = castData->entity.rot;
