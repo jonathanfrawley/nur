@@ -106,6 +106,7 @@ nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj)
 	entity->pos.x = (NX_SCREEN_WIDTH / 2);
 	entity->pos.y = (NX_SCREEN_HEIGHT / 2);
 	entity->rot = 0.0f;
+	entity->hasDoubleJumped = 0;
 	nxPhysics_addEntity(obj->physics, &(obj->entities[id]));
 
 	nxCreateEntityEventData createEvData = { obj->entities[id], 1 };
@@ -204,13 +205,18 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         if(currentVel.y > (0.0f + NX_FLOAT_DELTA) || 
             currentVel.y < (0.0f - NX_FLOAT_DELTA) )
         {
-            vel.y += yDoubleJumpDelta;
-            //Doing a double jump
-            nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+            if( ! obj->entities[obj->playerId].hasDoubleJumped)
+            {
+                vel.y += yDoubleJumpDelta;
+                //Doing a double jump
+                nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+                obj->entities[obj->playerId].hasDoubleJumped = 1;
+            }
         }
         else
         {
             nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+            obj->entities[obj->playerId].hasDoubleJumped = 0;
         }
         //obj->currentPlayerVel = vel;
         

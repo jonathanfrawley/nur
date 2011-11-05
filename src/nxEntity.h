@@ -24,7 +24,8 @@ typedef struct nxEntity
     nxFloat width;
     nxFloat height;
 
-    nxUInt nJumps;
+//    nxUInt nJumps;
+	nxUInt hasDoubleJumped;
 
     //Show keyboard movement on x and y axes.
     nxFloat xKeys;
