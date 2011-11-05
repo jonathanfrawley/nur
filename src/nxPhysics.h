@@ -11,7 +11,7 @@
 #define NX_INFINITY __builtin_inf()
 
 #define NX_PLAYER_MASS 1.0f
-#define NX_BULLET_MASS 1.0f
+#define NX_BULLET_MASS 0.5f
 
 #define NX_GRAVITY 2000.0f
 

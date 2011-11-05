@@ -169,7 +169,7 @@ void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds)
                 sceneNodes[i].animTime += deltaMilliseconds;
                 printf("ime is : %d \n", sceneNodes[i].animTime);
 
-                if(sceneNodes[i].animTime > sceneNodes[i].maxAnimTime)
+                if(sceneNodes[i].animTime >= sceneNodes[i].maxAnimTime)
                 {
                     sceneNodes[i].animTime = 0;
                 }
@@ -278,6 +278,7 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
         sceneNodes[id].height = castData->entity.height;
         sceneNodes[id].hasTex = 0; //Default to having no tex
         sceneNodes[id].animTime = 0;
+        sceneNodes[id].moving = 0;
 
 		switch(castData->entity.type)
 		{
@@ -340,6 +341,7 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
         glEnable( GL_TEXTURE_2D );
         if(node->moving)
         {
+            printf(" id %d node->animTime %d node->animFrameTime %d \n", node->id, node->animTime, node->animFrameTime);
             nxUInt frame = node->animTime / node->animFrameTime;
 
             /*

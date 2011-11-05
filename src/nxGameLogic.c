@@ -131,6 +131,7 @@ nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj,
 	entity->type = NX_ENT_PLATFORM;
 	entity->id = id;
 	entity->valid = 1;
+    entity->moving = 0;
 	entity->pos.x = x;
 	entity->pos.y = y;
 	entity->width = w;
@@ -155,6 +156,7 @@ nxInt nxGameLogic_addBulletEntity(nxGameLogic* obj,
 	entity->type = NX_ENT_BULLET;
 	entity->id = id;
 	entity->valid = 1;
+    entity->moving = 0;
 	entity->pos.x = pos.x;
 	entity->pos.y = pos.y;
 	entity->width = NX_BULLET_HALFWIDTH * 2;
@@ -191,10 +193,10 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 //        nxUInt entityId = *((nxUInt*)evt.data);
         nxFireEventData* evtData = (nxFireEventData*)evt.data;
         nxUInt entityId = evtData->entityId;
-        nxVector2 vel = { bulletSpeed, 0.0f };
+        nxVector2 vel = { -bulletSpeed, 0.0f };
         if(obj->entities[entityId].reversed)
         {
-            vel.x = -bulletSpeed;
+            vel.x = bulletSpeed;
         }
         nxInt res = nxGameLogic_addBulletEntity(obj,
                 obj->entities[entityId].pos, 

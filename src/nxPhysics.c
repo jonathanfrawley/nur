@@ -206,8 +206,8 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             // The cpSpaceAdd*() functions return the thing that you are adding.
             // It's convenient to create and add an object in one line.
     //        cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_PLAYER_MASS, moment));
-//            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_BULLET_MASS, moment));
-            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_BULLET_MASS, NX_GRAVITY));
+            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_BULLET_MASS, moment));
+//            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_BULLET_MASS, NX_GRAVITY));
             cpBodySetPos(body, cpv(entity->pos.x, entity->pos.y));
 
             // Now we create the collision shape for the ball.
