@@ -315,9 +315,10 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
 
     //BEGINPRE
     // If the jump key was just pressed this frame, jump!
-    if(jumpState && !lastJumpState && grounded){
+    if(jumpState && !lastJumpState && grounded)
+    {
         cpFloat jumpVel = nxMath_sqrt(2.0*NX_JUMP_HEIGHT*NX_GRAVITY);
-        body->v = cpvadd(body->v, cpv(0.0, jumpVel));
+        //body->v = cpvadd(body->v, cpv(0.0, jumpVel));
 
         remainingBoost = NX_JUMP_BOOST_HEIGHT/jumpVel;
     }
