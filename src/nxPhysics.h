@@ -8,6 +8,11 @@
 #include <nxCore/nxConstants.h>
 #include <nxCore/nxMM.h>
 #include <nxCore/nxMath.h>
+#include <nxCore/nxLog.h>
+#include <nxEntity.h>
+#include <nxEvent/nxEvent.h>
+#include <nxEvent/nxEventData.h>
+#include <nxEvent/nxEventManager.h>
 
 //#include <nxGameLogic.h>
 

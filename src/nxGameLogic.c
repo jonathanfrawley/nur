@@ -327,11 +327,22 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 
         obj->entities[obj->playerId].moving = 0;
 	}
+	else if(evt.type == NX_EVT_PHYSICSUPDATEENT)
+	{
+		nxPhysicsUpdateEntityEventData* castData = (nxPhysicsUpdateEntityEventData*)evt.data;
+        nxUInt entityId = castData->entityId;
+        obj->entities[entityId].pos.x = castData->pos.x; 
+        obj->entities[entityId].pos.y = castData->pos.y; 
+        obj->entities[entityId].rot = castData->rot; 
+    }
 }
 
+/*
+ * TODO: Remove, not needed anymore
 void nxGameLogic_updateEntityState(nxGameLogic* obj, nxUInt entityId, nxVector2 pos, nxFloat rot)
 {
    obj->entities[entityId].pos.x = pos.x; 
    obj->entities[entityId].pos.y = pos.y; 
    obj->entities[entityId].rot = rot; 
 }
+*/

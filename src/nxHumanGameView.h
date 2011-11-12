@@ -5,6 +5,11 @@
 #include <nxSceneNode.h>
 #include <nxEvent/nxEvent.h>
 #include <nxCore/nxConstants.h>
+#include <nxCore/nxMM.h>
+#include <nxCore/nxLog.h>
+#include <nxCore/nxMath.h>
+#include <nxEvent/nxEventManager.h>
+#include <nxEvent/nxEventData.h>
 
 #include <nxTextureLoader.h>
 

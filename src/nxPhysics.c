@@ -132,7 +132,10 @@ void nxPhysics_update(nxPhysics* obj, nxFloat timestep)
 //            cpVect vel = cpBodyGetVel(obj->_physicsEntities[i]);
             //Update entity
             nxVector2 vpos = {pos.x, pos.y};
-            nxGameLogic_updateEntityState(obj->_gameLogic, obj->_physicsEntities[i].entityId, vpos, rot);
+            //nxGameLogic_updateEntityState(obj->_gameLogic, obj->_physicsEntities[i].entityId, vpos, rot);
+            nxPhysicsUpdateEntityEventData evtData = { obj->_physicsEntities[i].entityId, vpos, rot };
+			nxEvent evt = {NX_EVT_PHYSICSUPDATEENT, (void*)&evtData};
+            nxEventManager_triggerEvent(evt);
         }
     }
 

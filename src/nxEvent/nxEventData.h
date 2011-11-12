@@ -2,6 +2,8 @@
 #define  NXEVENTDATA_H
 
 #include <nxEntity.h>
+#include <nxAlgebra/nxVector2.h>
+#include <nxCore/nxTypes.h>
 
 typedef struct nxCreateEntityEventData
 {
@@ -23,5 +25,12 @@ typedef struct nxFireEventData
 {
 	nxUInt entityId;
 } nxFireEventData;
+
+typedef struct nxPhysicsUpdateEntityEventData
+{
+	nxUInt entityId;
+    nxVector2 pos;
+    nxFloat rot;
+} nxPhysicsUpdateEntityEventData;
 
 #endif   // NXEVENTDATA_H

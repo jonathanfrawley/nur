@@ -1,10 +1,5 @@
 #include "nxHumanGameView.h"
 
-#include <nxCore/nxMM.h>
-#include <nxCore/nxLog.h>
-#include <nxCore/nxMath.h>
-#include <nxEvent/nxEventManager.h>
-#include <nxEvent/nxEventData.h>
 
 static SDL_Surface* screen;
 static nxSceneNode sceneNodes[NX_MAX_SCENENODES];

@@ -11,9 +11,13 @@
 #define nxMath_pow(x,y) powf(x,y)
 #define nxMath_abs(x) fabs(x)
 
-nxFloat nxMath_radToDeg(nxFloat x)
+#define nxMath_radToDeg(x) (x * (180.0f/NX_PI))
+
+/*
+inline nxFloat nxMath_radToDeg(nxFloat x)
 {
 	return x * (180.0f/NX_PI);
 }
+*/
 
 #endif   // NXMATH_H
