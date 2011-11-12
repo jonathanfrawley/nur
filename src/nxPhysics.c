@@ -1,7 +1,6 @@
 #include "nxPhysics.h"
 
 #include <stdio.h>
-#include <nxGameLogic.h>
 
 nxPhysics* nxPhysics_new(nxGameLogic* gameLogic)
 {
@@ -295,29 +294,52 @@ static void selectPlayerGroundNormal(cpBody *body, cpArbiter *arb, cpVect *groun
 //HERE
 void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
 {
+    static int lastJumpState = 0; //Init to 0
+	nxFloat remainingBoost;
     nxPhysicsEntity *physicsEntity = (nxPhysicsEntity *)cpBodyGetUserData(body);
     nxEntity *entity = physicsEntity->entity;
+	int jumpState = (entity->yKeys > (0.0f + NX_FLOAT_DELTA));
+
+    //
     //	int jumpState = (ChipmunkDemoKeyboard.y > 0.0f);
-	int jumpState = (entity->yKeys > 0.0f);
+	//int jumpState = (entity->yKeys > (0.0f + NX_FLOAT_DELTA));
 	
 	// Grab the grounding normal from last frame
 	cpVect groundNormal = cpvzero;
 	cpBodyEachArbiter(body, (cpBodyArbiterIteratorFunc)selectPlayerGroundNormal, &groundNormal);
 
-	nxFloat remainingBoost = 0.0f;
-	nxUInt grounded = (groundNormal.y > 0.0);
+	nxUInt grounded = (groundNormal.y > (0.0 + NX_FLOAT_DELTA));
+
+    //BEGINPRE
+    // If the jump key was just pressed this frame, jump!
+    if(jumpState && !lastJumpState && grounded){
+        cpFloat jumpVel = nxMath_sqrt(2.0*NX_JUMP_HEIGHT*NX_GRAVITY);
+        body->v = cpvadd(body->v, cpv(0.0, jumpVel));
+
+        remainingBoost = NX_JUMP_BOOST_HEIGHT/jumpVel;
+    }
+    //ENDPRE
+
 	if(groundNormal.y < 0.0f) 
     {
         remainingBoost = 0.0f;
     }
 	
+    //VERTICAL movement
 	// Do a normal-ish update
-	cpBool boost = (jumpState && remainingBoost > 0.0f);
-	cpVect g = (boost ? cpvzero : gravity);
+	cpBool boost = (jumpState && (remainingBoost > 0.0f));
+	//cpVect g = (boost ? cpvzero : gravity);
+    printf("boost is %d \n", boost);
+    cpVect jumpVel = {0.0f, NX_PLAYER_JUMP_SPEED};
+	cpVect g = (boost ? cpvzero : jumpVel);
 	cpBodyUpdateVelocity(body, g, damping, dt);
+
+	//body->v.y = cpfclamp(body->v.y, -NX_FALL_VELOCITY, NX_INFINITY);
+	body->v.y = cpfclamp(body->v.y, -NX_FALL_SPEED, NX_INFINITY);
 	
+    //HORIZONTAL movement
 	// Target horizontal speed for air/ground control
-	cpFloat target_vx = NX_PLAYER_VELOCITY*entity->xKeys;
+	cpFloat target_vx = NX_PLAYER_SPEED*entity->xKeys;
 	
 	// Update the surface velocity and friction
 	cpVect surface_v = cpv(target_vx, 0.0);
@@ -329,9 +351,15 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
     {
 		// Smoothly accelerate the velocity
 		body->v.x = cpflerpconst(body->v.x, target_vx, NX_PLAYER_AIR_ACCEL*dt);
+
+        if(!jumpState)
+        {
+            //XXX
+            //body->v.y = -NX_FALL_VELOCITY;
+        }
 	}
-	
-	body->v.y = cpfclamp(body->v.y, -NX_FALL_VELOCITY, NX_INFINITY);
+
+    lastJumpState = jumpState;
 }
 
 cpBool platformPreSolve(cpArbiter *arb, cpSpace *space, void *ignore)

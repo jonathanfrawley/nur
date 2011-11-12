@@ -21,7 +21,7 @@ nxGameView* nxHumanGameView_new()
 	res->shutdown = nxHumanGameView_shutdown;
 
 	screen = NX_NULL;
-	for(int i = 0;i<NX_MAX_SCENENODES;i++)
+	for(int i = 0; i<NX_MAX_SCENENODES ;i++)
 	{
 		sceneNodes[i].valid = 0;
 	}
@@ -41,7 +41,6 @@ nxInt nxHumanGameView_init(nxGameView* obj)
 		return 1; 
 	} 
 
-
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE,        8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,      8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,       8);
@@ -57,7 +56,6 @@ nxInt nxHumanGameView_init(nxGameView* obj)
      
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,  1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,  2);
-
 
 	if( (screen = SDL_SetVideoMode( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, NX_SCREEN_BPP, SDL_OPENGL )) == 0 ) 
 	{ 
