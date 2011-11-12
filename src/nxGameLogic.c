@@ -292,6 +292,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         //nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
         //currentVel.y = 0;
         //nxPhysics_setLinearVel(obj->physics, obj->playerId, currentVel);
+        obj->entities[obj->playerId].yKeys = 0.0f;
 	}
 	else if(evt.type == NX_EVT_ENDMOVEDOWN)
 	{

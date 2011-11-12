@@ -322,6 +322,13 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
 
         remainingBoost = NX_JUMP_BOOST_HEIGHT/jumpVel;
     }
+
+	if((!grounded) && (!jumpState))
+    {
+//        body->v.y = -NX_FALL_SPEED;
+
+        body->v = cpvadd(body->v, cpv(0.0, -NX_FALL_SPEED));
+    }
     //ENDPRE
 
 	if(groundNormal.y < 0.0f) 
@@ -332,14 +339,16 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
     //VERTICAL movement
 	// Do a normal-ish update
 	cpBool boost = (jumpState && (remainingBoost > 0.0f));
-	//cpVect g = (boost ? cpvzero : gravity);
-    printf("boost is %d \n", boost);
-    cpVect jumpVel = {0.0f, NX_PLAYER_JUMP_SPEED};
-	cpVect g = (boost ? cpvzero : jumpVel);
-	//cpBodyUpdateVelocity(body, g, damping, dt);
+    //printf("boost is %d \n", boost);
+    //cpVect jumpVel = {0.0f, NX_PLAYER_JUMP_SPEED};
+	//cpVect g = (boost ? cpvzero : jumpVel);
+
+    cpVect g = (boost ? cpvzero : gravity);
+	cpBodyUpdateVelocity(body, g, damping, dt);
 
 	//body->v.y = cpfclamp(body->v.y, -NX_FALL_VELOCITY, NX_INFINITY);
-	body->v.y = cpfclamp(body->v.y, -NX_FALL_SPEED, NX_INFINITY);
+	//body->v.y = cpfclamp(body->v.y, -NX_FALL_SPEED, NX_INFINITY);
+	body->v.y = cpfclamp(body->v.y, -NX_FALL_SPEED, NX_PLAYER_JUMP_SPEED);
 	
     //HORIZONTAL movement
 	// Target horizontal speed for air/ground control
