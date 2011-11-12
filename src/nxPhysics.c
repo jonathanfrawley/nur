@@ -318,7 +318,7 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
     if(jumpState && !lastJumpState && grounded)
     {
         cpFloat jumpVel = nxMath_sqrt(2.0*NX_JUMP_HEIGHT*NX_GRAVITY);
-        //body->v = cpvadd(body->v, cpv(0.0, jumpVel));
+        body->v = cpvadd(body->v, cpv(0.0, jumpVel));
 
         remainingBoost = NX_JUMP_BOOST_HEIGHT/jumpVel;
     }
@@ -336,7 +336,7 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
     printf("boost is %d \n", boost);
     cpVect jumpVel = {0.0f, NX_PLAYER_JUMP_SPEED};
 	cpVect g = (boost ? cpvzero : jumpVel);
-	cpBodyUpdateVelocity(body, g, damping, dt);
+	//cpBodyUpdateVelocity(body, g, damping, dt);
 
 	//body->v.y = cpfclamp(body->v.y, -NX_FALL_VELOCITY, NX_INFINITY);
 	body->v.y = cpfclamp(body->v.y, -NX_FALL_SPEED, NX_INFINITY);
