@@ -296,7 +296,10 @@ static void selectPlayerGroundNormal(cpBody *body, cpArbiter *arb, cpVect *groun
 
 void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
 {
-    static int lastJumpState = 0; //Init to 0
+    static int lastJumpState = 0;
+    static int nJumps = 0;
+    const int maxNJumps = 2;
+
 	nxFloat remainingBoost;
     nxPhysicsEntity *physicsEntity = (nxPhysicsEntity *)cpBodyGetUserData(body);
     nxEntity *entity = physicsEntity->entity;
@@ -310,19 +313,29 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
 	cpVect groundNormal = cpvzero;
 	cpBodyEachArbiter(body, (cpBodyArbiterIteratorFunc)selectPlayerGroundNormal, &groundNormal);
 
-	nxUInt grounded = (groundNormal.y > (0.0 + NX_FLOAT_DELTA));
+	nxUInt grounded = (groundNormal.y > (0.0f + NX_FLOAT_DELTA));
 
     //BEGINPRE
+    if(grounded)
+    {
+        nJumps = 0;
+    }
+
     // If the jump key was just pressed this frame, jump!
-    if(jumpState && (!lastJumpState) && grounded)
+    //if(jumpState && (!lastJumpState) && grounded)
+    if(jumpState && (!lastJumpState) && (nJumps < maxNJumps))
     {
         cpFloat jumpVel = nxMath_sqrt(2.0*NX_JUMP_HEIGHT*NX_GRAVITY);
-        body->v = cpvadd(body->v, cpv(0.0, jumpVel));
+        body->v = cpvadd(body->v, cpv(0.0f, jumpVel));
 
         remainingBoost = NX_JUMP_BOOST_HEIGHT/jumpVel;
 
         entity->yKeys = 0.0f; //XXX:Nasty hack
+        nJumps++;
+        //lastJumpState = jumpState;
     }
+
+    entity->yKeys = 0.0f; //XXX:Nasty hack
 
 	if((!grounded) && (!jumpState))
     {
@@ -393,6 +406,7 @@ cpBool bulletPreSolve(cpArbiter *arb, cpSpace *space, void *ignore)
 {
     CP_ARBITER_GET_SHAPES(arb, a, b); 
      
+    //TODO : Enemy collisions and stuff.
     cpArbiterIgnore(arb);
     return cpFalse;
 }
