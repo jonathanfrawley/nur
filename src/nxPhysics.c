@@ -37,7 +37,7 @@ nxInt nxPhysics_init(nxPhysics* obj)
 {
 	//Space init
 	//cpVect gravity = cpv(0, -400.0f);
-	cpVect gravity = cpv(0, -NX_GRAVITY);
+	cpVect gravity = cpv(0, -NX_GRAVITY * 100.0f);
 	obj->_space = cpSpaceNew();
     cpSpaceSetIterations(obj->_space, 20);
 	cpSpaceSetGravity(obj->_space, gravity);
@@ -294,7 +294,6 @@ static void selectPlayerGroundNormal(cpBody *body, cpArbiter *arb, cpVect *groun
     }   
 }
 
-//HERE
 void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
 {
     static int lastJumpState = 0; //Init to 0
@@ -315,19 +314,21 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
 
     //BEGINPRE
     // If the jump key was just pressed this frame, jump!
-    if(jumpState && !lastJumpState && grounded)
+    if(jumpState && (!lastJumpState) && grounded)
     {
         cpFloat jumpVel = nxMath_sqrt(2.0*NX_JUMP_HEIGHT*NX_GRAVITY);
         body->v = cpvadd(body->v, cpv(0.0, jumpVel));
 
         remainingBoost = NX_JUMP_BOOST_HEIGHT/jumpVel;
+
+        entity->yKeys = 0.0f; //XXX:Nasty hack
     }
 
 	if((!grounded) && (!jumpState))
     {
 //        body->v.y = -NX_FALL_SPEED;
 
-        body->v = cpvadd(body->v, cpv(0.0, -NX_FALL_SPEED));
+//        body->v = cpvadd(body->v, cpv(0.0, -NX_FALL_SPEED));
     }
     //ENDPRE
 
@@ -335,7 +336,7 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
     {
         remainingBoost = 0.0f;
     }
-	
+
     //VERTICAL movement
 	// Do a normal-ish update
 	cpBool boost = (jumpState && (remainingBoost > 0.0f));

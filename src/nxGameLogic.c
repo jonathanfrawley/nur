@@ -69,6 +69,9 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 
 	nxPhysics_update(obj->physics, timestep);
 
+
+//    obj->entities[obj->playerId].yKeys = 0.0f; //XXX: Test
+
 	if(finished)
 	{
 		return 1;
