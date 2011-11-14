@@ -11,6 +11,7 @@ typedef struct nxVector2
 	nxFloat y;
 } nxVector2;
 
+void nxVector2_init(nxVector2* obj);
 void nxVector2_fromCpVect(cpVect* vec, nxVector2* res);
 void nxVector2_toCpVect(const nxVector2* vec, cpVect* res);
 

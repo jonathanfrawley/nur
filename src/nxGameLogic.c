@@ -57,9 +57,10 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 	return 0;
 }
 
-nxInt nxGameLogic_update(nxGameLogic* obj)
+nxInt nxGameLogic_update(nxGameLogic* obj, nxUInt timestep)
 {
-	float timestep = 1.0f/60.0f;
+//	float timestep = 1.0f/60.0f;
+
     /*
     if(obj->playerHadMoved)
     {
@@ -67,7 +68,7 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
     }
     */
 
-	nxPhysics_update(obj->physics, timestep);
+	nxPhysics_update(obj->physics, 0.001f * (nxFloat)timestep);
 
 
 //    obj->entities[obj->playerId].yKeys = 0.0f; //XXX: Test
@@ -89,7 +90,6 @@ nxInt nxGameLogic_update(nxGameLogic* obj)
 
 			nxEvent evt = {NX_EVT_UPDATEENT, (void*)&evtData};
 
-            printf("obj->entities[%d].pos with id %d is <%f, %f> \n", i, obj->entities[i].id, obj->entities[i].pos.x, obj->entities[i].pos.y );
 //            NX_LOG(NX_LOG_DEBUG, "");
 
 			//Fire event

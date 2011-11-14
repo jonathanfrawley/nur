@@ -24,7 +24,7 @@ int main(void)
 	nxUInt lastFrameTime = 0;
 	while( ! finished) {
 		nxEventManager_handleEvents();
-		finished = nxGameLogic_update(gameLogic);
+		finished = nxGameLogic_update(gameLogic, lastFrameTime);
 
 		gameView->update(gameView, lastFrameTime);
 		gameView->draw(gameView);
@@ -32,14 +32,16 @@ int main(void)
         nxUInt now = SDL_GetTicks();
         nxUInt timeDelta = now - startTime;
 
+        printf("now is %d, timeDelta is %d, startTime is %d \n", now, timeDelta, startTime);
+
 		//limit frame rate
 		if( timeDelta < FRAME_TIME )
 		{ 
 			SDL_Delay( FRAME_TIME - timeDelta ); 
-
-            lastFrameTime = SDL_GetTicks() - startTime;
-            startTime = SDL_GetTicks();
 		}
+
+        lastFrameTime = SDL_GetTicks() - startTime;
+        startTime = SDL_GetTicks();
 	}
 
 	nxGameLogic_shutdown(gameLogic);
