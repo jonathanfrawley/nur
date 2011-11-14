@@ -33,4 +33,14 @@ typedef struct nxPhysicsUpdateEntityEventData
     nxFloat rot;
 } nxPhysicsUpdateEntityEventData;
 
+typedef struct nxCrouchEventData
+{
+	nxUInt entityId;
+} nxCrouchEventData;
+
+typedef struct nxUnCrouchEventData
+{
+	nxUInt entityId;
+} nxUnCrouchEventData;
+
 #endif   // NXEVENTDATA_H

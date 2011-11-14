@@ -330,7 +330,7 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
 
         remainingBoost = NX_JUMP_BOOST_HEIGHT/jumpVel;
 
-        entity->yKeys = 0.0f; //XXX:Nasty hack
+    //    entity->yKeys = 0.0f; //XXX:Nasty hack
         nJumps++;
         //lastJumpState = jumpState;
     }

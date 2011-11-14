@@ -40,6 +40,9 @@ static GLuint uploadTextureFromSurface(
 
     int w = powerOfTwo( sourceSurface->w ) ;
     int h = powerOfTwo( sourceSurface->h ) ;
+    
+    //    int w = sourceSurface->w; 
+    //    int h = sourceSurface->h;
 
     /*
      //TODO:Remove

@@ -24,6 +24,8 @@ typedef struct nxSceneNode
 	nxUInt maxAnimTime;
 
 	nxUInt texId;
+	nxUInt standingTexId;
+	nxUInt crouchingTexId;
 	nxUInt animTexIds[NX_MAX_ANIMTEXS];
 
 	nxUInt reversed;

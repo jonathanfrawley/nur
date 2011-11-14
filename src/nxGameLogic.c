@@ -113,6 +113,7 @@ nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj)
 	entity->pos.x = (NX_SCREEN_WIDTH / 2);
 	entity->pos.y = (NX_SCREEN_HEIGHT / 2);
 
+	entity->crouching = 0;
 	entity->xKeys = 0.0f;
 	entity->yKeys = 0.0f;
 
@@ -193,6 +194,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	nxFloat bulletSpeed = 1000.0f;
 	nxFloat bulletXOffset = -60.0f;
 	nxFloat bulletYOffset = 25.0f;
+	nxFloat crouchingYOffset = 10.0f;
 
 	if(evt.type == NX_EVT_ENDGAME)
 	{
@@ -205,16 +207,20 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxUInt entityId = evtData->entityId;
         nxVector2 vel = { -bulletSpeed, 0.0f };
         nxVector2 pos = obj->entities[entityId].pos;
+
+        nxFloat modifiedBulletXOffset = bulletXOffset;
+        nxFloat modifiedBulletYOffset = (obj->entities[entityId].crouching) ? (bulletYOffset - crouchingYOffset) :  bulletYOffset ;
+
         if(obj->entities[entityId].reversed)
         {
             vel.x = bulletSpeed;
-            pos.x -= bulletXOffset;
-            pos.y += bulletYOffset;
+            pos.x -= modifiedBulletXOffset;
+            pos.y += modifiedBulletYOffset;
         }
         else
         {
-            pos.x += bulletXOffset;
-            pos.y += bulletYOffset;
+            pos.x += modifiedBulletXOffset;
+            pos.y += modifiedBulletYOffset;
         }
         nxInt res = nxGameLogic_addBulletEntity(obj,
                 pos, 
@@ -250,10 +256,11 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	}
 	else if(evt.type == NX_EVT_STARTMOVEDOWN)
 	{
-        /*
-        nxVector2 vel = { 0.0f, -ySpeed };
-        nxPhysics_addLinearVel(obj->physics, obj->playerId, vel);
-        */
+        obj->entities[obj->playerId].crouching = 1;
+        nxCrouchEventData evtData = {obj->playerId};
+        nxEvent evt = {NX_EVT_CROUCH, &evtData};
+        nxEventManager_triggerEvent(evt);
+
 	}
 	else if(evt.type == NX_EVT_STARTMOVELEFT)
 	{
@@ -299,7 +306,11 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	}
 	else if(evt.type == NX_EVT_ENDMOVEDOWN)
 	{
-        obj->entities[obj->playerId].yKeys = 0.0f;
+        obj->entities[obj->playerId].crouching = 0;
+
+        nxUnCrouchEventData evtData = {obj->playerId};
+        nxEvent evt = {NX_EVT_UNCROUCH, &evtData};
+        nxEventManager_triggerEvent(evt);
 	}
 	else if(evt.type == NX_EVT_ENDMOVELEFT)
 	{

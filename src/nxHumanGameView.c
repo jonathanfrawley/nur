@@ -260,7 +260,7 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
         int id = currentSceneNodeId++;
 		nxCreateEntityEventData* castData = (nxCreateEntityEventData*)evt.data;
 
-        printf("id is : %d, type is %d \n", id, castData->entity.type);
+        //printf("id is : %d, type is %d \n", id, castData->entity.type);
 
 		//Now create a scenenode object from the entity object
 		sceneNodes[id].id = castData->entity.id;
@@ -278,7 +278,9 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 			case NX_ENT_PLAYER:
 				playerId = castData->entity.id;
 				sceneNodes[id].type = NX_SN_PLAYER;
-                sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/man_still.png");
+                sceneNodes[id].crouchingTexId = nxTextureLoader_loadImageFromFilename("../media/tex/man_crouching.png");
+                sceneNodes[id].standingTexId = nxTextureLoader_loadImageFromFilename("../media/tex/man_still.png");
+                sceneNodes[id].texId = sceneNodes[id].standingTexId;
                 sceneNodes[id].animTexIds[0] = nxTextureLoader_loadImageFromFilename("../media/tex/man_walking_0.png");
                 sceneNodes[id].animTexIds[1] = nxTextureLoader_loadImageFromFilename("../media/tex/man_walking_1.png");
                 sceneNodes[id].hasTex = 1;
@@ -302,7 +304,7 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 	{
 		nxUpdateEntityEventData* castData = (nxUpdateEntityEventData*)evt.data;
 
-		printf("castData->entity.pos with id %d : <%f,%f>\n", castData->entity.id, castData->entity.pos.x, castData->entity.pos.y);
+		//printf("castData->entity.pos with id %d : <%f,%f>\n", castData->entity.id, castData->entity.pos.x, castData->entity.pos.y);
 
 		sceneNodes[castData->entity.id].pos = castData->entity.pos;
 		sceneNodes[castData->entity.id].rot = castData->entity.rot;
@@ -313,6 +315,16 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
     {
         //Play sound now.
     //    alSourcePlay (obj->soundSources[0]);
+    }
+    else if(evt.type == NX_EVT_CROUCH) 
+    {
+		nxCrouchEventData* castData = (nxCrouchEventData*)evt.data;
+		sceneNodes[castData->entityId].texId = sceneNodes[castData->entityId].crouchingTexId;
+    }
+    else if(evt.type == NX_EVT_UNCROUCH) 
+    {
+		nxUnCrouchEventData* castData = (nxUnCrouchEventData*)evt.data;
+		sceneNodes[castData->entityId].texId = sceneNodes[castData->entityId].standingTexId;
     }
 }
 
@@ -334,7 +346,7 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
         glEnable( GL_TEXTURE_2D );
         if(node->moving)
         {
-            printf(" id %d node->animTime %d node->animFrameTime %d \n", node->id, node->animTime, node->animFrameTime);
+            //printf(" id %d node->animTime %d node->animFrameTime %d \n", node->id, node->animTime, node->animFrameTime);
             nxUInt frame = node->animTime / node->animFrameTime;
 
             /*
