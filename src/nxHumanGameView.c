@@ -18,7 +18,7 @@ nxGameView* nxHumanGameView_new()
 	screen = NX_NULL;
 	for(int i = 0; i<NX_MAX_SCENENODES ;i++)
 	{
-		sceneNodes[i].valid = 0;
+		nxSceneNode_init(&sceneNodes[i]);
 	}
 	currentSceneNodeId = 0;
 
@@ -51,6 +51,8 @@ nxInt nxHumanGameView_init(nxGameView* obj)
      
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,  1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,  2);
+
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	if( (screen = SDL_SetVideoMode( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, NX_SCREEN_BPP, SDL_OPENGL )) == 0 ) 
 	{ 
@@ -160,7 +162,7 @@ void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds)
             if(sceneNodes[i].moving)
             {
                 sceneNodes[i].animTime += deltaMilliseconds;
-                printf("ime is : %d \n", sceneNodes[i].animTime);
+                //printf("ime is : %d \n", sceneNodes[i].animTime);
 
                 if(sceneNodes[i].animTime >= sceneNodes[i].maxAnimTime)
                 {
@@ -234,7 +236,9 @@ nxInt nxHumanGameView_initAudio(nxGameView* obj)
 {
     ALuint soundBuffer;
 
-    alutInit (0, NX_NULL);
+    int argc = 0;
+    char** argv = 0;
+    alutInit (&argc, argv);
 
     //soundBuffer = alutCreateBufferHelloWorld (); 
     soundBuffer = alutCreateBufferFromFile ("../media/audio/jump.wav");

@@ -22,17 +22,14 @@ typedef struct nxGameLogic
 nxGameLogic* nxGameLogic_new();
 void nxGameLogic_shutdown(nxGameLogic* obj);
 nxInt nxGameLogic_init(nxGameLogic* obj);
-nxInt nxGameLogic_update(nxGameLogic* obj);
-
+nxInt nxGameLogic_update(nxGameLogic* obj, nxUInt timestep);
 nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj);
 nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj, 
         nxFloat x, 
         nxFloat y, 
         nxFloat w,
         nxFloat h);
-
 void nxGameLogic_handleEvent(nxEvent evt, void* vobj);
-
 //Utils
 void nxGameLogic_updateEntityState(nxGameLogic* obj, nxUInt entityId, nxVector2 pos, nxFloat rot);
 nxEntity* nxGameLogic_getEntity(nxGameLogic* obj, nxUInt entityId);
