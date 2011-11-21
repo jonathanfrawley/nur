@@ -300,6 +300,11 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
                 sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/bullet_0.png");
                 sceneNodes[id].hasTex = 1;
 				break;
+			case NX_ENT_FIKE:
+				sceneNodes[id].type = NX_SN_FIKE;
+                sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/fike.png");
+                sceneNodes[id].hasTex = 1;
+				break;
 			default:
 				break;
 		}

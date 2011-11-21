@@ -8,6 +8,7 @@
 #define NX_SN_PLAYER 0
 #define NX_SN_PLATFORM 1
 #define NX_SN_BULLET 2
+#define NX_SN_FIKE 3
 
 typedef struct nxSceneNode
 {

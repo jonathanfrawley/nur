@@ -29,6 +29,15 @@ nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj,
         nxFloat y, 
         nxFloat w,
         nxFloat h);
+nxInt nxGameLogic_addEnemyEntity(nxGameLogic* obj, 
+        nxUInt type,
+        nxFloat x,
+        nxFloat y, 
+        nxFloat w,
+        nxFloat h);
+nxInt nxGameLogic_addBulletEntity(nxGameLogic* obj, 
+        nxVector2 pos, 
+        nxVector2 vel);
 void nxGameLogic_handleEvent(nxEvent evt, void* vobj);
 //Utils
 void nxGameLogic_updateEntityState(nxGameLogic* obj, nxUInt entityId, nxVector2 pos, nxFloat rot);

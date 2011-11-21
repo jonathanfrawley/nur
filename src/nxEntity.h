@@ -7,6 +7,7 @@
 #define NX_ENT_PLAYER 0
 #define NX_ENT_PLATFORM 1
 #define NX_ENT_BULLET 2
+#define NX_ENT_FIKE 3
 
 typedef struct nxEntity
 {
@@ -30,6 +31,7 @@ typedef struct nxEntity
 } nxEntity;
 
 nxEntity* nxEntity_new();
+void nxEntity_init(nxEntity* obj);
 nxInt nxEntity_update(nxEntity* obj);
 void nxEntity_delete(nxEntity* obj);
 

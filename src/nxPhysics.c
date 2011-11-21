@@ -237,6 +237,32 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
 
             break;
             }
+        case NX_ENT_FIKE:
+            {
+            nxUInt id = obj->_nextEntityId++;
+            obj->_physicsEntities[id].entityId = entity->id;
+            obj->_physicsEntities[id].valid = 1;
+
+            cpFloat moment = cpMomentForBox(NX_FIKE_MASS, entity->width * 0.5f, entity->height*0.5f);
+            cpBody* body = cpSpaceAddBody(obj->_space, cpBodyNew(NX_FIKE_MASS, moment));
+            cpBodySetPos(body, cpv(entity->pos.x, entity->pos.y));
+
+            // Now we create the collision shape for the ball.
+            // You can create multiple collision shapes that point to the same body.
+            // They will all be attached to the body and move around to follow it.
+            cpShape* shape = cpSpaceAddShape(obj->_space, cpBoxShapeNew(body, entity->width * 0.5f, entity->width * 0.5f));
+            //cpShapeSetCollisionType(shape, NX_BULLET_COLLISION_TYPE);
+            cpShapeSetFriction(shape, 0.1f);
+
+            obj->_physicsEntities[id].shape = shape;
+            obj->_physicsEntities[id].body = body;
+            obj->_physicsEntities[id].entity = entity;
+
+            //Back pointer to nxPhysicsEntity struct, to be used in vel func
+            cpBodySetUserData(body, (const cpDataPointer)&(obj->_physicsEntities[id]));
+
+            break;
+            }
         default:
             {
                 NX_ASSERT("Entity type not handled in physics.");

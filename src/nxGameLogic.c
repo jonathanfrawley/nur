@@ -11,7 +11,7 @@ nxGameLogic* nxGameLogic_new()
 	int i = 0;
 	for(i=0;i<NX_MAX_ENTITIES;i++)
 	{
-		res->entities[i].valid = 0;
+		nxEntity_init(&res->entities[i]);
 	}
 
 	res->currentEntityId = 0;
@@ -43,6 +43,16 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
                100.0f,
                NX_SCREEN_WIDTH-600.0f,
                0.0f ))
+	{
+		return 1;
+	}
+
+	if(nxGameLogic_addEnemyEntity(obj, 
+                NX_ENT_FIKE,
+                100.0f,
+                100.0f,
+                100.0f,
+                100.0f))
 	{
 		return 1;
 	}
@@ -106,6 +116,7 @@ nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj)
 	nxUInt id = obj->currentEntityId++;
 	obj->playerId = id;
     nxEntity* entity = &(obj->entities[id]);
+
 	entity->type = NX_ENT_PLAYER;
 	entity->id = id;
 	entity->valid = 1;
@@ -154,6 +165,30 @@ nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj,
 	nxEventManager_triggerEvent(createEv);
 
 	return 0;
+}
+
+nxInt nxGameLogic_addEnemyEntity(nxGameLogic* obj, 
+        nxUInt type,
+        nxFloat x,
+        nxFloat y, 
+        nxFloat w,
+        nxFloat h)
+{
+	nxUInt id = obj->currentEntityId++;
+    nxEntity* entity = &(obj->entities[id]);
+	entity->type = type;
+	entity->id = id;
+	entity->valid = 1;
+	entity->pos.x = x;
+	entity->pos.y = y;
+	entity->width = w;
+	entity->height = h;
+	nxPhysics_addEntity(obj->physics, entity);
+	nxCreateEntityEventData createEvData = { obj->entities[id], 0 };
+	nxEvent createEv = { NX_EVT_CREATEENT, &createEvData };
+	nxEventManager_triggerEvent( createEv );
+
+    return 0;
 }
 
 nxInt nxGameLogic_addBulletEntity(nxGameLogic* obj, 
