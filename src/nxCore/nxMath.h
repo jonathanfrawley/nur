@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <nxCore/nxTypes.h>
+#include <nxCore/nxConstants.h>
 #include <float.h>
 
 #define NX_MAX_FLOAT FLT_MAX

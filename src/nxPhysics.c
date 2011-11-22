@@ -252,7 +252,7 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             // They will all be attached to the body and move around to follow it.
             cpShape* shape = cpSpaceAddShape(obj->_space, cpBoxShapeNew(body, entity->width * 0.5f, entity->width * 0.5f));
             //cpShapeSetCollisionType(shape, NX_BULLET_COLLISION_TYPE);
-            cpShapeSetFriction(shape, 0.1f);
+            //cpShapeSetFriction(shape, 0.1f);
 
             obj->_physicsEntities[id].shape = shape;
             obj->_physicsEntities[id].body = body;

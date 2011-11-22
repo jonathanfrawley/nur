@@ -47,12 +47,21 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 		return 1;
 	}
 
+	if(nxGameLogic_addPlatformEntity(obj,
+               0.0f,
+               0.0f,
+               NX_SCREEN_WIDTH,
+               0.0f ))
+	{
+		return 1;
+	}
+
 	if(nxGameLogic_addEnemyEntity(obj, 
                 NX_ENT_FIKE,
-                100.0f,
-                100.0f,
-                100.0f,
-                100.0f))
+                300.0f,
+                160.0f,
+                50.0f,
+                50.0f))
 	{
 		return 1;
 	}

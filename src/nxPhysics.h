@@ -21,7 +21,7 @@
 //#define NX_PLAYER_MASS 1.0f
 #define NX_PLAYER_MASS 10000.0f
 #define NX_BULLET_MASS 0.3f
-#define NX_FIKE_MASS 10000.0f
+#define NX_FIKE_MASS 1000.0f
 
 //#define NX_GRAVITY 20.0f
 #define NX_GRAVITY 9.8f

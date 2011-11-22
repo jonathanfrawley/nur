@@ -241,9 +241,9 @@ nxInt nxHumanGameView_initAudio(nxGameView* obj)
     alutInit (&argc, argv);
 
     //soundBuffer = alutCreateBufferHelloWorld (); 
-    soundBuffer = alutCreateBufferFromFile ("../media/audio/jump.wav");
-    alGenSources (1, &obj->soundSources[0]);
-    alSourcei (obj->soundSources[0], AL_BUFFER, soundBuffer);
+    soundBuffer = alutCreateBufferFromFile("../media/audio/jump.wav");
+    alGenSources(1, &obj->soundSources[0]);
+    alSourcei(obj->soundSources[0], AL_BUFFER, soundBuffer);
 
 	return 0;
 }
@@ -348,7 +348,8 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 	//float y = 10.0f;
 	nxFloat x = node->pos.x;
 	nxFloat y = NX_SCREEN_HEIGHT - node->pos.y; //Conversion between physics and graphics coords
-	nxFloat rot = node->rot;
+//	nxFloat rot = node->rot;
+    nxFloat rot = -nxMath_radToDeg(node->rot);
 
     if(node->hasTex)
     {
@@ -381,9 +382,11 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 	{
 		case(NX_SN_PLAYER):
 			glTranslatef( x, y, 0 );
-			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
+			//glTranslatef( x+NX_PLAYER_HALFWIDTH, y+NX_PLAYER_HALFHEIGHT, 0 );
+			//glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
+			glRotatef( rot, 0.0f, 0.0f, 1.0f );
             glColor4f( 1.0, 1.0, 1.0, 1.0 );
-            if(! node->reversed)
+            if(! node->reversed )
             {
                 glBegin( GL_QUADS ); 
                     glTexCoord2f( 0.0f, 0.0f ); 
@@ -415,7 +418,8 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
             nxFloat halfWidth = node->width * 0.5f;
             nxFloat halfHeight = node->height * 0.5f;
 			glTranslatef( x+halfWidth, y+halfHeight, 0 );
-			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
+			//glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
+			glRotatef( rot, 0.0f, 0.0f, 1.0f );
             glColor4f( 1.0f, 0.41, 0.7, 1.0 );
             glBegin( GL_QUADS ); 
                 glTexCoord2f( 0.0f, 0.0f ); 
@@ -434,7 +438,8 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
             nxFloat halfWidth = node->width * 0.5f;
             nxFloat halfHeight = node->height * 0.5f;
 			glTranslatef( x+halfWidth, y+halfHeight, 0 );
-			glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
+			//glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
+			glRotatef( rot, 0.0f, 0.0f, 1.0f );
             glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
             glBegin( GL_QUADS ); 
                 glTexCoord2f( 0.0f, 0.0f ); 
@@ -448,5 +453,31 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
             glEnd();
 			break;
             }
-	}
+        case(NX_SN_FIKE):
+            {
+                nxFloat halfWidth = node->width * 0.5f;
+                nxFloat halfHeight = node->height * 0.5f;
+                
+                //glTranslatef( x+halfWidth, y+halfHeight, 0 );
+                glTranslatef( x, y, 0 );
+                //glRotatef( -nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
+                glRotatef( rot, 0.0f, 0.0f, 1.0f );
+                glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
+                glBegin( GL_QUADS ); 
+                    glTexCoord2f( 0.0f, 0.0f ); 
+                    glVertex3f( -halfWidth, -halfHeight, 0 );
+                    glTexCoord2f( 0.0f, 1.0f ); 
+                    glVertex3f( -halfWidth, halfHeight, 0 ); 				
+                    glTexCoord2f( 1.0f, 1.0f ); 
+                    glVertex3f( halfWidth, halfHeight, 0 ); 
+                    glTexCoord2f( 1.0f, 0.0f );  
+                    glVertex3f( halfWidth, -halfHeight, 0 ); 
+                glEnd();
+                break;
+            }
+        default:
+            {
+                NX_ASSERT(0 && "SN definition not found.");
+            }
+    }
 }
