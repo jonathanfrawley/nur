@@ -22,6 +22,7 @@ typedef struct nxGameLogic
 nxGameLogic* nxGameLogic_new();
 void nxGameLogic_shutdown(nxGameLogic* obj);
 nxInt nxGameLogic_init(nxGameLogic* obj);
+nxInt nxGameLogic_aiUpdate(nxGameLogic* obj, nxUInt timestep);
 nxInt nxGameLogic_update(nxGameLogic* obj, nxUInt timestep);
 nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj);
 nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj, 

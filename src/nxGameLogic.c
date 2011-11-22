@@ -58,39 +58,53 @@ nxInt nxGameLogic_init(nxGameLogic* obj)
 
 	if(nxGameLogic_addEnemyEntity(obj, 
                 NX_ENT_FIKE,
-                300.0f,
-                160.0f,
-                50.0f,
-                50.0f))
+                20.0f,
+                20.0f,
+                30.0f,
+                20.0f))
 	{
 		return 1;
 	}
-
-    /*
-	if(nxGameLogic_addBallEntity(obj))
-	{
-		return 1;
-	}
-    */
 
 	return 0;
 }
 
+nxInt nxGameLogic_aiUpdate(nxGameLogic* obj, nxUInt timestep)
+{
+    float fikeSpeed = 500.0f;
+
+	for(int i = 0 ; i < NX_MAX_ENTITIES ; i++)
+	{
+		if(obj->entities[i].type == NX_ENT_FIKE)
+		{
+            static float speed = 500.0f;
+            /*
+            if(obj->entities[i].pos.x > obj->entities[obj->playerId].pos.x)
+            {
+                speed = -fikeSpeed;
+            }
+
+            */
+            if(obj->entities[i].pos.x > (NX_SCREEN_WIDTH - 20.0f))
+            {
+                speed = -fikeSpeed;
+            }
+            else if (obj->entities[i].pos.x < 20.0f)
+            {
+                speed = fikeSpeed;
+            }
+            nxVector2 vel = { speed, 0.0f };
+            //nxPhysics_applyImpulseToEntity(obj->physics, obj->entities[i].id, &vel);
+            nxPhysics_setLinearVel(obj->physics, obj->entities[i].id, &vel);
+        }
+    }
+}
+
 nxInt nxGameLogic_update(nxGameLogic* obj, nxUInt timestep)
 {
-//	float timestep = 1.0f/60.0f;
-
-    /*
-    if(obj->playerHadMoved)
-    {
-        nxPhysics_setLinearVel(obj->physics, obj->playerId, obj->currentPlayerVel); //
-    }
-    */
-
 	nxPhysics_update(obj->physics, 0.001f * (nxFloat)timestep);
 
-
-//    obj->entities[obj->playerId].yKeys = 0.0f; //XXX: Test
+    nxGameLogic_aiUpdate(obj, 0.001f * (nxFloat)timestep);
 
 	if(finished)
 	{
@@ -108,8 +122,6 @@ nxInt nxGameLogic_update(nxGameLogic* obj, nxUInt timestep)
 			nxUpdateEntityEventData evtData = { obj->entities[i] };
 
 			nxEvent evt = {NX_EVT_UPDATEENT, (void*)&evtData};
-
-//            NX_LOG(NX_LOG_DEBUG, "");
 
 			//Fire event
 			nxEventManager_triggerEvent(evt);
@@ -311,7 +323,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxVector2 currentVel;
         nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
         nxVector2 vel = { -xSpeed, currentVel.y };
-        nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+        nxPhysics_setLinearVel(obj->physics, obj->playerId, &vel);
 
         obj->entities[obj->playerId].xKeys = -1.0f;
 
@@ -329,7 +341,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxVector2 currentVel;
         nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
         nxVector2 vel = { xSpeed, currentVel.y };
-        nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+        nxPhysics_setLinearVel(obj->physics, obj->playerId, &vel);
 
         obj->entities[obj->playerId].xKeys = 1.0f;
 
@@ -364,7 +376,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         if(obj->entities[obj->playerId].xKeys < 0)
         {
             currentVel.x = 0;
-            nxPhysics_setLinearVel(obj->physics, obj->playerId, currentVel);
+            nxPhysics_setLinearVel(obj->physics, obj->playerId, &currentVel);
 
             obj->entities[obj->playerId].xKeys = 0.0f;
         }
@@ -379,7 +391,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         if(obj->entities[obj->playerId].xKeys > 0)
         {
             currentVel.x = 0;
-            nxPhysics_setLinearVel(obj->physics, obj->playerId, currentVel);
+            nxPhysics_setLinearVel(obj->physics, obj->playerId, &currentVel);
 
             obj->entities[obj->playerId].xKeys = 0.0f;
         }
@@ -395,13 +407,3 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         obj->entities[entityId].rot = castData->rot; 
     }
 }
-
-/*
- * TODO: Remove, not needed anymore
-void nxGameLogic_updateEntityState(nxGameLogic* obj, nxUInt entityId, nxVector2 pos, nxFloat rot)
-{
-   obj->entities[entityId].pos.x = pos.x; 
-   obj->entities[entityId].pos.y = pos.y; 
-   obj->entities[entityId].rot = rot; 
-}
-*/
