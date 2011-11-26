@@ -4,22 +4,32 @@
 #include <nxGameView.h>
 #include <nxSceneNode.h>
 #include <nxEvent/nxEvent.h>
+#include <nxCore/nxConstants.h>
+#include <nxCore/nxMM.h>
+#include <nxCore/nxLog.h>
+#include <nxCore/nxMath.h>
+#include <nxEvent/nxEventManager.h>
+#include <nxEvent/nxEventData.h>
+
+#include <nxTextureLoader.h>
+
 #include "SDL/SDL.h"
 #include "SDL/SDL_opengl.h"
 
-#define NX_MAX_SCENENODES 1024
+#include <stdlib.h>
+#include <AL/alut.h>
 
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 600
-#define SCREEN_BPP 32
+#define NX_MAX_SCENENODES 1024
 
 nxGameView* nxHumanGameView_new();
 nxInt nxHumanGameView_init(nxGameView* obj);
-void nxHumanGameView_update(nxGameView* obj);
+void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds);
 void nxHumanGameView_draw(nxGameView* obj);
 void nxHumanGameView_shutdown(nxGameView* obj);
 
 nxInt init_GL();
+
+nxInt nxHumanGameView_initAudio(nxGameView* obj);
 
 void nxHumanGameView_handleEvent(nxEvent evt, void* vobj);
 
