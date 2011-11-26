@@ -1,0 +1,2 @@
+env = Environment()
+env.Command('design.html', 'design.markdown', "markdown -x toc $SOURCE > $TARGET")

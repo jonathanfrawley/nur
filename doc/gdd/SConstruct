@@ -1,2 +1,2 @@
 env = Environment()
-env.Command('gdd.html', 'gdd.markdown', "markdown $SOURCE > $TARGET")
+env.Command('gdd.html', 'gdd.markdown', "markdown -x toc $SOURCE > $TARGET")
