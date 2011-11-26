@@ -270,11 +270,11 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
     }
 }
 
-void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel)
+void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, const nxVector2* vel)
 {
     cpVect velDelta;
-    velDelta.x = vel.x;
-    velDelta.y = vel.y;
+    velDelta.x = vel->x;
+    velDelta.y = vel->y;
     cpBodySetVel(obj->_physicsEntities[entityId].body, velDelta);
 //    cpBodySetForce(obj->_physicsEntities[entityId].body, velDelta); //XXX
 }

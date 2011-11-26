@@ -100,7 +100,7 @@ void nxPhysics_shutdown(nxPhysics* obj);
 nxInt nxPhysics_init(nxPhysics* obj);
 void nxPhysics_update(nxPhysics* obj, nxFloat timestep);
 void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity);
-void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel);
+void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, const nxVector2* vel);
 void nxPhysics_addLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel);
 void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res);
 void nxPhysics_applyImpulseToEntity(nxPhysics* obj, nxUInt entityId, const nxVector2* vel);
