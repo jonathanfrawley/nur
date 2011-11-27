@@ -11,6 +11,8 @@
 #include <nxEvent/nxEventManager.h>
 #include <nxPhysics.h>
 
+#define NX_DOUBLETAP_TIME 1000
+
 typedef struct nxGameLogic
 {
 	nxEntity entities[NX_MAX_ENTITIES];

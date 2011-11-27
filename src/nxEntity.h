@@ -3,6 +3,7 @@
 
 #include <nxAlgebra/nxVector2.h>
 #include <nxCore/nxTypes.h>
+#include <nxCore/nxConstants.h>
 
 #define NX_ENT_PLAYER 0
 #define NX_ENT_PLATFORM 1
@@ -28,11 +29,13 @@ typedef struct nxEntity
     //Show keyboard movement on x and y axes.
     nxFloat xKeys;
     nxFloat yKeys;
+    nxBool movingRight;
 } nxEntity;
 
 nxEntity* nxEntity_new();
 void nxEntity_init(nxEntity* obj);
 nxInt nxEntity_update(nxEntity* obj);
 void nxEntity_delete(nxEntity* obj);
+nxBool nxEntity_isDoubleTap(nxEntity* obj, nxFloat xVel);
 
 #endif   // NXENTITY_H

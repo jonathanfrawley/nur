@@ -128,8 +128,8 @@ void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds)
 			}
 			else if(event.key.keysym.sym == SDLK_d)
 			{
-				nxEvent evt = {NX_EVT_STARTMOVERIGHT, &evtData};
-				nxEventManager_triggerEvent(evt);
+                nxEvent evt = {NX_EVT_STARTMOVERIGHT, &evtData};
+                nxEventManager_triggerEvent(evt);
 			}
 		}
 		else if (event.type == SDL_KEYUP)

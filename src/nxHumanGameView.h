@@ -21,6 +21,7 @@
 
 #define NX_MAX_SCENENODES 1024
 
+
 nxGameView* nxHumanGameView_new();
 nxInt nxHumanGameView_init(nxGameView* obj);
 void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds);

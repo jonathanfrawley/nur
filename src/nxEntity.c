@@ -37,3 +37,19 @@ void nxEntity_delete(nxEntity* obj)
 {
 	nxFree(obj);
 }
+
+nxBool nxEntity_isDoubleTap(nxEntity* obj, nxFloat xVel)
+{
+    if(xVel > NX_FLOAT_DELTA)
+    {
+        return NX_TRUE;
+    }
+    else if(xVel < -NX_FLOAT_DELTA)
+    {
+        return NX_TRUE;
+    }
+    else
+    {
+        return NX_FALSE;
+    }
+}

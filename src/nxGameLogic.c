@@ -316,7 +316,15 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	{
         nxVector2 currentVel;
         nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
-        nxVector2 vel = { xSpeed, currentVel.y };
+
+        float xSpeedNew = xSpeed;
+        if(nxEntity_isDoubleTap(&(obj->entities[obj->playerId]), currentVel.x))
+        {
+            xSpeedNew *= 2;
+        }
+
+        nxVector2 vel = { xSpeedNew, currentVel.y };
+
         nxPhysics_setLinearVel(obj->physics, obj->playerId, &vel);
 
         obj->entities[obj->playerId].xKeys = 1.0f;
