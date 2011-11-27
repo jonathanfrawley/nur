@@ -18,6 +18,7 @@
 #define NX_EVT_PHYSICSUPDATEENT 12
 #define NX_EVT_CROUCH 13
 #define NX_EVT_UNCROUCH 14
+#define NX_EVT_STARTJUMP 15
 
 typedef struct nxEvent 
 {

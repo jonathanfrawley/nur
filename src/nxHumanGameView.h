@@ -31,10 +31,18 @@ nxInt init_GL();
 
 nxInt nxHumanGameView_initAudio(nxGameView* obj);
 
+nxInt nxHumanGameView_loadBackgrounds(void* vobj);
+
 void nxHumanGameView_handleEvent(nxEvent evt, void* vobj);
 
 void nxHumanGameView_toggleFullscreen();
 
+//Rendering
 void nxHumanGameView_drawSceneNode(nxSceneNode* node);
+
+void nxHumanGameView_drawRectangle(nxFloat x, nxFloat y, nxFloat width, nxFloat height, nxFloat rot);
+
+//Util
+nxUInt nxHumanGameView_getSceneNodeIdxWithEntityId(nxUInt entityId);
 
 #endif   // NXHUMANGAMEVIEW_H

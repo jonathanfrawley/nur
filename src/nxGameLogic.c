@@ -285,30 +285,6 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
     }
 	else if(evt.type == NX_EVT_STARTMOVEUP)
 	{
-        nxVector2 currentVel;
-        nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
-        nxVector2 vel = { currentVel.x, ySpeed };
-        if(currentVel.y > (0.0f + NX_FLOAT_DELTA) || 
-            currentVel.y < (0.0f - NX_FLOAT_DELTA) )
-        {
-            if( ! obj->entities[obj->playerId].hasDoubleJumped)
-            {
-                vel.y += yDoubleJumpDelta;
-                //Doing a double jump
-                //nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
-                obj->entities[obj->playerId].hasDoubleJumped = 1;
-                obj->entities[obj->playerId].yKeys = 1.0f;
-            }
-        }
-        else
-        {
-            //nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
-            obj->entities[obj->playerId].hasDoubleJumped = 0;
-            obj->entities[obj->playerId].yKeys = 0.0f;
-        }
-        //obj->currentPlayerVel = vel;
-        
-        obj->entities[obj->playerId].yKeys = 1.0f;
 	}
 	else if(evt.type == NX_EVT_STARTMOVEDOWN)
 	{
@@ -406,4 +382,31 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         obj->entities[entityId].pos.y = castData->pos.y; 
         obj->entities[entityId].rot = castData->rot; 
     }
+	else if(evt.type == NX_EVT_STARTJUMP)
+	{
+        nxVector2 currentVel;
+        nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
+        nxVector2 vel = { currentVel.x, ySpeed };
+        if(currentVel.y > (0.0f + NX_FLOAT_DELTA) || 
+            currentVel.y < (0.0f - NX_FLOAT_DELTA) )
+        {
+            if( ! obj->entities[obj->playerId].hasDoubleJumped)
+            {
+                vel.y += yDoubleJumpDelta;
+                //Doing a double jump
+                //nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+                obj->entities[obj->playerId].hasDoubleJumped = 1;
+                obj->entities[obj->playerId].yKeys = 1.0f;
+            }
+        }
+        else
+        {
+            //nxPhysics_setLinearVel(obj->physics, obj->playerId, vel);
+            obj->entities[obj->playerId].hasDoubleJumped = 0;
+            obj->entities[obj->playerId].yKeys = 0.0f;
+        }
+        //obj->currentPlayerVel = vel;
+        
+        obj->entities[obj->playerId].yKeys = 1.0f;
+	}
 }
