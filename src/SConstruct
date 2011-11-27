@@ -1,18 +1,34 @@
 import fnmatch
 import os
 
+#opts = Options('SCustomize')
+#opts.Add('debug', 'Build with debugging symbols', 0)
+opt = Variables()
+opt.Add('debug', help='Build with debugging symbols', default=0)
+#opt.AddVariables(
+#        ('debug', '', 0),
+#        )
+
 matches = []
 for root, dirnames, filenames in os.walk('.'):
   for filename in fnmatch.filter(filenames, '*.c'):
       matches.append(os.path.join(root, filename))
 
 
-env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS='-g -Werror -std=c99 -L ../lib/external/arch64/lib')
+#env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS='-g -Werror -std=c99 -L ../lib/external/arch64/lib')
+env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS=['-std=c99', '-L ../lib/external/arch64/lib'])
 
 env.ParseConfig('sdl-config --cflags')
 env.ParseConfig('sdl-config --libs')
 env.ParseConfig('freealut-config --cflags')
 env.ParseConfig('freealut-config --libs')
+
+debug = env.get('debug',1)
+
+if debug=='1':
+    env.Append(CFLAGS = ['-g', '-Werror'])
+else:
+    env.Append(CFLAGS = ['-O3'])
 
 env.Append(LIBS = ['GL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a')])
 
