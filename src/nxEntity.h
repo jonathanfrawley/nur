@@ -10,6 +10,8 @@
 #define NX_ENT_BULLET 2
 #define NX_ENT_FIKE 3
 
+#define NX_DOUBLETAPTIME 100
+
 typedef struct nxEntity
 {
 	nxUInt id;
@@ -30,11 +32,12 @@ typedef struct nxEntity
     nxFloat xKeys;
     nxFloat yKeys;
     nxBool movingRight;
+    nxUInt timeSpentTapping;
 } nxEntity;
 
 nxEntity* nxEntity_new();
 void nxEntity_init(nxEntity* obj);
-nxInt nxEntity_update(nxEntity* obj);
+nxInt nxEntity_update(nxEntity* obj, nxUInt timestep);
 void nxEntity_delete(nxEntity* obj);
 nxBool nxEntity_isDoubleTap(nxEntity* obj, nxFloat xVel);
 

@@ -26,10 +26,25 @@ void nxEntity_init(nxEntity* obj)
 	obj->hasDoubleJumped = 0;
     obj->xKeys = 0.0f;
     obj->yKeys = 0.0f;
+    obj->timeSpentTapping = 0.0f;
 }
 
-nxInt nxEntity_update(nxEntity* obj)
+nxInt nxEntity_update(nxEntity* obj, nxUInt timestep)
 {
+    //Double tap run logic
+    if((obj->xKeys > NX_FLOAT_DELTA) ||
+       (obj->xKeys < -NX_FLOAT_DELTA))
+    {
+        obj->timeSpentTapping += timestep;
+    }
+    else
+    {
+        obj->timeSpentTapping -= timestep/2;
+        if((nxInt)obj->timeSpentTapping > 0)
+        {
+            obj->timeSpentTapping = 0;
+        }
+    }
 	return 0;
 }
 
@@ -40,6 +55,16 @@ void nxEntity_delete(nxEntity* obj)
 
 nxBool nxEntity_isDoubleTap(nxEntity* obj, nxFloat xVel)
 {
+    if(obj->timeSpentTapping >= NX_DOUBLETAPTIME)
+    {
+        obj->timeSpentTapping = 0;
+        return NX_TRUE;
+    }
+    else
+    {
+        return NX_FALSE;
+    }
+    /*
     if(xVel > NX_FLOAT_DELTA)
     {
         return NX_TRUE;
@@ -52,4 +77,5 @@ nxBool nxEntity_isDoubleTap(nxEntity* obj, nxFloat xVel)
     {
         return NX_FALSE;
     }
+    */
 }

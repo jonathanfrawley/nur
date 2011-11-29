@@ -4,8 +4,18 @@
 #include <stdio.h>
 #include <assert.h>
 
-#define NX_LOG(a,b) printf("LOG (%s):%s\n", a,b);
+/**
+ * Simple Logging helper functions.
+ **/
+enum nxLogLevel 
+{
+    NX_LOG_INFO,
+    NX_LOG_WARN,
+    NX_LOG_ERROR
+};
 
-#define NX_ASSERT(a) assert(a);
+void nxLog(nxLogLevel logLevel
+        const char* logMsg);
+void nxAssertFail(const char* logMsg);
 
 #endif   // NXLOG_H

@@ -118,6 +118,8 @@ nxInt nxGameLogic_update(nxGameLogic* obj, nxUInt timestep)
 		}
 		else
 		{
+            nxEntity_update(&(obj->entities[i]), timestep);
+
 			//TODO:Only update info if something has changed.
 			nxUpdateEntityEventData evtData = { obj->entities[i] };
 
@@ -125,6 +127,7 @@ nxInt nxGameLogic_update(nxGameLogic* obj, nxUInt timestep)
 
 			//Fire event
 			nxEventManager_triggerEvent(evt);
+
 		}
 	}
 
