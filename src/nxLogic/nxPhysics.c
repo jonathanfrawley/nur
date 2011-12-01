@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-nxPhysics* nxPhysics_new(nxGameLogic* gameLogic)
+nxPhysics* nxPhysics_alloc(nxGameLogic* gameLogic)
 {
 	nxPhysics* res = (nxPhysics*) nxMalloc(sizeof(nxPhysics));
 
@@ -33,7 +33,7 @@ void nxPhysics_shutdown(nxPhysics* obj)
 	nxFree(obj);
 }
 
-nxInt nxPhysics_init(nxPhysics* obj)
+nxInt nxPhysics_init0(nxPhysics* obj)
 {
 	//Space init
 	//cpVect gravity = cpv(0, -400.0f);
@@ -265,7 +265,7 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             }
         default:
             {
-                NX_ASSERT("Entity type not handled in physics.");
+                nxAssertFail("Entity type not handled in physics.");
             }
     }
 }
@@ -292,7 +292,8 @@ void nxPhysics_addLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2 vel)
 void nxPhysics_getLinearVel(nxPhysics* obj, nxUInt entityId, nxVector2* res)
 {
     cpVect vel = cpBodyGetVel(obj->_physicsEntities[entityId].body);
-    nxVector2_fromCpVect(&vel, res);
+    //nxVector2_fromCpVect(&vel, res);
+    nxVector2_init(res, vel.x, vel.y);
 }
 
 
@@ -302,7 +303,9 @@ void nxPhysics_applyImpulseToEntity(nxPhysics* obj, nxUInt entityId, const nxVec
     cpVect j; //wtf is this!?!?
     cpVect r;
     //nxVector2_toCpVect(vel, &r);
-    nxVector2_toCpVect(vel, &j);
+    //nxVector2_toCpVect(vel, &j);
+    j.x = vel->x;
+    j.y = vel->y;
     cpBodyApplyImpulse(obj->_physicsEntities[entityId].body, j, r);
 }
 

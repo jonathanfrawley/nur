@@ -1,12 +1,12 @@
 #include "nxSceneNode.h"
 
-void nxSceneNode_init(nxSceneNode* obj)
+void nxSceneNode_init0(nxSceneNode* obj)
 {
 	obj->id = 0;
 	obj->valid = 0;
 	obj->hasTex = 0;
 	obj->type = 0;
-	nxVector2_init(&obj->pos);
+	nxVector2_init0(&obj->pos);
 	obj->rot = 0;
 	obj->isAnimated = NX_FALSE;
 	obj->moving = 0;

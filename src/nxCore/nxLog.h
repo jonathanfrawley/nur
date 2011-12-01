@@ -7,14 +7,15 @@
 /**
  * Simple Logging helper functions.
  **/
-enum nxLogLevel 
+typedef enum nxLogLevel 
 {
     NX_LOG_INFO,
     NX_LOG_WARN,
-    NX_LOG_ERROR
-};
+    NX_LOG_ERROR,
+    NX_LOG_CRITICAL
+} nxLogLevel;
 
-void nxLog(nxLogLevel logLevel
+void nxLog(nxLogLevel logLevel,
         const char* logMsg);
 void nxAssertFail(const char* logMsg);
 

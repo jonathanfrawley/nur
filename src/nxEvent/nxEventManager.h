@@ -28,6 +28,6 @@ void nxEventManager_handleEvents();
 
 void nxEventManager_handleEvent(nxEvent event);
 
-void nxEventManager_init();
+void nxEventManager_init0();
 
 #endif   // NXEVENTMANAGER_H

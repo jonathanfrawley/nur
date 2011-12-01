@@ -1,7 +1,7 @@
 #ifndef  NXPHYSICS_H
 #define  NXPHYSICS_H
 
-#include <chipmunk.h>
+#include <chipmunk/chipmunk.h>
 
 #include <nxAlgebra/nxVector2.h>
 #include <nxCore/nxTypes.h>
@@ -9,12 +9,12 @@
 #include <nxCore/nxMM.h>
 #include <nxCore/nxMath.h>
 #include <nxCore/nxLog.h>
-#include <nxEntity.h>
+#include <nxLogic/nxEntity.h>
 #include <nxEvent/nxEvent.h>
 #include <nxEvent/nxEventData.h>
 #include <nxEvent/nxEventManager.h>
 
-//#include <nxGameLogic.h>
+//#include <nxLogic/nxGameLogic.h>
 
 #define NX_INFINITY __builtin_inf()
 
@@ -95,9 +95,9 @@ typedef struct nxPhysics
     nxOneWayPlatform _oneWayPlatforms[NX_MAX_ONEWAYPLATFORMS];
 } nxPhysics;
 
-nxPhysics* nxPhysics_new(nxGameLogic* gameLogic);
+nxPhysics* nxPhysics_alloc(nxGameLogic* gameLogic);
 void nxPhysics_shutdown(nxPhysics* obj);
-nxInt nxPhysics_init(nxPhysics* obj);
+nxInt nxPhysics_init0(nxPhysics* obj);
 void nxPhysics_update(nxPhysics* obj, nxFloat timestep);
 void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity);
 void nxPhysics_setLinearVel(nxPhysics* obj, nxUInt entityId, const nxVector2* vel);

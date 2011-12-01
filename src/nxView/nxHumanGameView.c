@@ -6,11 +6,11 @@ static nxSceneNode sceneNodes[NX_MAX_SCENENODES];
 static nxUInt currentSceneNodeId;
 static nxUInt playerId;
 
-nxGameView* nxHumanGameView_new()
+nxGameView* nxHumanGameView_alloc()
 {
 	nxGameView* res = (nxGameView*)nxMalloc(sizeof(nxGameView));
 
-	res->init = nxHumanGameView_init;
+	res->init = nxHumanGameView_init0;
 	res->update = nxHumanGameView_update;
 	res->draw = nxHumanGameView_draw;
 	res->shutdown = nxHumanGameView_shutdown;
@@ -18,7 +18,7 @@ nxGameView* nxHumanGameView_new()
 	screen = NX_NULL;
 	for(int i = 0; i<NX_MAX_SCENENODES ;i++)
 	{
-		nxSceneNode_init(&sceneNodes[i]);
+		nxSceneNode_init0(&sceneNodes[i]);
 	}
 	currentSceneNodeId = 0;
 
@@ -29,7 +29,7 @@ nxGameView* nxHumanGameView_new()
 	return res;
 }
 
-nxInt nxHumanGameView_init(nxGameView* obj)
+nxInt nxHumanGameView_init0(nxGameView* obj)
 {
 	if( SDL_Init( SDL_INIT_EVERYTHING ) < 0 ) 
 	{ 
@@ -64,7 +64,7 @@ nxInt nxHumanGameView_init(nxGameView* obj)
 		return 1; 
 	} 
 
-    if( nxHumanGameView_initAudio(obj) )
+    if( nxHumanGameView_init0Audio(obj) )
     {
         return 1;
     }
@@ -248,7 +248,7 @@ nxInt init_GL()
 	return 1;
 }
 
-nxInt nxHumanGameView_initAudio(nxGameView* obj)
+nxInt nxHumanGameView_init0Audio(nxGameView* obj)
 {
     ALuint soundBuffer;
 
@@ -393,7 +393,6 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
         glEnable( GL_TEXTURE_2D );
         if(node->isAnimated)
         {
-            NX_LOG("nxHumanGameView", "Animated");
             if(node->moving)
             {
                 //printf(" id %d node->animTime %d node->animFrameTime %d \n", node->id, node->animTime, node->animFrameTime);
@@ -415,7 +414,6 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
         }
         else
         {
-            NX_LOG("nxHumanGameView", "Not Animated");
             // load the texture
             glBindTexture(GL_TEXTURE_2D, node->texId);
         }
@@ -525,12 +523,11 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
         case(NX_SN_BACKGROUND):
             {
                 nxHumanGameView_drawRectangle(x,y,node->width,node->height, rot);
-                NX_LOG("nxHumanGameView", "Drawing background.");
                 break;
             }
         default:
             {
-                NX_ASSERT(0 && "SN definition not found.");
+                nxAssertFail("SN definition not found.");
             }
     }
 }

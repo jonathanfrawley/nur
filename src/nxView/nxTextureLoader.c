@@ -78,7 +78,7 @@ static GLuint uploadTextureFromSurface(
 
     if ( alphaImage == NX_NULL )
     {
-        NX_ASSERT("uploadTextureFromSurface : RGB surface creation failed.");
+        nxAssertFail("uploadTextureFromSurface : RGB surface creation failed.");
     }
 
     // Set up so that colorkey pixels become transparent :
@@ -140,7 +140,7 @@ static SDL_Surface* loadImage(const char* filename)
  
     if((tempSurface = IMG_Load(filename)) == NX_NULL) 
     {
-        NX_ASSERT("Cannot load image file");
+        nxAssertFail("Cannot load image file");
     }
  
     result = SDL_DisplayFormatAlpha(tempSurface);
@@ -197,7 +197,7 @@ void nxTextureLoader_shutdown()
 #define NX_UNITTEST 
 #ifdef NX_UNITTEST
 
-#include <nxTextureLoader.h>
+#include <nxView/nxTextureLoader.h>
 
 int main(void)
 {

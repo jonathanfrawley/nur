@@ -1,7 +1,7 @@
 #ifndef  NXEVENTDATA_H
 #define  NXEVENTDATA_H
 
-#include <nxEntity.h>
+#include <nxLogic/nxEntity.h>
 #include <nxAlgebra/nxVector2.h>
 #include <nxCore/nxTypes.h>
 

@@ -7,7 +7,7 @@ static nxEventManager instance;
 //instance.currentEvtIdx = 0;
 //instance.currentHandlerIdx = 0;
 
-void nxEventManager_init()
+void nxEventManager_init0()
 {
 	for(int i=0;i<NX_MAX_EVENTS;i++)
 	{
@@ -46,7 +46,6 @@ void nxEventManager_handleEvents()
 			continue;
 		}
 
-		NX_LOG("nxEventManager", "handling event");
 		nxEventManager_handleEvent(instance.events[i]);
 
 		instance.events[i].type = -1;

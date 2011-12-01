@@ -36,6 +36,6 @@ typedef struct nxSceneNode
 	nxFloat height;
 } nxSceneNode;
 
-void nxSceneNode_init(nxSceneNode* obj);
+void nxSceneNode_init0(nxSceneNode* obj);
 
 #endif   // NXSCENENODE_H

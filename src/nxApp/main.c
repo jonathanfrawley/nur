@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-#include <nxGameLogic.h>
-#include <nxHumanGameView.h>
+#include <nxLogic/nxGameLogic.h>
+#include <nxView/nxHumanGameView.h>
 #include <nxEvent/nxEventManager.h>
 #include <nxCore/nxMM.h>
 
@@ -11,13 +11,13 @@ static int FRAME_TIME = 1000 / FRAMES_PER_SECOND;
 
 int main(void)
 {
-	nxEventManager_init();
+	nxEventManager_init0();
 
-    nxGameView* gameView = nxHumanGameView_new();
+    nxGameView* gameView = nxHumanGameView_alloc();
     gameView->init(gameView);
 
-    nxGameLogic* gameLogic = nxGameLogic_new();
-	nxGameLogic_init(gameLogic);
+    nxGameLogic* gameLogic = nxGameLogic_alloc();
+	nxGameLogic_init0(gameLogic);
 
 	nxInt finished = 0;
 	nxUInt startTime = SDL_GetTicks();

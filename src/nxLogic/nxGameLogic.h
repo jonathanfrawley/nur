@@ -5,11 +5,11 @@
 #include <nxCore/nxConstants.h>
 #include <nxCore/nxMM.h>
 #include <nxCore/nxLog.h>
-#include <nxEntity.h>
+#include <nxLogic/nxEntity.h>
 #include <nxEvent/nxEvent.h>
 #include <nxEvent/nxEventData.h>
 #include <nxEvent/nxEventManager.h>
-#include <nxPhysics.h>
+#include <nxLogic/nxPhysics.h>
 
 #define NX_DOUBLETAP_TIME 1000
 
@@ -21,9 +21,9 @@ typedef struct nxGameLogic
 	nxPhysics* physics;
 } nxGameLogic;
 
-nxGameLogic* nxGameLogic_new();
+nxGameLogic* nxGameLogic_alloc();
 void nxGameLogic_shutdown(nxGameLogic* obj);
-nxInt nxGameLogic_init(nxGameLogic* obj);
+nxInt nxGameLogic_init0(nxGameLogic* obj);
 nxInt nxGameLogic_aiUpdate(nxGameLogic* obj, nxUInt timestep);
 nxInt nxGameLogic_update(nxGameLogic* obj, nxUInt timestep);
 nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj);

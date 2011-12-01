@@ -10,9 +10,16 @@ typedef float nxFloat;
 typedef bool nxBool;
 typedef void* nxPointer;
 
+/*
 const int NX_NULL = 0;
 
 const bool NX_TRUE = true;
 const bool NX_FALSE = false;
+*/
+
+#define NX_NULL 0
+
+#define NX_TRUE true
+#define NX_FALSE false
 
 #endif   // NXTYPES_H

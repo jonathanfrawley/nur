@@ -2,19 +2,24 @@
 
 #include <nxCore/nxMM.h>
 
-nxEntity* nxEntity_new()
+nxEntity* nxEntity_alloc()
 {
 	nxEntity* res = (nxEntity*)nxMalloc(sizeof(nxEntity));
-    nxEntity_init(res);
+    nxEntity_init0(res);
 	return res;
 }
 
-void nxEntity_init(nxEntity* obj)
+void nxEntity_free(nxEntity* obj)
+{
+	nxFree(obj);
+}
+
+void nxEntity_init0(nxEntity* obj)
 {
 	obj->id = 0;
 	obj->type = 0;
 	obj->valid = 0;
-	nxVector2_init(&(obj->pos));
+	nxVector2_init0(&(obj->pos));
     obj->rot = 0.0f;
     obj->reversed = 0;
     obj->moving = 0;
@@ -46,11 +51,6 @@ nxInt nxEntity_update(nxEntity* obj, nxUInt timestep)
         }
     }
 	return 0;
-}
-
-void nxEntity_delete(nxEntity* obj)
-{
-	nxFree(obj);
 }
 
 nxBool nxEntity_isDoubleTap(nxEntity* obj, nxFloat xVel)

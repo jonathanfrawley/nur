@@ -1,22 +1,22 @@
 #include "nxGameLogic.h"
 
-#include <chipmunk.h> //XXX:prob shouldn't be here
+//#include <chipmunk.h> //XXX:prob shouldn't be here
 
 static int finished = 0;
 
-nxGameLogic* nxGameLogic_new()
+nxGameLogic* nxGameLogic_alloc()
 {
 	nxGameLogic* res = (nxGameLogic*)nxMalloc(sizeof(nxGameLogic));
 
 	int i = 0;
 	for(i=0;i<NX_MAX_ENTITIES;i++)
 	{
-		nxEntity_init(&res->entities[i]);
+		nxEntity_init0(&res->entities[i]);
 	}
 
 	res->currentEntityId = 0;
 
-	res->physics = nxPhysics_new(res);
+	res->physics = nxPhysics_alloc(res);
 
 	nxEventManager_addHandler(nxGameLogic_handleEvent, (void*)res);
 
@@ -29,9 +29,9 @@ void nxGameLogic_shutdown(nxGameLogic* obj)
 	nxFree(obj);
 }
 
-nxInt nxGameLogic_init(nxGameLogic* obj)
+nxInt nxGameLogic_init0(nxGameLogic* obj)
 {
-	nxPhysics_init(obj->physics); //Important to do this first.
+	nxPhysics_init0(obj->physics); //Important to do this first.
 
 	if(nxGameLogic_addPlayerEntity(obj))
 	{
@@ -284,7 +284,10 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxInt res = nxGameLogic_addBulletEntity(obj,
                 pos, 
                 vel);
-        NX_ASSERT((res==0) && "Can't add bullet entity.");
+        if(res==1)
+        {
+            nxAssertFail("Can't add bullet entity.");
+        }
     }
 	else if(evt.type == NX_EVT_STARTMOVEUP)
 	{

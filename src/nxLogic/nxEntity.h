@@ -35,10 +35,10 @@ typedef struct nxEntity
     nxUInt timeSpentTapping;
 } nxEntity;
 
-nxEntity* nxEntity_new();
-void nxEntity_init(nxEntity* obj);
+nxEntity* nxEntity_alloc();
+void nxEntity_free(nxEntity* obj);
+void nxEntity_init0(nxEntity* obj);
 nxInt nxEntity_update(nxEntity* obj, nxUInt timestep);
-void nxEntity_delete(nxEntity* obj);
 nxBool nxEntity_isDoubleTap(nxEntity* obj, nxFloat xVel);
 
 #endif   // NXENTITY_H

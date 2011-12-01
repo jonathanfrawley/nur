@@ -11,12 +11,18 @@ opt.Add('debug', help='Build with debugging symbols', default=0)
 
 matches = []
 for root, dirnames, filenames in os.walk('.'):
-  for filename in fnmatch.filter(filenames, '*.c'):
-      matches.append(os.path.join(root, filename))
+    for filename in fnmatch.filter(filenames, '*.c'):
+        matches.append(os.path.join(root, filename))
+#Add the main c files too
+for root, dirnames, filenames in os.walk('../src'):
+    for filename in fnmatch.filter(filenames, '*.c'):
+        if(filename != "main.c"):
+            matches.append(os.path.join(root, filename))
 
 
 #env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS='-g -Werror -std=c99 -L ../lib/external/arch64/lib')
-env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS=['-std=c99', '-L ../lib/external/arch64/lib'])
+#env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS=['-std=c99', '-L ../lib/external/arch64/lib'])
+env = Environment(variables=opt, CPPPATH = ['.', '../src'], CFLAGS=['-std=c99'])
 
 env.ParseConfig('sdl-config --cflags')
 env.ParseConfig('sdl-config --libs')
