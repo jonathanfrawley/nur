@@ -43,4 +43,14 @@ typedef struct nxUnCrouchEventData
 	nxUInt entityId;
 } nxUnCrouchEventData;
 
+typedef struct nxStopAllowedRunLeftEventData
+{
+	nxUInt entityId;
+} nxStopAllowedRunLeftEventData;
+
+typedef struct nxStopAllowedRunRightEventData
+{
+	nxUInt entityId;
+} nxStopAllowedRunRightEventData;
+
 #endif   // NXEVENTDATA_H

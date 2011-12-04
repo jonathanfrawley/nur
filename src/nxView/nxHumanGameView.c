@@ -101,8 +101,9 @@ void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds)
 			}
             else if (event.key.keysym.sym == SDLK_SPACE)
 			{
-				nxEvent evt = {NX_EVT_STARTJUMP, &evtData};
-				nxEventManager_triggerEvent(evt);
+                nxFireEventData evtData = {playerId};
+				nxEvent ev = {NX_EVT_FIRE, (void*)&evtData};
+				nxEventManager_triggerEvent(ev);
 			}
 			else if (event.key.keysym.sym == SDLK_f)
 			{

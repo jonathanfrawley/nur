@@ -4,6 +4,7 @@
 #include <nxView/nxHumanGameView.h>
 #include <nxEvent/nxEventManager.h>
 #include <nxCore/nxMM.h>
+#include <nxLogic/nxProcessManager.h>
 
 #define FRAMES_PER_SECOND 60
 
@@ -12,6 +13,8 @@ static int FRAME_TIME = 1000 / FRAMES_PER_SECOND;
 int main(void)
 {
 	nxEventManager_init0();
+
+    nxProcessManager_init(nxProcessManager_getInstance());
 
     nxGameView* gameView = nxHumanGameView_alloc();
     gameView->init(gameView);
@@ -23,6 +26,8 @@ int main(void)
 	nxUInt startTime = SDL_GetTicks();
 	nxUInt lastFrameTime = 0;
 	while( ! finished) {
+        nxProcessManager_update(nxProcessManager_getInstance(), lastFrameTime);
+
 		nxEventManager_handleEvents();
 		finished = nxGameLogic_update(gameLogic, lastFrameTime);
 

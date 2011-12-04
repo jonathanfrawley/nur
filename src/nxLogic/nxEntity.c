@@ -31,51 +31,9 @@ void nxEntity_init0(nxEntity* obj)
 	obj->hasDoubleJumped = 0;
     obj->xKeys = 0.0f;
     obj->yKeys = 0.0f;
-    obj->timeSpentTapping = 0.0f;
-}
-
-nxInt nxEntity_update(nxEntity* obj, nxUInt timestep)
-{
-    //Double tap run logic
-    if((obj->xKeys > NX_FLOAT_DELTA) ||
-       (obj->xKeys < -NX_FLOAT_DELTA))
-    {
-        obj->timeSpentTapping += timestep;
-    }
-    else
-    {
-        obj->timeSpentTapping -= timestep/2;
-        if((nxInt)obj->timeSpentTapping > 0)
-        {
-            obj->timeSpentTapping = 0;
-        }
-    }
-	return 0;
-}
-
-nxBool nxEntity_isDoubleTap(nxEntity* obj, nxFloat xVel)
-{
-    if(obj->timeSpentTapping >= NX_DOUBLETAPTIME)
-    {
-        obj->timeSpentTapping = 0;
-        return NX_TRUE;
-    }
-    else
-    {
-        return NX_FALSE;
-    }
-    /*
-    if(xVel > NX_FLOAT_DELTA)
-    {
-        return NX_TRUE;
-    }
-    else if(xVel < -NX_FLOAT_DELTA)
-    {
-        return NX_TRUE;
-    }
-    else
-    {
-        return NX_FALSE;
-    }
-    */
+//    obj->timeSpentTapping = 0.0f;
+    obj->runningLeft = NX_FALSE;
+    obj->allowedRunLeft = NX_FALSE;
+    obj->runningRight = NX_FALSE;
+    obj->allowedRunRight = NX_FALSE;
 }

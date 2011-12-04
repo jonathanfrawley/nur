@@ -6,6 +6,8 @@
 #include <nxCore/nxMM.h>
 #include <nxCore/nxLog.h>
 #include <nxLogic/nxEntity.h>
+#include <nxLogic/nxProcess.h>
+#include <nxLogic/nxProcessManager.h>
 #include <nxEvent/nxEvent.h>
 #include <nxEvent/nxEventData.h>
 #include <nxEvent/nxEventManager.h>

@@ -10,26 +10,6 @@ nxList* nxList_alloc(nxPointer data)
 
 void nxList_free(nxList* obj)
 {
-    /*
-    if(obj == NX_NULL)
-    {
-        return;
-    }
-    else if(obj->next == NX_NULL)
-    {
-        if(obj->data != NX_NULL)
-        {
-            nxFree(obj->data);
-        }
-        nxFree(obj);
-    }
-    else 
-    {
-        nxList_free(obj->next);
-        nxFree(obj->data);
-        nxFree(obj);
-    }
-    */
     if(obj == NX_NULL)
     {
         return;
@@ -48,32 +28,6 @@ void nxList_free(nxList* obj)
 
 nxList* nxList_append(nxList* list, nxPointer data)
 {
-    /*
-    if(list == NX_NULL)
-    {
-        //1st
-        list = nxList_alloc();
-        list->data = data;
-        return list;
-    }
-    else if(list->next == NX_NULL)
-    {
-        //not 1st
-        list->next = nxList_alloc();
-        list->next->data = data;
-        return list->next;
-    }
-    else
-    {
-        //recurse
-        nxList* lastElem = nxList_append(list->next, data);
-        if(list != lastElem)
-        {
-            return list;
-        }
-    }
-    */
-
     nxList* curr;
     nxList* prev;
     for(prev=NX_NULL, curr=list ; curr != NX_NULL ; prev=curr, curr=curr->next)

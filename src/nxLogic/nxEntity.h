@@ -32,13 +32,16 @@ typedef struct nxEntity
     nxFloat xKeys;
     nxFloat yKeys;
     nxBool movingRight;
-    nxUInt timeSpentTapping;
+//    nxUInt timeSpentTapping;
+
+    nxBool runningLeft;
+    nxBool allowedRunLeft;
+    nxBool runningRight;
+    nxBool allowedRunRight;
 } nxEntity;
 
 nxEntity* nxEntity_alloc();
 void nxEntity_free(nxEntity* obj);
 void nxEntity_init0(nxEntity* obj);
-nxInt nxEntity_update(nxEntity* obj, nxUInt timestep);
-nxBool nxEntity_isDoubleTap(nxEntity* obj, nxFloat xVel);
 
 #endif   // NXENTITY_H

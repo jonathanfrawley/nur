@@ -9,7 +9,7 @@ opt.Add('debug', help='Build with debugging symbols', default=0)
 #        ('debug', '', 0),
 #        )
 
-tests = ['nxList_tests']
+tests = ['nxList_tests', 'nxProcessManager_tests']
 matches = []
 #for root, dirnames, filenames in os.walk('.'):
 #    for filename in fnmatch.filter(filenames, '*.c'):
