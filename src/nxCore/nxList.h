@@ -10,12 +10,29 @@ typedef struct nxList
     struct nxList *next; 
 } nxList;
 
-nxList* nxList_alloc(void);
+nxList* nxList_alloc(nxPointer data);
 void nxList_free(nxList* obj);
 
+//----------------------------------------------------------------------
+//  Adds data to this list. List will handle freeing data.
+//  Returns: New beginning of list.
+//----------------------------------------------------------------------
 nxList* nxList_append(nxList* list, nxPointer data);
+
+//----------------------------------------------------------------------
+//  Removes elem w/ data == data in this list.
+//  Returns: New beginning of list.
+//----------------------------------------------------------------------
 nxList* nxList_remove(nxList* list, nxPointer data);
-void nxList_empty(nxList* list);
+
+//----------------------------------------------------------------------
+//  Empties list and frees data.
+//----------------------------------------------------------------------
+nxList* nxList_empty(nxList* list);
+
+//----------------------------------------------------------------------
+//  Returns: Length of list.
+//----------------------------------------------------------------------
 nxUInt nxList_getLength(nxList* list);
 
 #endif   // NXLIST_H

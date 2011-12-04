@@ -9,10 +9,12 @@ opt.Add('debug', help='Build with debugging symbols', default=0)
 #        ('debug', '', 0),
 #        )
 
+tests = ['nxList_tests']
 matches = []
-for root, dirnames, filenames in os.walk('.'):
-    for filename in fnmatch.filter(filenames, '*.c'):
-        matches.append(os.path.join(root, filename))
+#for root, dirnames, filenames in os.walk('.'):
+#    for filename in fnmatch.filter(filenames, '*.c'):
+#        matches.append(os.path.join(root, filename))
+
 #Add the main c files too
 for root, dirnames, filenames in os.walk('../src'):
     for filename in fnmatch.filter(filenames, '*.c'):
@@ -33,11 +35,9 @@ env.ParseConfig('pkg-config --libs glib-2.0')
 
 debug = env.get('debug',1)
 
-if debug=='1':
-    env.Append(CFLAGS = ['-g', '-Werror'])
-else:
-    env.Append(CFLAGS = ['-O3'])
+env.Append(CFLAGS = ['-g', '-Werror'])
 
 env.Append(LIBS = ['check', 'GL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a')])
 
-env.Program('pmujtest', matches)
+for test in tests:
+    env.Program(test, matches + ["%s.c" % test])
