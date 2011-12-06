@@ -1,14 +1,18 @@
 
 In Progress:
-    - Scary Monsters!
+    - Sprite for wall
+    - More enemies
+    - Design level t
 
 TODO:
-    - Run when double tap
+    - Scary Monsters!
     - Points
     - Life
     - Powerups
     - Sounds + Music
     - Triggers to queues
+    - Load in level
 
 DONE:
     - Limit jump to certain height.
+    - Run when double tap
