@@ -209,7 +209,6 @@ void nxHumanGameView_draw(nxGameView* obj)
 	{
 		if(sceneNodes[i].valid)
         {
-            printf("drawing sn with id %d\n", sceneNodes[i].id);
 			glPushMatrix();
 			nxHumanGameView_drawSceneNode(&sceneNodes[i]);
 			glPopMatrix();
