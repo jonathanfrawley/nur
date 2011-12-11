@@ -37,8 +37,6 @@ int main(void)
         nxUInt now = SDL_GetTicks();
         nxUInt timeDelta = now - startTime;
 
-        printf("now is %d, timeDelta is %d, startTime is %d \n", now, timeDelta, startTime);
-
 		//limit frame rate
 		if( timeDelta < FRAME_TIME )
 		{ 

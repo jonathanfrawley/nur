@@ -18,11 +18,6 @@ for root, dirnames, filenames in os.walk('.'):
 #env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS='-g -Werror -std=c99 -L ../lib/external/arch64/lib')
 env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS=['-std=c99', '-L ../lib/external/arch64/lib'])
 
-env.ParseConfig('sdl-config --cflags')
-env.ParseConfig('sdl-config --libs')
-env.ParseConfig('freealut-config --cflags')
-env.ParseConfig('freealut-config --libs')
-
 debug = env.get('debug',1)
 
 if debug=='1':
@@ -30,6 +25,11 @@ if debug=='1':
 else:
     env.Append(CFLAGS = ['-O3'])
 
-env.Append(LIBS = ['GL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a')])
+env.Append(LIBS = ['GL', 'SDL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a'), 'openal', 'ftgl'])
+
+env.ParseConfig('sdl-config --cflags')
+env.ParseConfig('sdl-config --libs')
+env.ParseConfig('freealut-config --cflags')
+env.ParseConfig('freealut-config --libs')
 
 env.Program('pmuj', matches)

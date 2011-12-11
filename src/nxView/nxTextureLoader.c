@@ -143,7 +143,10 @@ static SDL_Surface* loadImage(const char* filename)
         nxAssertFail("Cannot load image file");
     }
  
-    result = SDL_DisplayFormatAlpha(tempSurface);
+    if((result = SDL_DisplayFormatAlpha(tempSurface)) == NX_NULL) 
+    {
+        nxAssertFail(SDL_GetError());
+    }
     SDL_FreeSurface(tempSurface);
  
     return result;
