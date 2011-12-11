@@ -279,7 +279,8 @@ nxInt nxHumanGameView_loadBackgrounds(void* vobj)
     sceneNodes[id].type = NX_SN_BACKGROUND;
     sceneNodes[id].hasTex = 1;
     sceneNodes[id].isAnimated = NX_FALSE;
-    sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/t.png");
+    //sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/t.png");
+    sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/levels/level_t.png");
 }
 
 void nxHumanGameView_shutdown(nxGameView* obj)
