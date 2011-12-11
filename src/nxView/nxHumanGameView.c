@@ -1,5 +1,7 @@
 #include "nxHumanGameView.h"
 
+//#include <FTGL/ftgl.h>
+
 
 static SDL_Surface* screen;
 static nxSceneNode sceneNodes[NX_MAX_SCENENODES];
@@ -33,16 +35,18 @@ nxInt nxHumanGameView_init0(nxGameView* obj)
 {
 	if( SDL_Init( SDL_INIT_EVERYTHING ) < 0 ) 
 	{ 
+        nxAssertFail(SDL_GetError());
 		return 1; 
 	} 
 
+    /*
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE,        8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,      8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,       8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,      8);
      
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,      16);
-    SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,        32);
+    SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,        16);
      
     SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE,    8);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE,    8);
@@ -53,14 +57,17 @@ nxInt nxHumanGameView_init0(nxGameView* obj)
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,  2);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    */
 
 	if( (screen = SDL_SetVideoMode( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, NX_SCREEN_BPP, SDL_OPENGL )) == 0 ) 
 	{ 
+        nxAssertFail(SDL_GetError());
 		return 1; 
 	} 
 
 	if( init_GL() == 0 ) 
 	{ 
+        nxAssertFail("Can't initialise opengl.");
 		return 1; 
 	} 
 
@@ -219,6 +226,19 @@ void nxHumanGameView_draw(nxGameView* obj)
 		glVertex3f( NX_SCREEN_WIDTH, 0, 0 ); 
 	glEnd();
 	//end test
+    */
+
+    
+    /*
+    FTGLfont *font = ftglCreatePixmapFont("../media/fonts/FreeSerif.ttf");
+
+    if(!font)
+        return -1;
+
+    ftglSetFontFaceSize(font, 72, 72);
+    ftglRenderFont(font, "Hello World!", FTGL_RENDER_ALL);
+
+   // ftglDestroyFont(font);
     */
 
 	SDL_GL_SwapBuffers();
