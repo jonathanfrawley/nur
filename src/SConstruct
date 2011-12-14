@@ -15,21 +15,44 @@ for root, dirnames, filenames in os.walk('.'):
       matches.append(os.path.join(root, filename))
 
 
-#env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS='-g -Werror -std=c99 -L ../lib/external/arch64/lib')
-env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS=['-std=c99', '-L ../lib/external/arch64/lib'])
+if(platform.system() == "Linux"):
+    #env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS='-g -Werror -std=c99 -L ../lib/external/arch64/lib')
+    env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS=['-std=c99', '-L ../lib/external/arch64/lib'])
 
-debug = env.get('debug',1)
+    debug = env.get('debug',1)
 
-if debug=='1':
-    env.Append(CFLAGS = ['-g', '-Werror'])
+    if debug=='1':
+        env.Append(CFLAGS = ['-g', '-Werror'])
+    else:
+        env.Append(CFLAGS = ['-O3'])
+
+    env.Append(LIBS = ['GL', 'SDL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a'), 'openal', 'ftgl'])
+
+    env.ParseConfig('sdl-config --cflags')
+    env.ParseConfig('sdl-config --libs')
+    env.ParseConfig('freealut-config --cflags')
+    env.ParseConfig('freealut-config --libs')
+
+    env.Program('pmuj', matches)
 else:
-    env.Append(CFLAGS = ['-O3'])
+    #env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS='-g -Werror -std=c99 -L ../lib/external/arch64/lib')
+    env = Environment(variables=opt, CPPPATH = ['.', 
+    '../lib/external/win32/include/chipmunk',
+    '../lib/external/win32/include/SDL',
+    ], CFLAGS=['-std=c99', '-L ../lib/external/win32/lib'])
 
-env.Append(LIBS = ['GL', 'SDL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a'), 'openal', 'ftgl'])
+    debug = env.get('debug',1)
 
-env.ParseConfig('sdl-config --cflags')
-env.ParseConfig('sdl-config --libs')
-env.ParseConfig('freealut-config --cflags')
-env.ParseConfig('freealut-config --libs')
+    if debug=='1':
+        env.Append(CFLAGS = ['-g', '-Werror'])
+    else:
+        env.Append(CFLAGS = ['-O3'])
 
-env.Program('pmuj', matches)
+    env.Append(LIBS = ['GL', 'SDL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a'), 'openal', 'ftgl'])
+
+    env.ParseConfig('../lib/external/win32/SDL-1.2.14/bin/sdl-config --cflags')
+    env.ParseConfig('../lib/external/win32/SDL-1.2.14/bin/sdl-config --static-libs')
+    env.ParseConfig('freealut-config --cflags')
+    env.ParseConfig('freealut-config --libs')
+
+    env.Program('pmuj', matches)
