@@ -1,5 +1,6 @@
 import fnmatch
 import os
+import platform
 
 #opts = Options('SCustomize')
 #opts.Add('debug', 'Build with debugging symbols', 0)
@@ -14,22 +15,37 @@ for root, dirnames, filenames in os.walk('.'):
   for filename in fnmatch.filter(filenames, '*.c'):
       matches.append(os.path.join(root, filename))
 
+env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/include'], CFLAGS=['-std=c99'])
+print "platform is :" + str(platform.system())
 
-#env = Environment(CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS='-g -Werror -std=c99 -L ../lib/external/arch64/lib')
-env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/arch64/include/chipmunk'], CFLAGS=['-std=c99', '-L ../lib/external/arch64/lib'])
+if(platform.system() == "Linux"):
+    env.Append(CFLAGS = ['-L ../lib/external/arch64/lib'])
 
-debug = env.get('debug',1)
+    debug = env.get('debug',1)
 
-if debug=='1':
-    env.Append(CFLAGS = ['-g', '-Werror'])
+    if debug=='1':
+        env.Append(CFLAGS = ['-g', '-Werror'])
+    else:
+        env.Append(CFLAGS = ['-O3'])
+
+    env.Append(LIBS = ['GL', 'SDL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a'), 'openal', 'ftgl'])
+
+    env.ParseConfig('sdl-config --cflags')
+    env.ParseConfig('sdl-config --libs')
+    env.ParseConfig('freealut-config --cflags')
+    env.ParseConfig('freealut-config --libs')
+
+    env.Program('pmuj', matches)
 else:
-    env.Append(CFLAGS = ['-O3'])
+    env.Append(CFLAGS = ['-L ../lib/external/win32/lib'])
 
-env.Append(LIBS = ['GL', 'SDL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a'), 'openal', 'ftgl'])
+    debug = env.get('debug',1)
 
-env.ParseConfig('sdl-config --cflags')
-env.ParseConfig('sdl-config --libs')
-env.ParseConfig('freealut-config --cflags')
-env.ParseConfig('freealut-config --libs')
+    if debug=='1':
+        env.Append(CFLAGS = ['-g', '-Werror'])
+    else:
+        env.Append(CFLAGS = ['-O3'])
 
-env.Program('pmuj', matches)
+    env.Append(LIBS = ['GL', 'm', File('../lib/external/lib/win32/libSDLmain.a'), File('../lib/external/lib/win32/libSDL.dll.a'), File('../lib/external/lib/win32/libchipmunk.a'), 'openal', 'SDL_image'])
+
+    env.Program('pmuj', matches)
