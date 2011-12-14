@@ -39,26 +39,6 @@ nxInt nxHumanGameView_init0(nxGameView* obj)
 		return 1; 
 	} 
 
-    /*
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,        8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,      8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,       8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,      8);
-     
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,      16);
-    SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,        16);
-     
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE,    8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE,    8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,    8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,    8);
-     
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,  1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,  2);
-
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    */
-
 	if( (screen = SDL_SetVideoMode( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, NX_SCREEN_BPP, SDL_OPENGL )) == 0 ) 
 	{ 
         nxAssertFail(SDL_GetError());
@@ -95,7 +75,7 @@ void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds)
 		{ 
 			nxEvent endGameEvent = {NX_EVT_ENDGAME, NX_NULL};
 			nxEventManager_triggerEvent(endGameEvent);
-		} 
+		}
 		else if (event.type == SDL_KEYDOWN)
 		{
 			//HERE, need to use malloc
@@ -272,14 +252,20 @@ nxInt nxHumanGameView_init0Audio(nxGameView* obj)
 {
     ALuint soundBuffer;
 
-    int argc = 0;
-    char** argv = 0;
-    alutInit (&argc, argv);
-
     //soundBuffer = alutCreateBufferHelloWorld (); 
     soundBuffer = alutCreateBufferFromFile("../media/audio/jump.wav");
     alGenSources(1, &obj->soundSources[0]);
     alSourcei(obj->soundSources[0], AL_BUFFER, soundBuffer);
+
+    if((soundBuffer = alutCreateBufferFromFile("../media/audio/level_t.wav")) == AL_FALSE)
+    {
+        nxAssertFail("Failed creating audio buffer for level");
+    }
+    alGenSources(1, &(obj->soundSources[1]));
+    alSourcei(obj->soundSources[1], AL_BUFFER, soundBuffer);
+    alSourcei(obj->soundSources[1], AL_LOOPING, AL_TRUE);
+    alSourcePlay(obj->soundSources[1]);
+
 
 	return 0;
 }
@@ -298,15 +284,14 @@ nxInt nxHumanGameView_loadBackgrounds(void* vobj)
     sceneNodes[id].type = NX_SN_BACKGROUND;
     sceneNodes[id].hasTex = 1;
     sceneNodes[id].isAnimated = NX_FALSE;
-    //sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/t.png");
-    sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/levels/level_t.png");
+    sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/t.png");
+    //sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/levels/level_t.png");
 }
 
 void nxHumanGameView_shutdown(nxGameView* obj)
 {
 	nxFree(obj);
     nxTextureLoader_shutdown();
-    alutExit (); 
 }
 
 void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
