@@ -289,20 +289,6 @@ nxInt init_GL()
 
 nxInt nxHumanGameView_init0Audio(nxGameView* obj)
 {
-    /*
-    ALuint soundBuffer;
-
-    int argc = 0;
-    char** argv = 0;
-    alutInit (&argc, argv);
-
-    //soundBuffer = alutCreateBufferHelloWorld ();
-    soundBuffer = alutCreateBufferFromFile("../media/audio/jump.wav");
-    alGenSources(1, &obj->soundSources[0]);
-    alSourcei(obj->soundSources[0], AL_BUFFER, soundBuffer);
-    */
-    //Mix_Chunk *sound = NULL;
-
     if( SDL_Init(SDL_INIT_AUDIO) < 0 )
     {
         char buf[255];
@@ -322,7 +308,7 @@ nxInt nxHumanGameView_init0Audio(nxGameView* obj)
         nxAssertFail(buf);
     }
 
-    obj->soundSources[0] = Mix_LoadWAV("../media/audio/jump.wav");
+    obj->soundSources[0] = Mix_LoadWAV("../media/audio/level_t.wav");
     if(obj->soundSources[0] == NULL)
     {
         char buf[255];
@@ -358,13 +344,13 @@ nxInt nxHumanGameView_loadBackgrounds(void* vobj)
     sceneNodes[id].hasTex = 1;
     sceneNodes[id].isAnimated = NX_FALSE;
     sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/tex/t.png");
+    //sceneNodes[id].texId = nxTextureLoader_loadImageFromFilename("../media/levels/level_t.png");
 }
 
 void nxHumanGameView_shutdown(nxGameView* obj)
 {
 	nxFree(obj);
     nxTextureLoader_shutdown();
-//    alutExit ();
     for(int i = 0 ; i < NX_MAX_SOUNDS ; i++)
     {
         if(obj->soundSources[i] != NX_NULL)

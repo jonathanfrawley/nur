@@ -29,7 +29,7 @@ if(platform.system() == "Linux"):
     else:
         env.Append(CFLAGS = ['-O3'])
 
-    env.Append(LIBS = ['GL', 'SDL', 'SDL_image', 'm', File('../lib/external/arch64/lib/libchipmunk.a'), 'openal', 'ftgl'])
+    env.Append(LIBS = ['GL', 'SDL', 'SDL_image', 'm', 'libchipmunk.a', 'openal', 'ftgl'])
 
     env.ParseConfig('sdl-config --cflags')
     env.ParseConfig('sdl-config --libs')
