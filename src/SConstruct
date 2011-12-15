@@ -15,7 +15,8 @@ for root, dirnames, filenames in os.walk('.'):
   for filename in fnmatch.filter(filenames, '*.c'):
       matches.append(os.path.join(root, filename))
 
-env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/include'], CFLAGS=['-std=c99'])
+env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/include'], CFLAGS=['-std=c99'], ENV = os.environ)
+
 print "platform is :" + str(platform.system())
 
 if(platform.system() == "Linux"):
@@ -37,7 +38,11 @@ if(platform.system() == "Linux"):
 
     env.Program('pmuj', matches)
 else:
+    #env.Replace(CC = "gcc")
+    Tool('mingw')(env)
+
     env.Append(CFLAGS = ['-L ../lib/external/win32/lib'])
+
 
     debug = env.get('debug',1)
 
@@ -46,6 +51,9 @@ else:
     else:
         env.Append(CFLAGS = ['-O3'])
 
-    env.Append(LIBS = ['GL', 'm', File('../lib/external/lib/win32/libSDLmain.a'), File('../lib/external/lib/win32/libSDL.dll.a'), File('../lib/external/lib/win32/libchipmunk.a'), 'openal', 'SDL_image'])
+    env.Append(CFLAGS = '-nologo')
+
+    #env.Append(LIBS = ['GL', 'm', File('../lib/external/lib/win32/libSDLmain.a'), File('../lib/external/lib/win32/SDL.lib'), File('../lib/external/lib/win32/chipmunk.lib'), File('../lib/external/lib/win32/alut.lib'), 'SDL_image'])
+    env.Append(LIBS = ['GL', 'm', 'SDLmain', 'SDL', 'SDL_image', 'chipmunk', 'alut'])
 
     env.Program('pmuj', matches)

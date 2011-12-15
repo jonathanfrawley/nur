@@ -52,8 +52,8 @@
 #define NX_PLAYER_AIR_ACCEL_TIME 19.25f
 #define NX_PLAYER_AIR_ACCEL (NX_PLAYER_SPEED/NX_PLAYER_AIR_ACCEL_TIME)
 
-typedef struct nxGameLogic nxGameLogic;
-typedef struct nxEntity nxEntity;
+struct nxGameLogic;
+//typedef struct nxGameLogic nxGameLogic;
 
 /**
  * Physical attributes of an entity.
@@ -67,7 +67,7 @@ typedef struct nxPhysicsEntity
     nxEntity* entity;
 } nxPhysicsEntity;
 
-typedef struct nxOneWayPlatform 
+typedef struct nxOneWayPlatform
 {
     cpVect n; // direction objects may pass through
     nxUInt valid;
@@ -82,7 +82,7 @@ typedef struct nxPhysics
 	cpShape* ballShape;
 	cpBody* ballBody;
     */
-    nxGameLogic* _gameLogic;
+    struct nxGameLogic* _gameLogic;
 	cpSpace* _space;
 	cpShape* _ground;
 	cpShape* _leftWall;
@@ -95,7 +95,7 @@ typedef struct nxPhysics
     nxOneWayPlatform _oneWayPlatforms[NX_MAX_ONEWAYPLATFORMS];
 } nxPhysics;
 
-nxPhysics* nxPhysics_alloc(nxGameLogic* gameLogic);
+nxPhysics* nxPhysics_alloc(struct nxGameLogic* gameLogic);
 void nxPhysics_shutdown(nxPhysics* obj);
 nxInt nxPhysics_init0(nxPhysics* obj);
 void nxPhysics_update(nxPhysics* obj, nxFloat timestep);

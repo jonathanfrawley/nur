@@ -19,9 +19,6 @@
  * SOFTWARE.
  */
 
-/// @defgroup misc Misc
-/// @{
-
 #ifndef CHIPMUNK_HEADER
 #define CHIPMUNK_HEADER
 
@@ -39,40 +36,45 @@ extern "C" {
 	#define CP_PRIVATE(symbol) symbol##_private
 #endif
 
-void cpMessage(const char *message, const char *condition, const char *file, int line, int isError);
+void cpMessage(const char *condition, const char *file, int line, int isError, int isHardError, const char *message, ...);
 #ifdef NDEBUG
-	#define	cpAssertWarn(condition, message)
+	#define	cpAssertWarn(condition, ...)
 #else
-	#define cpAssertWarn(condition, message) if(!(condition)) cpMessage(message, #condition, __FILE__, __LINE__, 0)
+	#define cpAssertWarn(condition, ...) if(!(condition)) cpMessage(#condition, __FILE__, __LINE__, 0, 0, __VA_ARGS__)
+#endif
+
+#ifdef NDEBUG
+	#define	cpAssertSoft(condition, ...)
+#else
+	#define cpAssertSoft(condition, ...) if(!(condition)) cpMessage(#condition, __FILE__, __LINE__, 1, 0, __VA_ARGS__)
 #endif
 
 // Hard assertions are important and cheap to execute. They are not disabled by compiling as debug.
-#define cpAssertHard(condition, message) if(!(condition)) cpMessage(message, #condition, __FILE__, __LINE__, 1)
-
-#ifdef NDEBUG
-	#define	cpAssertSoft(condition, message)
-#else
-	#define cpAssertSoft(condition, message) cpAssertHard(condition, message)
-#endif
+#define cpAssertHard(condition, ...) if(!(condition)) cpMessage(#condition, __FILE__, __LINE__, 1, 1, __VA_ARGS__)
 
 
 #include "chipmunk_types.h"
 	
-// Allocated size for various Chipmunk buffers
+/// @defgroup misc Misc
+/// @{
+
+/// Allocated size for various Chipmunk buffers
 #ifndef CP_BUFFER_BYTES
 	#define CP_BUFFER_BYTES (32*1024)
 #endif
 
-// Chipmunk memory function aliases.
 #ifndef cpcalloc
+	/// Chipmunk calloc() alias.
 	#define cpcalloc calloc
 #endif
 
 #ifndef cprealloc
+	/// Chipmunk realloc() alias.
 	#define cprealloc realloc
 #endif
 
 #ifndef cpfree
+	/// Chipmunk free() alias.
 	#define cpfree free
 #endif
 
@@ -101,9 +103,10 @@ typedef struct cpSpace cpSpace;
 
 #include "cpSpace.h"
 
+// Chipmunk 6.0.3
 #define CP_VERSION_MAJOR 6
 #define CP_VERSION_MINOR 0
-#define CP_VERSION_RELEASE 0
+#define CP_VERSION_RELEASE 3
 
 /// Version string.
 extern const char *cpVersionString;
@@ -145,6 +148,8 @@ cpFloat cpMomentForBox(cpFloat m, cpFloat width, cpFloat height);
 /// Calculate the moment of inertia for a solid box.
 cpFloat cpMomentForBox2(cpFloat m, cpBB box);
 
+//@}
+
 #ifdef __cplusplus
 }
 
@@ -156,4 +161,3 @@ static inline cpVect operator -(const cpVect v){return cpvneg(v);}
 
 #endif
 #endif
-//@}

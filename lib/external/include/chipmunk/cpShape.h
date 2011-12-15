@@ -117,7 +117,7 @@ static inline type cpShapeGet##name(const cpShape *shape){return shape->member;}
 
 #define CP_DefineShapeStructSetter(type, member, name, activates) \
 static inline void cpShapeSet##name(cpShape *shape, type value){ \
-	if(activates) cpBodyActivate(shape->body); \
+	if(activates && shape->body) cpBodyActivate(shape->body); \
 	shape->member = value; \
 }
 
@@ -125,7 +125,7 @@ static inline void cpShapeSet##name(cpShape *shape, type value){ \
 CP_DefineShapeStructGetter(type, member, name) \
 CP_DefineShapeStructSetter(type, member, name, activates)
 
-CP_DefineShapeStructGetter(cpBody *, body, Body);
+CP_DefineShapeStructGetter(cpBody*, body, Body);
 void cpShapeSetBody(cpShape *shape, cpBody *body);
 
 CP_DefineShapeStructGetter(cpBB, bb, BB);
@@ -172,11 +172,11 @@ typedef struct cpCircleShape {
 } cpCircleShape;
 
 /// Allocate a circle shape.
-cpCircleShape *cpCircleShapeAlloc(void);
+cpCircleShape* cpCircleShapeAlloc(void);
 /// Initialize a circle shape.
-cpCircleShape *cpCircleShapeInit(cpCircleShape *circle, cpBody *body, cpFloat radius, cpVect offset);
+cpCircleShape* cpCircleShapeInit(cpCircleShape *circle, cpBody *body, cpFloat radius, cpVect offset);
 /// Allocate and initialize a circle shape.
-cpShape *cpCircleShapeNew(cpBody *body, cpFloat radius, cpVect offset);
+cpShape* cpCircleShapeNew(cpBody *body, cpFloat radius, cpVect offset);
 
 CP_DeclareShapeGetter(cpCircleShape, cpVect, Offset);
 CP_DeclareShapeGetter(cpCircleShape, cpFloat, Radius);
@@ -191,6 +191,8 @@ typedef struct cpSegmentShape {
 	cpVect a, b, n;
 	cpVect ta, tb, tn;
 	cpFloat r;
+	
+	cpVect a_tangent, b_tangent;
 } cpSegmentShape;
 
 /// Allocate a segment shape.
@@ -199,6 +201,8 @@ cpSegmentShape* cpSegmentShapeAlloc(void);
 cpSegmentShape* cpSegmentShapeInit(cpSegmentShape *seg, cpBody *body, cpVect a, cpVect b, cpFloat radius);
 /// Allocate and initialize a segment shape.
 cpShape* cpSegmentShapeNew(cpBody *body, cpVect a, cpVect b, cpFloat radius);
+
+void cpSegmentShapeSetNeighbors(cpShape *shape, cpVect prev, cpVect next);
 
 CP_DeclareShapeGetter(cpSegmentShape, cpVect, A);
 CP_DeclareShapeGetter(cpSegmentShape, cpVect, B);

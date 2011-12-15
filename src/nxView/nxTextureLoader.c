@@ -12,12 +12,11 @@ static int powerOfTwo( int value )
         result *= 2 ;
     }
 
-    return result ;		
+    return result ;
 }
 
-
 /**
- * Creates a texture from a surface. Set the alpha according to the color key. 
+ * Creates a texture from a surface. Set the alpha according to the color key.
  * Pixels that match the color key get an alpha of zero while all other
  * pixels get an alpha of one.
  *
@@ -25,10 +24,10 @@ static int powerOfTwo( int value )
  *
  * @url:http://osdl.sourceforge.net/main/documentation/rendering/SDL-openGL-examples.html#loadnonalphaexample
  */
-static GLuint uploadTextureFromSurface( 
-        SDL_Surface* sourceSurface, 
-        Uint8 colorKeyRed, 
-        Uint8 colorKeyGreen, 
+static GLuint uploadTextureFromSurface(
+        SDL_Surface* sourceSurface,
+        Uint8 colorKeyRed,
+        Uint8 colorKeyGreen,
         Uint8 colorKeyBlue,
         Uint8 colorKeyAlpha)
 {
@@ -42,8 +41,8 @@ static GLuint uploadTextureFromSurface(
     //int h = powerOfTwo( sourceSurface->h ) ;
     int w = ( sourceSurface->w ) ;
     int h = ( sourceSurface->h ) ;
-    
-    //    int w = sourceSurface->w; 
+
+    //    int w = sourceSurface->w;
     //    int h = sourceSurface->h;
 
     /*
@@ -59,19 +58,19 @@ static GLuint uploadTextureFromSurface(
     */
 
     /* Create the target alpha surface with correct color component ordering */
-    SDL_Surface* alphaImage = SDL_CreateRGBSurface( SDL_SWSURFACE, 
+    SDL_Surface* alphaImage = SDL_CreateRGBSurface( SDL_SWSURFACE,
             sourceSurface->w,
-            sourceSurface->h, 
+            sourceSurface->h,
             32 /* bits */,
-#if SDL_BYTEORDER == SDL_LIL_ENDIAN // OpenGL RGBA masks 
-            0x000000FF, 
-            0x0000FF00, 
-            0x00FF0000, 
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN // OpenGL RGBA masks
+            0x000000FF,
+            0x0000FF00,
+            0x00FF0000,
             0xFF000000
 #else
             0xFF000000,
-            0x00FF0000, 
-            0x0000FF00, 
+            0x00FF0000,
+            0x0000FF00,
             0x000000FF
 #endif
             );
@@ -93,17 +92,17 @@ static GLuint uploadTextureFromSurface(
 
 //    SDL_SetAlpha(sourceSurface, 0, 0); //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
     SDL_SetAlpha(sourceSurface, 0, colorKeyAlpha); //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
-            
+
 //    SDL_SetAlpha(sourceSurface, SDL_ALPHA_TRANSPARENT, 255); //http://www.gamedev.net/topic/518525-opengl--sdl--transparent-image-make-textures/
 
-    // Copy the surface into the GL texture image : 
+    // Copy the surface into the GL texture image :
     area.x = 0;
-    area.y = 0; 
+    area.y = 0;
     area.w = sourceSurface->w;
     area.h = sourceSurface->h;
     SDL_BlitSurface( sourceSurface, &area, alphaImage, &area );
 
-    // Create an OpenGL texture for the image 
+    // Create an OpenGL texture for the image
 
     GLuint textureID;
     glGenTextures( 1, &textureID );
@@ -120,7 +119,7 @@ static GLuint uploadTextureFromSurface(
     glTexImage2D( GL_TEXTURE_2D,
             0,
             GL_RGBA,
-            w, 
+            w,
             h,
             0,
             GL_RGBA,
@@ -128,27 +127,27 @@ static GLuint uploadTextureFromSurface(
             alphaImage->pixels );
 
     // No longer needed :
-    SDL_FreeSurface(alphaImage); 
+    SDL_FreeSurface(alphaImage);
 
     return textureID ;
 }
 
-static SDL_Surface* loadImage(const char* filename) 
+static SDL_Surface* loadImage(const char* filename)
 {
     SDL_Surface* tempSurface = NX_NULL;
     SDL_Surface* result = NX_NULL;
- 
-    if((tempSurface = IMG_Load(filename)) == NX_NULL) 
+
+    if((tempSurface = IMG_Load(filename)) == NX_NULL)
     {
         nxAssertFail("Cannot load image file");
     }
- 
-    if((result = SDL_DisplayFormatAlpha(tempSurface)) == NX_NULL) 
+
+    if((result = SDL_DisplayFormatAlpha(tempSurface)) == NX_NULL)
     {
         nxAssertFail(SDL_GetError());
     }
     SDL_FreeSurface(tempSurface);
- 
+
     return result;
 }
 
@@ -172,17 +171,17 @@ GLuint nxTextureLoader_loadImageFromFilename(const char* filename)
 		amask = 0xff000000;
 	#endif
 
-    GLuint texture = uploadTextureFromSurface( 
-        image, 
-        rmask, 
-        gmask, 
-        bmask, 
+    GLuint texture = uploadTextureFromSurface(
+        image,
+        rmask,
+        gmask,
+        bmask,
         amask);
 
     textureIndices[currentTextureIdx++] = texture; //Keep track of textures for deletion
 
     SDL_FreeSurface(image);
-    return texture; 
+    return texture;
 }
 
 void nxTextureLoader_shutdown()
@@ -191,13 +190,13 @@ void nxTextureLoader_shutdown()
     for(int i = 0;i<currentTextureIdx;i++)
     {
         glDeleteTextures( 1, &textureIndices[i] );
-    }    
+    }
 }
 
 //---------------------------------------------------------------
 
 /*
-#define NX_UNITTEST 
+#define NX_UNITTEST
 #ifdef NX_UNITTEST
 
 #include <nxView/nxTextureLoader.h>

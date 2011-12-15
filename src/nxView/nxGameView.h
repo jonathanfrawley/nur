@@ -1,7 +1,8 @@
 #ifndef NXGAMEVIEW_H
 #define NXGAMEVIEW_H
 
-#include <AL/alut.h>
+//#include <AL/alut.h>
+#include <SDL/SDL_mixer.h>
 
 #include <nxCore/nxTypes.h>
 
@@ -14,7 +15,8 @@ typedef struct nxGameView
 	void (*draw)(struct nxGameView* obj);
 	void (*shutdown)(struct nxGameView* obj);
 
-    ALuint soundSources[NX_MAX_SOUNDS];
+//    ALuint soundSources[NX_MAX_SOUNDS];
+    Mix_Chunk* soundSources[NX_MAX_SOUNDS];
 } nxGameView;
 
 #endif

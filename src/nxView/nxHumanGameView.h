@@ -17,7 +17,7 @@
 #include "SDL/SDL_opengl.h"
 
 #include <stdlib.h>
-#include <AL/alut.h>
+//#include <AL/alut.h>
 
 #define NX_MAX_SCENENODES 1024
 

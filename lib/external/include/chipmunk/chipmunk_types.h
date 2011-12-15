@@ -1,9 +1,12 @@
+#include <math.h>
+#include <stdint.h>
+
 #ifdef __APPLE__
    #import "TargetConditionals.h"
 #endif
 
-#if (defined TARGET_OS_IPHONE) && (!defined CP_USE_CGPOINTS)
-	#define CP_USE_CGPOINTS
+#if (TARGET_OS_IPHONE == 1) && (!defined CP_USE_CGPOINTS)
+	#define CP_USE_CGPOINTS 1
 #endif
 
 #ifdef CP_USE_CGPOINTS
@@ -132,10 +135,10 @@ static inline cpFloat cpflerpconst(cpFloat f1, cpFloat f2, cpFloat d)
 }
 
 /// Hash value type.
-typedef unsigned int cpHashValue;
+typedef uintptr_t cpHashValue;
 
+// Oh C, how we love to define our own boolean types to get compiler compatibility
 /// Chipmunk's boolean type.
-/// Oh C, how we love to define our own boolean types to get compiler compatibility
 #ifdef CP_BOOL_TYPE
 	typedef CP_BOOL_TYPE cpBool;
 #else
@@ -163,18 +166,18 @@ typedef unsigned int cpHashValue;
 	typedef CP_COLLISION_TYPE_TYPE cpCollisionType;
 #else
 /// Type used for cpSpace.collision_type.
-	typedef unsigned int cpCollisionType;
+	typedef uintptr_t cpCollisionType;
 #endif
 
 #ifdef CP_GROUP_TYPE
 	typedef CP_GROUP_TYPE cpGroup;
 #else
 /// Type used for cpShape.group.
-	typedef unsigned int cpGroup;
+	typedef uintptr_t cpGroup;
 #endif
 
 #ifdef CP_LAYERS_TYPE
-	typedef CP_GROUP_TYPE cpLayers;
+	typedef CP_LAYERS_TYPE cpLayers;
 #else
 /// Type used for cpShape.layers.
 	typedef unsigned int cpLayers;

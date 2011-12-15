@@ -1,6 +1,7 @@
 #include "nxPhysics.h"
 
 #include <stdio.h>
+#include <nxLogic/nxGameLogic.h>
 
 nxPhysics* nxPhysics_alloc(nxGameLogic* gameLogic)
 {
@@ -69,12 +70,12 @@ nxInt nxPhysics_init0(nxPhysics* obj)
 	cpShapeSetElasticity(shape, 1.0f);
 	cpShapeSetFriction(shape, 0.0f);
 	cpShapeSetCollisionType(shape, NX_PLATFORM_COLLISION_TYPE);
-	
+
 	obj->_oneWayPlatforms[0].valid = 1;
 	obj->_oneWayPlatforms[0].n = cpv(0, 1); // let objects pass upwards
 	cpShapeSetUserData(shape, &obj->_oneWayPlatforms[0]);
 
-    cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_PLAYER_COLLISION_TYPE, 
+    cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_PLAYER_COLLISION_TYPE,
             NULL, platformPreSolve, NULL, NULL, NULL);
             */
 
@@ -146,7 +147,7 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
 {
     switch(entity->type)
     {
-        case NX_ENT_PLAYER: 
+        case NX_ENT_PLAYER:
             {
             nxUInt id = obj->_nextEntityId++;
             obj->_physicsEntities[id].entityId = entity->id;
@@ -182,7 +183,7 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             {
             nxUInt platformId = obj->_currentPlatformId++;
             // Add our one way segment
-            cpShape* shape = cpSpaceAddShape(obj->_space, 
+            cpShape* shape = cpSpaceAddShape(obj->_space,
                     cpSegmentShapeNew(obj->_space->staticBody, cpv(entity->pos.x,entity->pos.y), cpv(entity->pos.x+entity->width, entity->pos.y+entity->height), 10.0f));
             cpShapeSetElasticity(shape, 1.0f);
             cpShapeSetFriction(shape, 0.0f);
@@ -192,7 +193,7 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             obj->_oneWayPlatforms[platformId].n = cpv(0, 1); // let objects pass upwards
             cpShapeSetUserData(shape, &obj->_oneWayPlatforms[platformId]);
 
-            cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_PLAYER_COLLISION_TYPE, 
+            cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_PLAYER_COLLISION_TYPE,
                     NULL, platformPreSolve, NULL, NULL, NULL);
 
             obj->_nextEntityId++; //Add it as an entity even though it isn't used, this is so there is a 1-1 mapping between physicsEntities and entities.
@@ -223,13 +224,13 @@ void nxPhysics_addEntity(nxPhysics* obj, nxEntity* entity)
             obj->_physicsEntities[id].body = body;
             obj->_physicsEntities[id].entity = entity;
 
-            cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_BULLET_COLLISION_TYPE, 
+            cpSpaceAddCollisionHandler(obj->_space, NX_PLATFORM_COLLISION_TYPE, NX_BULLET_COLLISION_TYPE,
                     NULL, bulletPreSolve, NULL, NULL, NULL);
 
-            cpSpaceAddCollisionHandler(obj->_space, NX_PLAYER_COLLISION_TYPE, NX_BULLET_COLLISION_TYPE, 
+            cpSpaceAddCollisionHandler(obj->_space, NX_PLAYER_COLLISION_TYPE, NX_BULLET_COLLISION_TYPE,
                     NULL, bulletPreSolve, NULL, NULL, NULL);
 
-            cpSpaceAddCollisionHandler(obj->_space, NX_BULLET_COLLISION_TYPE, NX_BULLET_COLLISION_TYPE, 
+            cpSpaceAddCollisionHandler(obj->_space, NX_BULLET_COLLISION_TYPE, NX_BULLET_COLLISION_TYPE,
                     NULL, bulletPreSolve, NULL, NULL, NULL);
 
             //Back pointer to nxPhysicsEntity struct, to be used in vel func
@@ -316,11 +317,11 @@ void nxPhysics_applyImpulseToEntity(nxPhysics* obj, nxUInt entityId, const nxVec
 static void selectPlayerGroundNormal(cpBody *body, cpArbiter *arb, cpVect *groundNormal)
 {
     cpVect n = cpvneg(cpArbiterGetNormal(arb, 0));
-        
+
     if(n.y > groundNormal->y)
     {
         (*groundNormal) = n;
-    }   
+    }
 }
 
 void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat dt)
@@ -337,7 +338,7 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
     //
     //	int jumpState = (ChipmunkDemoKeyboard.y > 0.0f);
 	//int jumpState = (entity->yKeys > (0.0f + NX_FLOAT_DELTA));
-	
+
 	// Grab the grounding normal from last frame
 	cpVect groundNormal = cpvzero;
 	cpBodyEachArbiter(body, (cpBodyArbiterIteratorFunc)selectPlayerGroundNormal, &groundNormal);
@@ -374,7 +375,7 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
     }
     //ENDPRE
 
-	if(groundNormal.y < 0.0f) 
+	if(groundNormal.y < 0.0f)
     {
         remainingBoost = 0.0f;
     }
@@ -392,16 +393,16 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
 	//body->v.y = cpfclamp(body->v.y, -NX_FALL_VELOCITY, NX_INFINITY);
 	//body->v.y = cpfclamp(body->v.y, -NX_FALL_SPEED, NX_INFINITY);
 	body->v.y = cpfclamp(body->v.y, -NX_FALL_SPEED, NX_PLAYER_JUMP_SPEED);
-	
+
     //HORIZONTAL movement
 	// Target horizontal speed for air/ground control
 	cpFloat target_vx = NX_PLAYER_SPEED*entity->xKeys;
-	
+
 	// Update the surface velocity and friction
 	cpVect surface_v = cpv(target_vx, 0.0);
 	physicsEntity->shape->surface_v = surface_v;
 	physicsEntity->shape->u = (grounded ? NX_PLAYER_GROUND_ACCEL/NX_GRAVITY : 0.0);
-	
+
 	// Apply air control if not grounded
 	if(!grounded)
     {
@@ -420,21 +421,21 @@ void playerUpdateVelocity(cpBody *body, cpVect gravity, cpFloat damping, cpFloat
 
 cpBool platformPreSolve(cpArbiter *arb, cpSpace *space, void *ignore)
 {
-    CP_ARBITER_GET_SHAPES(arb, a, b); 
+    CP_ARBITER_GET_SHAPES(arb, a, b);
     nxOneWayPlatform *platform = (nxOneWayPlatform *)cpShapeGetUserData(a);
-     
-    if(cpvdot(cpArbiterGetNormal(arb, 0), platform->n) < 0){ 
+
+    if(cpvdot(cpArbiterGetNormal(arb, 0), platform->n) < 0){
         cpArbiterIgnore(arb);
         return cpFalse;
-    }   
-    
+    }
+
     return cpTrue;
 }
 
 cpBool bulletPreSolve(cpArbiter *arb, cpSpace *space, void *ignore)
 {
-    CP_ARBITER_GET_SHAPES(arb, a, b); 
-     
+    CP_ARBITER_GET_SHAPES(arb, a, b);
+
     //TODO : Enemy collisions and stuff.
     cpArbiterIgnore(arb);
     return cpFalse;

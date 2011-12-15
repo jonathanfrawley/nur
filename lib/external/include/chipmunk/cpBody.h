@@ -100,16 +100,16 @@ struct cpBody {
 };
 
 /// Allocate a cpBody.
-cpBody *cpBodyAlloc(void);
+cpBody* cpBodyAlloc(void);
 /// Initialize a cpBody.
-cpBody *cpBodyInit(cpBody *body, cpFloat m, cpFloat i);
+cpBody* cpBodyInit(cpBody *body, cpFloat m, cpFloat i);
 /// Allocate and initialize a cpBody.
-cpBody *cpBodyNew(cpFloat m, cpFloat i);
+cpBody* cpBodyNew(cpFloat m, cpFloat i);
 
 /// Initialize a static cpBody.
-cpBody *cpBodyInitStatic(cpBody *body);
+cpBody* cpBodyInitStatic(cpBody *body);
 /// Allocate and initialize a static cpBody.
-cpBody *cpBodyNewStatic();
+cpBody* cpBodyNewStatic(void);
 
 /// Destroy a cpBody.
 void cpBodyDestroy(cpBody *body);
@@ -213,6 +213,12 @@ void cpBodyResetForces(cpBody *body);
 void cpBodyApplyForce(cpBody *body, const cpVect f, const cpVect r);
 /// Apply an impulse (in world coordinates) to the body at a point relative to the center of gravity (also in world coordinates).
 void cpBodyApplyImpulse(cpBody *body, const cpVect j, const cpVect r);
+
+/// Get the velocity on a body (in world units) at a point on the body in world coordinates.
+cpVect cpBodyGetVelAtWorldPoint(cpBody *body, cpVect point);
+/// Get the velocity on a body (in world units) at a point on the body in local coordinates.
+cpVect cpBodyGetVelAtLocalPoint(cpBody *body, cpVect point);
+
 
 /// Get the kinetic energy of a body.
 static inline cpFloat cpBodyKineticEnergy(const cpBody *body)

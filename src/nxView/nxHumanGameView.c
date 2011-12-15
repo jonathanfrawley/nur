@@ -28,48 +28,53 @@ nxGameView* nxHumanGameView_alloc()
 
 	nxEventManager_addHandler(nxHumanGameView_handleEvent, (void*)res);
 
+
+    for(int i = 0 ; i < NX_MAX_SOUNDS ; i++)
+    {
+        res->soundSources[i] = NX_NULL;
+    }
+
 	return res;
 }
 
 nxInt nxHumanGameView_init0(nxGameView* obj)
 {
-	if( SDL_Init( SDL_INIT_EVERYTHING ) < 0 ) 
-	{ 
+	if( SDL_Init( SDL_INIT_EVERYTHING ) != 0 )
+	{
         nxAssertFail(SDL_GetError());
-		return 1; 
-	} 
-
-    /*
+		return 1;
+	}
+/*
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE,        8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,      8);
     SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,       8);
     SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,      8);
-     
+
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,      16);
     SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,        16);
-     
+
     SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE,    8);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE,    8);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,    8);
     SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,    8);
-     
+
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,  1);
     SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,  2);
 
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    */
+*/
 
-	if( (screen = SDL_SetVideoMode( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, NX_SCREEN_BPP, SDL_OPENGL )) == 0 ) 
-	{ 
+	if( (screen = SDL_SetVideoMode( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, NX_SCREEN_BPP, SDL_OPENGL )) == 0 )
+	{
         nxAssertFail(SDL_GetError());
-		return 1; 
-	} 
+		return 1;
+	}
 
-	if( init_GL() == 0 ) 
-	{ 
+	if( init_GL() == 0 )
+	{
         nxAssertFail("Can't initialise opengl.");
-		return 1; 
-	} 
+		return 1;
+	}
 
     if( nxHumanGameView_init0Audio(obj) )
     {
@@ -81,7 +86,18 @@ nxInt nxHumanGameView_init0(nxGameView* obj)
         return 1;
     }
 
-	SDL_WM_SetCaption( "pmuj", NULL ); 
+    int audio_rate = 22050;
+    Uint16 audio_format = AUDIO_S16SYS;
+    int audio_channels = 2;
+    int audio_buffers = 4096;
+
+    if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
+    {
+        fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
+        nxAssertFail("Can't initialise audio.");
+    }
+
+	SDL_WM_SetCaption( "pmuj", NULL );
 
 	return 0;
 }
@@ -89,13 +105,13 @@ nxInt nxHumanGameView_init0(nxGameView* obj)
 void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds)
 {
 	SDL_Event event;
-	while( SDL_PollEvent( &event ) ) 
-	{ 
-		if( event.type == SDL_QUIT ) 
-		{ 
+	while( SDL_PollEvent( &event ) )
+	{
+		if( event.type == SDL_QUIT )
+		{
 			nxEvent endGameEvent = {NX_EVT_ENDGAME, NX_NULL};
 			nxEventManager_triggerEvent(endGameEvent);
-		} 
+		}
 		else if (event.type == SDL_KEYDOWN)
 		{
 			//HERE, need to use malloc
@@ -202,7 +218,8 @@ void nxHumanGameView_update(nxGameView* obj, nxUInt deltaMilliseconds)
 
 void nxHumanGameView_draw(nxGameView* obj)
 {
-	glClear( GL_COLOR_BUFFER_BIT ); 
+	glClear( GL_COLOR_BUFFER_BIT );
+
 	glLoadIdentity();
 
 	for(int i = 0 ; i < NX_MAX_SCENENODES ; i++)
@@ -217,17 +234,16 @@ void nxHumanGameView_draw(nxGameView* obj)
 
     /*
 	//do test
-	glBegin( GL_LINES ); 
+	glBegin( GL_LINES );
 		glColor4f( 1.0, 0.0, 0.0, 1.0 );
-		glVertex3f( 0, 0, 0 ); 
-		glVertex3f( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, 0 ); 
-		glVertex3f( 0, NX_SCREEN_HEIGHT, 0 ); 
-		glVertex3f( NX_SCREEN_WIDTH, 0, 0 ); 
+		glVertex3f( 0, 0, 0 );
+		glVertex3f( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, 0 );
+		glVertex3f( 0, NX_SCREEN_HEIGHT, 0 );
+		glVertex3f( NX_SCREEN_WIDTH, 0, 0 );
 	glEnd();
 	//end test
     */
 
-    
     /*
     FTGLfont *font = ftglCreatePixmapFont("../media/fonts/FreeSerif.ttf");
 
@@ -245,41 +261,84 @@ void nxHumanGameView_draw(nxGameView* obj)
 
 nxInt init_GL()
 {
+
     glEnable( GL_TEXTURE_2D );
 
-    glEnable (GL_BLEND); 
+    glEnable (GL_BLEND);
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 //    glBlendFunc(GL_DST_COLOR,GL_ZERO);
 
-	//glClearColor( 0, 0, 0, 0 );
-	glClearColor( 1, 1, 1, 1 );
-	glMatrixMode( GL_PROJECTION ); 
-	glLoadIdentity(); 
+	glClearColor( 0, 0, 0, 0 );
+	//glClearColor( 1, 1, 1, 1 );
+	glMatrixMode( GL_PROJECTION );
+	glLoadIdentity();
 	glOrtho( 0, NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, 0, -1, 1 );
 
-	glMatrixMode( GL_MODELVIEW ); 
+	glMatrixMode( GL_MODELVIEW );
 	glLoadIdentity();
 
-	if( glGetError() != GL_NO_ERROR ) 
-	{ 
-		return 0; 
+	if( glGetError() != GL_NO_ERROR )
+	{
+		return 0;
 	}
 
+
+	glClearColor( 1, 1, 1, 1 );
 	return 1;
 }
 
 nxInt nxHumanGameView_init0Audio(nxGameView* obj)
 {
+    /*
     ALuint soundBuffer;
 
     int argc = 0;
     char** argv = 0;
     alutInit (&argc, argv);
 
-    //soundBuffer = alutCreateBufferHelloWorld (); 
+    //soundBuffer = alutCreateBufferHelloWorld ();
     soundBuffer = alutCreateBufferFromFile("../media/audio/jump.wav");
     alGenSources(1, &obj->soundSources[0]);
     alSourcei(obj->soundSources[0], AL_BUFFER, soundBuffer);
+    */
+    //Mix_Chunk *sound = NULL;
+
+    if( SDL_Init(SDL_INIT_AUDIO) < 0 )
+    {
+        char buf[255];
+        sprintf(buf, "Unable to start SDL_mixer audio: %s\n", SDL_GetError());
+        nxAssertFail(buf);
+    }
+
+    int audio_rate = 22050;
+    Uint16 audio_format = AUDIO_S16SYS;
+    int audio_channels = 2;
+    int audio_buffers = 4096;
+
+    if(Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
+    {
+        char buf[255];
+        sprintf(buf, "Unable to initialize audio: %s\n", Mix_GetError());
+        nxAssertFail(buf);
+    }
+
+    obj->soundSources[0] = Mix_LoadWAV("../media/audio/jump.wav");
+    if(obj->soundSources[0] == NULL)
+    {
+        char buf[255];
+        sprintf(buf, "Unable to load WAV file: %s\n", Mix_GetError());
+        nxAssertFail(buf);
+    }
+
+    int channel;
+
+    channel = Mix_PlayChannel(-1, obj->soundSources[0], 0);
+    if(channel == -1)
+    {
+        char buf[255];
+        sprintf(buf, "Unable to play WAV file: %s\n", Mix_GetError());
+        nxAssertFail(buf);
+    }
 
 	return 0;
 }
@@ -305,7 +364,17 @@ void nxHumanGameView_shutdown(nxGameView* obj)
 {
 	nxFree(obj);
     nxTextureLoader_shutdown();
-    alutExit (); 
+//    alutExit ();
+    for(int i = 0 ; i < NX_MAX_SOUNDS ; i++)
+    {
+        if(obj->soundSources[i] != NX_NULL)
+        {
+            Mix_FreeChunk(obj->soundSources[i]);
+        }
+    }
+
+    Mix_CloseAudio();
+    SDL_Quit();
 }
 
 void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
@@ -375,18 +444,18 @@ void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)
 		node->reversed = castData->entity.reversed;
 		node->moving = castData->entity.moving;
 	}
-    else if(evt.type == NX_EVT_STARTMOVEUP) 
+    else if(evt.type == NX_EVT_STARTMOVEUP)
     {
         //Play sound now.
     //    alSourcePlay (obj->soundSources[0]);
     }
-    else if(evt.type == NX_EVT_CROUCH) 
+    else if(evt.type == NX_EVT_CROUCH)
     {
 		nxCrouchEventData* castData = (nxCrouchEventData*)evt.data;
         nxSceneNode* node = &(sceneNodes[nxHumanGameView_getSceneNodeIdxWithEntityId(castData->entityId)]);
 		node->texId = node->crouchingTexId;
     }
-    else if(evt.type == NX_EVT_UNCROUCH) 
+    else if(evt.type == NX_EVT_UNCROUCH)
     {
 		nxUnCrouchEventData* castData = (nxUnCrouchEventData*)evt.data;
         nxSceneNode* node = &(sceneNodes[nxHumanGameView_getSceneNodeIdxWithEntityId(castData->entityId)]);
@@ -408,6 +477,7 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 //	nxFloat rot = node->rot;
     nxFloat rot = -nxMath_radToDeg(node->rot);
 
+
     if(node->hasTex)
     {
         glEnable( GL_TEXTURE_2D );
@@ -418,11 +488,6 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
                 //printf(" id %d node->animTime %d node->animFrameTime %d \n", node->id, node->animTime, node->animFrameTime);
                 nxUInt frame = node->animTime / node->animFrameTime;
 
-                /*
-                printf("node->animTime is : %d", node->animTime);
-                printf("node->animFrameTime is : %d", node->animFrameTime);
-                printf("frame is : %d", frame);
-                */
                 //TODO:Move between tex ids based on time.
                 glBindTexture(GL_TEXTURE_2D, node->animTexIds[frame]);
             }
@@ -443,6 +508,7 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
         glDisable( GL_TEXTURE_2D );
     }
 
+
 	switch(node->type)
 	{
 		case(NX_SN_PLAYER):
@@ -453,28 +519,28 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
             glColor4f( 1.0, 1.0, 1.0, 1.0 );
             if(! node->reversed )
             {
-                glBegin( GL_QUADS ); 
-                    glTexCoord2f( 0.0f, 0.0f ); 
+                glBegin( GL_QUADS );
+                    glTexCoord2f( 0.0f, 0.0f );
                     glVertex3f( -NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 );
-                    glTexCoord2f( 0.0f, 1.0f ); 
-                    glVertex3f( -NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 				
-                    glTexCoord2f( 1.0f, 1.0f ); 
-                    glVertex3f( NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 
-                    glTexCoord2f( 1.0f, 0.0f );  
-                    glVertex3f( NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 ); 
+                    glTexCoord2f( 0.0f, 1.0f );
+                    glVertex3f( -NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 );
+                    glTexCoord2f( 1.0f, 1.0f );
+                    glVertex3f( NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 );
+                    glTexCoord2f( 1.0f, 0.0f );
+                    glVertex3f( NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 );
                 glEnd();
             }
             else
             {
-                glBegin( GL_QUADS ); 
-                    glTexCoord2f( 1.0f, 0.0f );  
+                glBegin( GL_QUADS );
+                    glTexCoord2f( 1.0f, 0.0f );
                     glVertex3f( -NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 );
-                    glTexCoord2f( 1.0f, 1.0f ); 
-                    glVertex3f( -NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 				
-                    glTexCoord2f( 0.0f, 1.0f ); 
-                    glVertex3f( NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 ); 
-                    glTexCoord2f( 0.0f, 0.0f ); 
-                    glVertex3f( NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 ); 
+                    glTexCoord2f( 1.0f, 1.0f );
+                    glVertex3f( -NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 );
+                    glTexCoord2f( 0.0f, 1.0f );
+                    glVertex3f( NX_PLAYER_HALFWIDTH, NX_PLAYER_HALFHEIGHT, 0 );
+                    glTexCoord2f( 0.0f, 0.0f );
+                    glVertex3f( NX_PLAYER_HALFWIDTH, -NX_PLAYER_HALFHEIGHT, 0 );
                 glEnd();
             }
 			break;
@@ -486,15 +552,15 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 			//glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
 			glRotatef( rot, 0.0f, 0.0f, 1.0f );
             glColor4f( 1.0f, 0.41, 0.7, 1.0 );
-            glBegin( GL_QUADS ); 
-                glTexCoord2f( 0.0f, 0.0f ); 
+            glBegin( GL_QUADS );
+                glTexCoord2f( 0.0f, 0.0f );
                 glVertex3f( -halfWidth, -halfHeight, 0 );
-                glTexCoord2f( 0.0f, 1.0f ); 
-                glVertex3f( -halfWidth, halfHeight, 0 ); 				
-                glTexCoord2f( 1.0f, 1.0f ); 
-                glVertex3f( halfWidth, halfHeight, 0 ); 
-                glTexCoord2f( 1.0f, 0.0f );  
-                glVertex3f( halfWidth, -halfHeight, 0 ); 
+                glTexCoord2f( 0.0f, 1.0f );
+                glVertex3f( -halfWidth, halfHeight, 0 );
+                glTexCoord2f( 1.0f, 1.0f );
+                glVertex3f( halfWidth, halfHeight, 0 );
+                glTexCoord2f( 1.0f, 0.0f );
+                glVertex3f( halfWidth, -halfHeight, 0 );
             glEnd();
 			break;
             }
@@ -506,15 +572,15 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
 			//glRotatef( nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
 			glRotatef( rot, 0.0f, 0.0f, 1.0f );
             glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-            glBegin( GL_QUADS ); 
-                glTexCoord2f( 0.0f, 0.0f ); 
+            glBegin( GL_QUADS );
+                glTexCoord2f( 0.0f, 0.0f );
                 glVertex3f( -halfWidth, -halfHeight, 0 );
-                glTexCoord2f( 0.0f, 1.0f ); 
-                glVertex3f( -halfWidth, halfHeight, 0 ); 				
-                glTexCoord2f( 1.0f, 1.0f ); 
-                glVertex3f( halfWidth, halfHeight, 0 ); 
-                glTexCoord2f( 1.0f, 0.0f );  
-                glVertex3f( halfWidth, -halfHeight, 0 ); 
+                glTexCoord2f( 0.0f, 1.0f );
+                glVertex3f( -halfWidth, halfHeight, 0 );
+                glTexCoord2f( 1.0f, 1.0f );
+                glVertex3f( halfWidth, halfHeight, 0 );
+                glTexCoord2f( 1.0f, 0.0f );
+                glVertex3f( halfWidth, -halfHeight, 0 );
             glEnd();
 			break;
             }
@@ -522,21 +588,21 @@ void nxHumanGameView_drawSceneNode(nxSceneNode* node)
             {
                 nxFloat halfWidth = node->width * 0.5f;
                 nxFloat halfHeight = node->height * 0.5f;
-                
+
                 //glTranslatef( x+halfWidth, y+halfHeight, 0 );
                 glTranslatef( x, y, 0 );
                 //glRotatef( -nxMath_radToDeg(rot), 0.0f, 0.0f, 1.0f );
                 glRotatef( rot, 0.0f, 0.0f, 1.0f );
                 glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-                glBegin( GL_QUADS ); 
-                    glTexCoord2f( 0.0f, 0.0f ); 
+                glBegin( GL_QUADS );
+                    glTexCoord2f( 0.0f, 0.0f );
                     glVertex3f( -halfWidth, -halfHeight, 0 );
-                    glTexCoord2f( 0.0f, 1.0f ); 
-                    glVertex3f( -halfWidth, halfHeight, 0 ); 				
-                    glTexCoord2f( 1.0f, 1.0f ); 
-                    glVertex3f( halfWidth, halfHeight, 0 ); 
-                    glTexCoord2f( 1.0f, 0.0f );  
-                    glVertex3f( halfWidth, -halfHeight, 0 ); 
+                    glTexCoord2f( 0.0f, 1.0f );
+                    glVertex3f( -halfWidth, halfHeight, 0 );
+                    glTexCoord2f( 1.0f, 1.0f );
+                    glVertex3f( halfWidth, halfHeight, 0 );
+                    glTexCoord2f( 1.0f, 0.0f );
+                    glVertex3f( halfWidth, -halfHeight, 0 );
                 glEnd();
                 break;
             }
@@ -560,15 +626,15 @@ void nxHumanGameView_drawRectangle(nxFloat x, nxFloat y, nxFloat width, nxFloat 
     glTranslatef( x, y, 0 );
     glRotatef( rot, 0.0f, 0.0f, 1.0f );
     glColor4f( 1.0f, 1.0f, 1.0f, 1.0f );
-    glBegin( GL_QUADS ); 
-        glTexCoord2f( 0.0f, 0.0f ); 
+    glBegin( GL_QUADS );
+        glTexCoord2f( 0.0f, 0.0f );
         glVertex3f( -halfWidth, -halfHeight, 0 );
-        glTexCoord2f( 0.0f, 1.0f ); 
-        glVertex3f( -halfWidth, halfHeight, 0 ); 				
-        glTexCoord2f( 1.0f, 1.0f ); 
-        glVertex3f( halfWidth, halfHeight, 0 ); 
-        glTexCoord2f( 1.0f, 0.0f );  
-        glVertex3f( halfWidth, -halfHeight, 0 ); 
+        glTexCoord2f( 0.0f, 1.0f );
+        glVertex3f( -halfWidth, halfHeight, 0 );
+        glTexCoord2f( 1.0f, 1.0f );
+        glVertex3f( halfWidth, halfHeight, 0 );
+        glTexCoord2f( 1.0f, 0.0f );
+        glVertex3f( halfWidth, -halfHeight, 0 );
     glEnd();
 }
 

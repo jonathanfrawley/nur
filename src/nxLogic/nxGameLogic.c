@@ -1,5 +1,7 @@
 #include "nxGameLogic.h"
 
+#include <nxLogic/nxPhysics.h>
+
 //#include <chipmunk.h> //XXX:prob shouldn't be here
 
 static int finished = 0;
@@ -56,7 +58,7 @@ nxInt nxGameLogic_init0(nxGameLogic* obj)
 		return 1;
 	}
 
-	if(nxGameLogic_addEnemyEntity(obj, 
+	if(nxGameLogic_addEnemyEntity(obj,
                 NX_ENT_FIKE,
                 20.0f,
                 20.0f,
@@ -162,9 +164,9 @@ nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj)
 	return 0;
 }
 
-nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj, 
-        nxFloat x, 
-        nxFloat y, 
+nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj,
+        nxFloat x,
+        nxFloat y,
         nxFloat w,
         nxFloat h)
 {
@@ -189,10 +191,10 @@ nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj,
 	return 0;
 }
 
-nxInt nxGameLogic_addEnemyEntity(nxGameLogic* obj, 
+nxInt nxGameLogic_addEnemyEntity(nxGameLogic* obj,
         nxUInt type,
         nxFloat x,
-        nxFloat y, 
+        nxFloat y,
         nxFloat w,
         nxFloat h)
 {
@@ -213,8 +215,8 @@ nxInt nxGameLogic_addEnemyEntity(nxGameLogic* obj,
     return 0;
 }
 
-nxInt nxGameLogic_addBulletEntity(nxGameLogic* obj, 
-        nxVector2 pos, 
+nxInt nxGameLogic_addBulletEntity(nxGameLogic* obj,
+        nxVector2 pos,
         nxVector2 vel)
 {
 	nxUInt id = obj->currentEntityId++;
@@ -280,7 +282,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
             pos.y += modifiedBulletYOffset;
         }
         nxInt res = nxGameLogic_addBulletEntity(obj,
-                pos, 
+                pos,
                 vel);
         if(res==1)
         {
@@ -292,7 +294,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
         nxVector2 currentVel;
         nxPhysics_getLinearVel(obj->physics, obj->playerId, &currentVel);
         nxVector2 vel = { currentVel.x, ySpeed };
-        if(currentVel.y > (0.0f + NX_FLOAT_DELTA) || 
+        if(currentVel.y > (0.0f + NX_FLOAT_DELTA) ||
             currentVel.y < (0.0f - NX_FLOAT_DELTA) )
         {
             if( ! obj->entities[obj->playerId].hasDoubleJumped)
@@ -311,7 +313,7 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
             obj->entities[obj->playerId].yKeys = 0.0f;
         }
         //obj->currentPlayerVel = vel;
-        
+
         obj->entities[obj->playerId].yKeys = 1.0f;
 	}
 	else if(evt.type == NX_EVT_STARTMOVEDOWN)
@@ -473,9 +475,9 @@ void nxGameLogic_handleEvent(nxEvent evt, void* vobj)
 	{
 		nxPhysicsUpdateEntityEventData* castData = (nxPhysicsUpdateEntityEventData*)evt.data;
         nxUInt entityId = castData->entityId;
-        obj->entities[entityId].pos.x = castData->pos.x; 
-        obj->entities[entityId].pos.y = castData->pos.y; 
-        obj->entities[entityId].rot = castData->rot; 
+        obj->entities[entityId].pos.x = castData->pos.x;
+        obj->entities[entityId].pos.y = castData->pos.y;
+        obj->entities[entityId].rot = castData->rot;
     }
 	else if(evt.type == NX_EVT_STOPALLOWEDRUNLEFT)
 	{

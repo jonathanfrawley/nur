@@ -11,16 +11,19 @@
 #include <nxEvent/nxEvent.h>
 #include <nxEvent/nxEventData.h>
 #include <nxEvent/nxEventManager.h>
-#include <nxLogic/nxPhysics.h>
+//#include <nxLogic/nxPhysics.h>
 
 #define NX_DOUBLETAP_TIME 1000
+
+struct nxPhysics;
+//typedef struct nxPhysics nxPhysics;
 
 typedef struct nxGameLogic
 {
 	nxEntity entities[NX_MAX_ENTITIES];
 	nxInt currentEntityId;
 	nxInt playerId;
-	nxPhysics* physics;
+	struct nxPhysics* physics;
 } nxGameLogic;
 
 nxGameLogic* nxGameLogic_alloc();
@@ -29,19 +32,19 @@ nxInt nxGameLogic_init0(nxGameLogic* obj);
 nxInt nxGameLogic_aiUpdate(nxGameLogic* obj, nxUInt timestep);
 nxInt nxGameLogic_update(nxGameLogic* obj, nxUInt timestep);
 nxInt nxGameLogic_addPlayerEntity(nxGameLogic* obj);
-nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj, 
-        nxFloat x, 
-        nxFloat y, 
+nxInt nxGameLogic_addPlatformEntity(nxGameLogic* obj,
+        nxFloat x,
+        nxFloat y,
         nxFloat w,
         nxFloat h);
-nxInt nxGameLogic_addEnemyEntity(nxGameLogic* obj, 
+nxInt nxGameLogic_addEnemyEntity(nxGameLogic* obj,
         nxUInt type,
         nxFloat x,
-        nxFloat y, 
+        nxFloat y,
         nxFloat w,
         nxFloat h);
-nxInt nxGameLogic_addBulletEntity(nxGameLogic* obj, 
-        nxVector2 pos, 
+nxInt nxGameLogic_addBulletEntity(nxGameLogic* obj,
+        nxVector2 pos,
         nxVector2 vel);
 void nxGameLogic_handleEvent(nxEvent evt, void* vobj);
 //Utils
