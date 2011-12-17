@@ -8,22 +8,27 @@ void nxLog(nxLogLevel logLevel,
         case NX_LOG_INFO:
         {
             printf("INFO: %s\n", logMsg);
+            break;
         }
         case NX_LOG_WARN:
         {
             printf("WARN: %s\n", logMsg);
+            break;
         }
         case NX_LOG_ERROR:
         {
             printf("ERROR: %s\n", logMsg);
+            break;
         }
         case NX_LOG_CRITICAL:
         {
             printf("CRITICAL: %s\n", logMsg);
+            break;
         }
         default:
         {
             nxAssertFail("Log level not defined.");
+            break;
         }
     }
 }

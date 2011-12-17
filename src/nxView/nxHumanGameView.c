@@ -2,7 +2,6 @@
 
 //#include <FTGL/ftgl.h>
 
-
 static SDL_Surface* screen;
 static nxSceneNode sceneNodes[NX_MAX_SCENENODES];
 static nxUInt currentSceneNodeId;
@@ -28,7 +27,6 @@ nxGameView* nxHumanGameView_alloc()
 
 	nxEventManager_addHandler(nxHumanGameView_handleEvent, (void*)res);
 
-
     for(int i = 0 ; i < NX_MAX_SOUNDS ; i++)
     {
         res->soundSources[i] = NX_NULL;
@@ -44,25 +42,6 @@ nxInt nxHumanGameView_init0(nxGameView* obj)
         nxAssertFail(SDL_GetError());
 		return 1;
 	}
-/*
-    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,        8);
-    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE,      8);
-    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,       8);
-    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE,      8);
-
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE,      16);
-    SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE,        16);
-
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_RED_SIZE,    8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_GREEN_SIZE,    8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_BLUE_SIZE,    8);
-    SDL_GL_SetAttribute(SDL_GL_ACCUM_ALPHA_SIZE,    8);
-
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,  1);
-    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,  2);
-
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-*/
 
 	if( (screen = SDL_SetVideoMode( NX_SCREEN_WIDTH, NX_SCREEN_HEIGHT, NX_SCREEN_BPP, SDL_OPENGL )) == 0 )
 	{
@@ -86,6 +65,7 @@ nxInt nxHumanGameView_init0(nxGameView* obj)
         return 1;
     }
 
+    /*
     int audio_rate = 22050;
     Uint16 audio_format = AUDIO_S16SYS;
     int audio_channels = 2;
@@ -96,8 +76,9 @@ nxInt nxHumanGameView_init0(nxGameView* obj)
         fprintf(stderr, "Unable to initialize audio: %s\n", Mix_GetError());
         nxAssertFail("Can't initialise audio.");
     }
+    */
 
-	SDL_WM_SetCaption( "pmuj", NULL );
+	SDL_WM_SetCaption( "nur", NULL );
 
 	return 0;
 }
@@ -316,15 +297,15 @@ nxInt nxHumanGameView_init0Audio(nxGameView* obj)
         nxAssertFail(buf);
     }
 
-    int channel;
-
-    channel = Mix_PlayChannel(-1, obj->soundSources[0], 0);
+    /*
+    int channel = Mix_PlayChannel(-1, obj->soundSources[0], 0);
     if(channel == -1)
     {
         char buf[255];
         sprintf(buf, "Unable to play WAV file: %s\n", Mix_GetError());
         nxAssertFail(buf);
     }
+    */
 
 	return 0;
 }
@@ -349,7 +330,6 @@ nxInt nxHumanGameView_loadBackgrounds(void* vobj)
 
 void nxHumanGameView_shutdown(nxGameView* obj)
 {
-	nxFree(obj);
     nxTextureLoader_shutdown();
     for(int i = 0 ; i < NX_MAX_SOUNDS ; i++)
     {
@@ -361,6 +341,7 @@ void nxHumanGameView_shutdown(nxGameView* obj)
 
     Mix_CloseAudio();
     SDL_Quit();
+	nxFree(obj);
 }
 
 void nxHumanGameView_handleEvent(nxEvent evt, void* vobj)

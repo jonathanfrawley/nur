@@ -2,6 +2,8 @@ import fnmatch
 import os
 import platform
 
+progName = 'nur'
+
 #opts = Options('SCustomize')
 #opts.Add('debug', 'Build with debugging symbols', 0)
 opt = Variables()
@@ -20,24 +22,35 @@ env = Environment(variables=opt, CPPPATH = ['.', '../lib/external/include'], CFL
 print "platform is :" + str(platform.system())
 
 if(platform.system() == "Linux"):
+
+    #Generic
     env.Append(CFLAGS = ['-L ../lib/external/arch64/lib'])
-
-    debug = env.get('debug',1)
-
-    if debug=='1':
-        env.Append(CFLAGS = ['-g', '-Werror'])
-    else:
-        env.Append(CFLAGS = ['-O3'])
-
-    env.Append(LIBS = ['GL', 'SDL', 'SDL_image', 'm', 'libchipmunk.a', 'openal', 'ftgl'])
-
+    env.Append(LIBS = ['GL', 'SDL', 'SDL_image', 'SDL_mixer', 'm', 'libchipmunk.a'])
     env.ParseConfig('sdl-config --cflags')
     env.ParseConfig('sdl-config --libs')
     env.ParseConfig('freealut-config --cflags')
     env.ParseConfig('freealut-config --libs')
 
-    env.Program('pmuj', matches)
+    #Release build.
+    rel = env.Clone()
+    env.Append(CFLAGS = ['-O3'])
+
+    objs = []
+    for cfile in matches:
+        objs.append(env.Object(cfile.split('.c')[0]+'-rel', cfile))
+    env.Program(progName, objs)
+
+    #Debug
+    envDebug = env.Clone()
+    envDebug.Append(CFLAGS = ['-g', '-Werror', '-DDEBUG'])
+
+    objs = []
+    for cfile in matches:
+        objs.append(envDebug.Object(cfile.split('.c')[0]+'-dbg', cfile))
+    envDebug.Program('%s_%s' % (progName, 'debug'), matches)
+
 else:
+
     #env.Replace(CC = "gcc")
     Tool('mingw')(env)
 
