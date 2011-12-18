@@ -3,12 +3,9 @@
  <tileset firstgid="1" name="nur_ts" tilewidth="32" tileheight="32">
   <image source="../tex/nur_ts.png" width="640" height="640"/>
  </tileset>
- <tileset firstgid="401" name="nur_ts_2" tilewidth="32" tileheight="32">
-  <image source="../tex/nur_ts.png" width="640" height="640"/>
- </tileset>
  <layer name="Tile Layer 1" width="20" height="200">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3WYQrDIAyGYT1E6/1/jJ2h6+VKfwyKSMxqTGf7PhCEucWPkspC8BWdzxvVZFRPyTVKTu9caZCcWrNBecyfh6myemfJKwl11/ftLIu5nrOeqXHtlasHi4wv4z8nS9Q/h9pzK/0+3y+t0nmaz6S9T5T3pSzHPe3MaPL9MmuambWe3ZZ+S2E+Nf2ueldLef8lW352j75P7vntu564U6W52e9oqd6Hqn3X+r4HAAAAAAAAAAAAAAAAAAAAAOCuNi8lXjCAPgAA
+   H4sIAAAAAAAAA+3WUQ6CMBAFQDwE4BXU+9/P/4aULbZLwJmkKaG6PMlSnKZcj+TrXdXcafxLrqvkzM61XiRn1NJhZPRfhnlnzs5Sjmdl3PV5O6pHXy9FzfXHeVSuEc7aF16NuVrzl+vld8rjcq5dL3Jua23rN9fq7a1FeyaSr6XXIj3bu3fPqJf5rL4bP3/mPjK6buu9iNTsKeOefg7UqO2ptXd09D9G5nsdAAAAAAAAAAAAAADu4Asc8DyWgD4AAA==
   </data>
  </layer>
 </map>
